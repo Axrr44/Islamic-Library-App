@@ -1,0 +1,133 @@
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../config/app_languages.dart';
+import '../models/tafseer_books.dart';
+
+class AppDataPreferences {
+  static SharedPreferences? _prefs;
+
+
+  // Search-Page
+
+  static Future<void> _initPrefs() async {
+    _prefs ??= await SharedPreferences.getInstance();
+  }
+
+  static Future<void> setSearchPageQuranCheck(bool value) async {
+    await _initPrefs();
+    await _prefs?.setBool("Search-QuranCheckBox", value);
+  }
+
+  static Future<void> setSearchPageHadithsCheck(bool value) async {
+    await _initPrefs();
+    await _prefs?.setBool("Search-HadithsCheckBox", value);
+  }
+
+  static Future<void> setSearchPageTafseerCheck(bool value) async {
+    await _initPrefs();
+    await _prefs?.setBool("Search-TafseerCheckBox", value);
+  }
+
+  static Future<void> setSearchPageMufseerId(int value) async {
+    await _initPrefs();
+    await _prefs?.setInt("Search-MufseerId", value);
+  }
+
+  static Future<void> setSearchPageHadithId(int value) async {
+    await _initPrefs();
+    await _prefs?.setInt("Search-HadithId", value);
+  }
+
+  static Future<bool> getSearchPageQuranCheck() async {
+    await _initPrefs();
+    return _prefs?.getBool("Search-QuranCheckBox") ?? true;
+  }
+
+  static Future<bool> getSearchPageHadithsCheck() async {
+    await _initPrefs();
+    return _prefs?.getBool("Search-HadithsCheckBox") ?? true;
+  }
+
+  static Future<bool> getSearchPageTafseerCheck() async {
+    await _initPrefs();
+    return _prefs?.getBool("Search-TafseerCheckBox") ?? true;
+  }
+
+  static Future<int> getSearchPageMufseerId(String currentLanguage) async {
+    await _initPrefs();
+    return _prefs?.getInt("Search-MufseerId") ??
+        (currentLanguage == Languages.EN.languageCode ? 9 : 1);
+  }
+
+  static Future<int> getSearchPageMufseerIndex() async {
+    await _initPrefs();
+    return _prefs?.getInt("Search-MufseerId") ?? 0;
+  }
+
+  static Future<int> getSearchPageHadithId() async {
+    await _initPrefs();
+    return _prefs?.getInt("Search-HadithId") ?? 0;
+  }
+
+  // Tafseer last read
+
+  static Future<void> setTafseerLastRead(Tafseer mufseer, int surahId, int index) async {
+    await _initPrefs();
+    final String json = jsonEncode(mufseer.toJson());
+    await _prefs?.setString("Tafseer-Mufseer", json);
+    await _prefs?.setInt("Tafseer-SurahId", surahId);
+    await _prefs?.setInt("Tafseer-Index", index);
+  }
+
+  static Future<Tafseer> getTafseerMufseer() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? jsonString = prefs.getString("Tafseer-Mufseer");
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString!);
+      return Tafseer.fromJson(jsonMap) ?? Tafseer.empty();
+  }
+
+  static Future<int> getTafseerSurahId() async {
+    await _initPrefs();
+    return _prefs?.getInt("Tafseer-SurahId") ?? -1;
+  }
+
+  static Future<int> getTafseerIndex() async {
+    await _initPrefs();
+    return _prefs?.getInt("Tafseer-Index") ?? -1;
+  }
+
+  // Hadiths last read
+  static Future<void> setHadithLastRead(int bookId, int index,bool isChapter,int chapterId,String chapterName) async {
+    await _initPrefs();
+    await _prefs?.setInt("Hadith-MufseerId", bookId);
+    await _prefs?.setInt("Hadith-Index", index);
+    await _prefs?.setInt("Hadith-ChapterId", chapterId);
+    await _prefs?.setInt("Hadith-ChapterId", chapterId);
+    await _prefs?.setBool("Hadith-Chapter", isChapter);
+    await _prefs?.setString("Hadith-ChapterName", chapterName);
+  }
+
+  static Future<int> getHadithBookId() async {
+    await _initPrefs();
+    return _prefs?.getInt("Hadith-MufseerId") ?? -1;
+  }
+  static Future<int> getHadithIndex() async {
+    await _initPrefs();
+    return _prefs?.getInt("Hadith-Index") ?? -1;
+  }
+  static Future<int> getHadithChapterId() async {
+    await _initPrefs();
+    return _prefs?.getInt("Hadith-ChapterId") ?? -1;
+  }
+  static Future<bool> getHadithIsChapter() async {
+    await _initPrefs();
+    return _prefs?.getBool("Hadith-Chapter") ?? false;
+  }
+  static Future<String> getHadithChapterName() async {
+    await _initPrefs();
+    return _prefs?.getString("Hadith-ChapterName") ?? "";
+  }
+}
+
