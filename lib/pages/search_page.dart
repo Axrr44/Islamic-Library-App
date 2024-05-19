@@ -1,15 +1,17 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancer/config/app_languages.dart';
+import 'package:freelancer/utilities/constants.dart';
 import '../config/app_colors.dart';
 import '../models/tafseer_content.dart';
 import '../services/app_data_pref.dart';
 import '../models/hadith_model.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:http/http.dart' as http;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -174,7 +176,8 @@ class _SearchPageState extends State<SearchPage> {
                 decoration: InputDecoration(
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
-                  hintText: "Search....",
+                  hintText: "${AppLocalizations.of(context)!.search}....",
+                  hintStyle: TextStyle(fontFamily: Constants.getTextFamily(currentLanguage)),
                   filled: true,
                   fillColor: Colors.white,
                   focusColor: Colors.black,

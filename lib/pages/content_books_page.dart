@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:freelancer/utilities/constants.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 import '../components/custom_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../config/app_languages.dart';
 import '../services/app_data.dart';
 import '../config/app_colors.dart';
@@ -246,8 +249,10 @@ class ContentBooksPage extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    (index + 1).toString(),
+                    currentLanguage == Languages.EN.languageCode ? (index + 1).toString()
+                    : ArabicNumbers.convert(index + 1),
                     style: TextStyle(
+                      fontFamily: Constants.getTextFamily(currentLanguage),
                         fontSize: 15.sp,
                         color: AppColor.white,
                         fontWeight: FontWeight.w600),
@@ -268,6 +273,7 @@ class ContentBooksPage extends StatelessWidget {
                             ? chapter.arabic!
                             : "${chapter.arabic!.substring(0, 35)}...",
                     style: TextStyle(
+                        fontFamily: Constants.getTextFamily(currentLanguage),
                         fontSize: currentLanguage == Languages.EN.languageCode
                             ? chapter.english!.length <= 25
                                 ? 15.sp
@@ -336,7 +342,7 @@ class ContentBooksPage extends StatelessWidget {
                               color: AppColor.black,
                             ),
                             Text(
-                              "Copy",
+                              AppLocalizations.of(context)!.copy,
                               style: TextStyle(
                                   fontSize: 15.sp, color: AppColor.black),
                             )
@@ -361,9 +367,9 @@ class ContentBooksPage extends StatelessWidget {
                               color: AppColor.black,
                             ),
                             Text(
-                              "Share",
+                              AppLocalizations.of(context)!.share,
                               style: TextStyle(
-                                  fontSize: 15.sp, color: AppColor.black),
+                                  fontSize: 15.sp, color: AppColor.black,),
                             )
                           ],
                         ),
@@ -384,7 +390,7 @@ class ContentBooksPage extends StatelessWidget {
                               color: AppColor.black,
                             ),
                             Text(
-                              "Favorite",
+                              AppLocalizations.of(context)!.favorite,
                               style: TextStyle(
                                   fontSize: 15.sp, color: AppColor.black),
                             )
@@ -411,7 +417,7 @@ class ContentBooksPage extends StatelessWidget {
                               color: AppColor.black,
                             ),
                             Text(
-                              "Mark",
+                              AppLocalizations.of(context)!.mark,
                               style: TextStyle(
                                   fontSize: 15.sp, color: AppColor.black),
                             )
@@ -458,7 +464,8 @@ class ContentBooksPage extends StatelessWidget {
                 bookName.length <= 20
                     ? bookName
                     : "${bookName.substring(0, 17)}...",
-                style: TextStyle(fontSize: bookName.length < 20 ? 25.sp : 22.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: bookName.length < 20 ? 25.sp : 22.sp, fontWeight: FontWeight.bold,
+                fontFamily: Constants.getTextFamily(currentLanguage)),
               )
             ],
           ),

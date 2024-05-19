@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancer/utilities/constants.dart';
 import 'package:quran/quran.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../config/app_colors.dart';
 import '../config/toast_message.dart';
 import '../services/app_data_pref.dart';
@@ -322,7 +324,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                         color: AppColor.black,
                       ),
                       Text(
-                        "Copy",
+                        AppLocalizations.of(context)!.copy,
                         style:
                             TextStyle(fontSize: 15.sp, color: AppColor.black),
                       )
@@ -347,7 +349,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                         color: AppColor.black,
                       ),
                       Text(
-                        "Share",
+                        AppLocalizations.of(context)!.share,
                         style:
                             TextStyle(fontSize: 15.sp, color: AppColor.black),
                       )
@@ -370,7 +372,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                         color: AppColor.black,
                       ),
                       Text(
-                        "Favorite",
+                        AppLocalizations.of(context)!.favorite,
                         style:
                             TextStyle(fontSize: 15.sp, color: AppColor.black),
                       )
@@ -397,7 +399,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                         color: AppColor.black,
                       ),
                       Text(
-                        "Mark",
+                        AppLocalizations.of(context)!.mark,
                         style:
                             TextStyle(fontSize: 15.sp, color: AppColor.black),
                       )
@@ -459,7 +461,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
   }
 
   Widget _header(
-      String language, BuildContext context, double width, bool isMobile) {
+      String currentLanguage, BuildContext context, double width, bool isMobile) {
     return Column(
       children: [
         Padding(
@@ -476,7 +478,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                       Navigator.pop(context);
                     },
                     icon: Icon(
-                      language == Languages.EN.languageCode ? Icons.keyboard_arrow_left_rounded
+                      currentLanguage == Languages.EN.languageCode ? Icons.keyboard_arrow_left_rounded
                       : Icons.keyboard_arrow_right_rounded,
                       size: 35.w,
                       color: AppColor.white,
@@ -491,11 +493,12 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                 width: width / 2,
                 child: Text(
                   textAlign: TextAlign.center,
-                  language == Languages.EN.languageCode
+                  currentLanguage == Languages.EN.languageCode
                       ? quran.getSurahNameEnglish(widget.surahId)
                       : quran.getSurahNameArabic(widget.surahId),
                   style:
-                      TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold,
+                      fontFamily: Constants.getTextFamily(currentLanguage)),
                 ),
               )
             ],

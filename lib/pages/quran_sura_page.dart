@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freelancer/pages/quran_aya_page.dart';
+import 'package:freelancer/utilities/constants.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:arabic_numbers/arabic_numbers.dart';
 import '../config/app_colors.dart';
 import '../config/app_languages.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/app_data.dart';
 
 class QuranSuraPage extends StatefulWidget {
@@ -47,7 +49,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverToBoxAdapter(
-              child: _header(width, height, context, isMobile,currentLanguage),
+              child: _header(width, height, context, isMobile, currentLanguage),
             ),
             SliverAppBar(
               pinned: true,
@@ -75,12 +77,22 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                     indicatorColor: innerBoxIsScrolled == false
                         ? AppColor.black
                         : AppColor.white,
-                    tabs: const [
+                    tabs: [
                       Tab(
-                        child: Text("Surah"),
+                        child: Text(
+                          AppLocalizations.of(context)!.surah,
+                          style: TextStyle(
+                              fontFamily:
+                                  Constants.getTextFamily(currentLanguage)),
+                        ),
                       ),
                       Tab(
-                        child: Text("Juz"),
+                        child: Text(
+                          AppLocalizations.of(context)!.juz,
+                          style: TextStyle(
+                              fontFamily:
+                                  Constants.getTextFamily(currentLanguage)),
+                        ),
                       ),
                     ]),
               ),
@@ -211,7 +223,11 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                   ? quran.getSurahNameEnglish(++index)
                                   : quran.getSurahNameArabic(++index),
                               style: TextStyle(
-                                  fontSize: 15.sp, fontWeight: FontWeight.w700),
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w700,
+                                fontFamily:
+                                    Constants.getTextFamily(currentLanguage),
+                              ),
                             ),
                             Column(
                               children: [
@@ -220,6 +236,8 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                       ? "${quran.getVerseCount(index)}   Verse"
                                       : "${ArabicNumbers.convert(quran.getVerseCount(index))}   اية",
                                   style: TextStyle(
+                                      fontFamily: Constants.getTextFamily(
+                                          currentLanguage),
                                       fontSize: 15.sp,
                                       fontWeight: FontWeight.w700),
                                 ),
@@ -231,6 +249,8 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                       ? "${quran.getJuzNumber(index, 1)}   Juz"
                                       : "${ArabicNumbers.convert(quran.getJuzNumber(index, 1))}   جزء",
                                   style: TextStyle(
+                                      fontFamily: Constants.getTextFamily(
+                                          currentLanguage),
                                       fontSize: 15.sp,
                                       fontWeight: FontWeight.w700),
                                 ),
@@ -261,8 +281,8 @@ class _QuranSuraPageState extends State<QuranSuraPage>
     );
   }
 
-  Widget _header(
-      double width, double height, BuildContext context, bool isMobile,String currentLanguage) {
+  Widget _header(double width, double height, BuildContext context,
+      bool isMobile, String currentLanguage) {
     return Container(
       width: width,
       height: isMobile == true ? height / 3 : height / 2 - 100,
@@ -286,8 +306,10 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: Icon(currentLanguage == Languages.EN.languageCode
-                        ? Icons.keyboard_arrow_left_rounded : Icons.keyboard_arrow_right_rounded,
+                      icon: Icon(
+                        currentLanguage == Languages.EN.languageCode
+                            ? Icons.keyboard_arrow_left_rounded
+                            : Icons.keyboard_arrow_right_rounded,
                         size: 35.w,
                         color: AppColor.white,
                       ),
@@ -299,10 +321,11 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Qura`an",
+                      AppLocalizations.of(context)!.quran,
                       style: TextStyle(
                           fontSize: 40.sp,
                           color: AppColor.primary1,
+                          fontFamily: Constants.getTextFamily(currentLanguage),
                           fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
@@ -338,8 +361,11 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                   height: 5.h,
                 ),
                 Text(
-                  "Last read",
-                  style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                  AppLocalizations.of(context)!.lastRead,
+                  style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.grey,
+                      fontFamily: Constants.getTextFamily(currentLanguage)),
                 )
               ],
             )

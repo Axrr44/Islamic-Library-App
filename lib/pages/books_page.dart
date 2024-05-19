@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancer/utilities/constants.dart';
 import '../components/custom_dialog.dart';
 import '../config/app_languages.dart';
 import '../models/hadith_drop_down_item.dart';
 import '../services/app_data.dart';
 import '../config/app_colors.dart';
 import '../models/hadith_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/app_data_pref.dart';
 import 'content_books_page.dart';
 
@@ -87,12 +89,22 @@ class _BooksPageState extends State<BooksPage> {
                       indicatorColor: innerBoxIsScrolled == false
                           ? AppColor.black
                           : AppColor.white,
-                      tabs: const [
+                      tabs:   [
                         Tab(
-                          child: Text("All"),
+                          child: Text(
+                            AppLocalizations.of(context)!.all,
+                            style: TextStyle(
+                                fontFamily:
+                                Constants.getTextFamily(currentLanguage)),
+                          ),
                         ),
                         Tab(
-                          child: Text("Chapter"),
+                          child: Text(
+                            AppLocalizations.of(context)!.chapter,
+                            style: TextStyle(
+                                fontFamily:
+                                Constants.getTextFamily(currentLanguage)),
+                          ),
                         ),
                       ]),
                 ),
@@ -109,6 +121,7 @@ class _BooksPageState extends State<BooksPage> {
       ),
     );
   }
+
 
   Widget _listOfChapters(
       double width, double height, BuildContext context, String language) {
@@ -172,6 +185,7 @@ class _BooksPageState extends State<BooksPage> {
                                         ? chapters[index].english.toString()
                                         : chapters[index].arabic.toString(),
                                     style: TextStyle(
+                                      fontFamily: Constants.getTextFamily(language),
                                         fontSize: 15.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -322,8 +336,9 @@ class _BooksPageState extends State<BooksPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Hadiths",
+                      AppLocalizations.of(context)!.hadiths,
                       style: TextStyle(
+                        fontFamily: Constants.getTextFamily(currentLanguage),
                           fontSize: 40.sp,
                           color: AppColor.primary1,
                           fontWeight: FontWeight.bold),
@@ -373,7 +388,7 @@ class _BooksPageState extends State<BooksPage> {
                   height: 5.h,
                 ),
                 Text(
-                  "Last read",
+                  AppLocalizations.of(context)!.lastRead,
                   style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                 )
               ],

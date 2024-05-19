@@ -36,5 +36,11 @@
   "juz" : "Juz",
   "chapter" : "Chapter",
   "all" : "All",
-  "fseer" : "Tafsser"
+  "fseer" : "Tafsser",
+  "copy" : "Copy",
+  "share" : "Share",
+  "favorite" : "Favorite",
+  "mark" : "Mark",
+  "resetPassword" : "Reset Password",
+  "textOfResetPassword" : "Enter Your Email and we will send you a password rest link"
 }

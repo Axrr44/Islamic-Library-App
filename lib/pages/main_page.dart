@@ -15,7 +15,6 @@ import '../services/app_data_pref.dart';
 import 'home_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -82,7 +81,7 @@ class _MainPageState extends State<MainPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _header(width, height, notificationCount,isMobile),
+              _header(width, height, notificationCount, isMobile),
               Container(
                 alignment: Alignment.center,
                 child: pages[_currentPage],
@@ -176,14 +175,17 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> _loadSearchDialogData() async {
     _searchIsQuranChecked = await AppDataPreferences.getSearchPageQuranCheck();
-    _searchIsHadithChecked = await AppDataPreferences.getSearchPageHadithsCheck();
-    _searchIsTafseerChecked = await AppDataPreferences.getSearchPageTafseerCheck();
+    _searchIsHadithChecked =
+        await AppDataPreferences.getSearchPageHadithsCheck();
+    _searchIsTafseerChecked =
+        await AppDataPreferences.getSearchPageTafseerCheck();
     _selectedHadith = IndexDropdownItem(
-        AppData.getBookName(context, await AppDataPreferences.getSearchPageHadithId()),
+        AppData.getBookName(
+            context, await AppDataPreferences.getSearchPageHadithId()),
         await AppDataPreferences.getSearchPageHadithId());
   }
 
-  void _showFilterSearchDialog() {
+  void _showFilterSearchDialog(String currentLanguage) {
     showDialog(
       context: context,
       builder: (context) {
@@ -201,8 +203,11 @@ class _MainPageState extends State<MainPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Qura`an",
-                          style: TextStyle(fontSize: 20.sp),
+                          AppLocalizations.of(context)!.quran,
+                          style: TextStyle(
+                              fontSize: 20.sp,
+                              fontFamily:
+                                  Constants.getTextFamily(currentLanguage)),
                         ),
                         Transform.scale(
                           scale: 1.w,
@@ -225,8 +230,11 @@ class _MainPageState extends State<MainPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Hadiths",
-                          style: TextStyle(fontSize: 20.sp),
+                          AppLocalizations.of(context)!.hadiths,
+                          style: TextStyle(
+                              fontSize: 20.sp,
+                              fontFamily:
+                                  Constants.getTextFamily(currentLanguage)),
                         ),
                         Transform.scale(
                           scale: 1.w,
@@ -292,8 +300,11 @@ class _MainPageState extends State<MainPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Tafseer",
-                          style: TextStyle(fontSize: 20.sp),
+                          AppLocalizations.of(context)!.tafseer,
+                          style: TextStyle(
+                              fontSize: 20.sp,
+                              fontFamily:
+                                  Constants.getTextFamily(currentLanguage)),
                         ),
                         Transform.scale(
                           scale: 1.w,
@@ -323,7 +334,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  void _showFilterFavoriteDialog() {
+  void _showFilterFavoriteDialog(String currentLanguage) {
     showDialog(
       context: context,
       builder: (context) {
@@ -340,8 +351,8 @@ class _MainPageState extends State<MainPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Qura`an",
-                        style: TextStyle(fontSize: 20.sp),
+                        AppLocalizations.of(context)!.quran,
+                        style: TextStyle(fontSize: 20.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
                       ),
                       Transform.scale(
                         scale: 1.w,
@@ -358,8 +369,8 @@ class _MainPageState extends State<MainPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Hadiths",
-                        style: TextStyle(fontSize: 20.sp),
+                        AppLocalizations.of(context)!.hadiths,
+                        style: TextStyle(fontSize: 20.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
                       ),
                       Transform.scale(
                         scale: 1.w,
@@ -376,8 +387,8 @@ class _MainPageState extends State<MainPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Tafseer",
-                        style: TextStyle(fontSize: 20.sp),
+                        AppLocalizations.of(context)!.tafseer,
+                        style: TextStyle(fontSize: 20.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
                       ),
                       Transform.scale(
                         scale: 1.w,
@@ -399,7 +410,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  void _showSettingDialog() {
+  void _showSettingDialog(String currentLanguage) {
     showDialog(
       context: context,
       builder: (context) {
@@ -413,8 +424,9 @@ class _MainPageState extends State<MainPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Languages",
+                      AppLocalizations.of(context)!.languages,
                       style: TextStyle(
+                        fontFamily: Constants.getTextFamily(currentLanguage),
                         fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -498,10 +510,9 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _header(double width, double height, int notificationCount,bool isMobile) {
-
+  Widget _header(
+      double width, double height, int notificationCount, bool isMobile) {
     String currentLanguage = Localizations.localeOf(context).languageCode;
-
 
     return Container(
       width: width,
@@ -519,7 +530,7 @@ class _MainPageState extends State<MainPage> {
                 Text(
                   _nameOfPage,
                   style: TextStyle(
-                    fontFamily: Constants.getTextFamily(currentLanguage),
+                      fontFamily: Constants.getTextFamily(currentLanguage),
                       fontSize: _nameOfPage.length > 10 ? 30.sp : 40.sp,
                       color: AppColor.primary1,
                       fontWeight: FontWeight.bold),
@@ -533,50 +544,54 @@ class _MainPageState extends State<MainPage> {
                 ),
               ],
             ),
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
-                  child: Container(
-                    color: AppColor.primary1,
-                    child: IconButton(
-                        onPressed: () {
-                          _actionOfHeaderButton();
-                        },
-                        icon: Icon(
-                          _iconHeader(_nameOfPage),
-                          size: 35.w,
-                          color: AppColor.white,
-                        )),
-                  ),
-                ),
-                if (notificationCount > 0 && _nameOfPage == AppLocalizations.of(context)!.home)
-                  Positioned(
-                    right: 8.w,
-                    top: 8.w,
-                    child: Container(
-                      padding: EdgeInsets.all(4.w),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      constraints: BoxConstraints(
-                        minWidth: 16.w,
-                        minHeight: 16.w,
-                      ),
-                      child: Center(
-                        child: Text(
-                          notificationCount.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.sp,
-                          ),
+            _nameOfPage != AppLocalizations.of(context)!.home
+                ? Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            isMobile == true ? 15.w : 10.w),
+                        child: Container(
+                          color: AppColor.primary1,
+                          child: IconButton(
+                              onPressed: () {
+                                _actionOfHeaderButton();
+                              },
+                              icon: Icon(
+                                _iconHeader(_nameOfPage),
+                                size: 35.w,
+                                color: AppColor.white,
+                              )),
                         ),
                       ),
-                    ),
-                  ),
-              ],
-            )
+                      if (notificationCount > 0 &&
+                          _nameOfPage == AppLocalizations.of(context)!.home)
+                        Positioned(
+                          right: 8.w,
+                          top: 8.w,
+                          child: Container(
+                            padding: EdgeInsets.all(4.w),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 16.w,
+                              minHeight: 16.w,
+                            ),
+                            child: Center(
+                              child: Text(
+                                notificationCount.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10.sp,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  )
+                : Container()
           ],
         ),
       ),
@@ -584,14 +599,15 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _actionOfHeaderButton() {
-    if (_nameOfPage == "Home") {
+    String currentLanguage = Localizations.localeOf(context).languageCode;
+    if (_nameOfPage == AppLocalizations.of(context)!.home) {
       Navigator.of(context).pushNamed(AppRoutes.NOTIFICATION_ROUTES);
-    } else if (_nameOfPage == "Search") {
-      _showFilterSearchDialog();
-    } else if (_nameOfPage == "Favorites") {
-      _showFilterFavoriteDialog();
-    } else if (_nameOfPage == "Profile") {
-      _showSettingDialog();
+    } else if (_nameOfPage == AppLocalizations.of(context)!.search) {
+      _showFilterSearchDialog(currentLanguage);
+    } else if (_nameOfPage == AppLocalizations.of(context)!.favorites) {
+      _showFilterFavoriteDialog(currentLanguage);
+    } else if (_nameOfPage == AppLocalizations.of(context)!.profile) {
+      _showSettingDialog(currentLanguage);
     }
   }
 
@@ -642,9 +658,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _bottomNavigation() {
-
     String currentLanguage = Localizations.localeOf(context).languageCode;
-
 
     return Container(
       color: AppColor.white,
@@ -667,8 +681,9 @@ class _MainPageState extends State<MainPage> {
             GButton(
               icon: Icons.home_outlined,
               text: AppLocalizations.of(context)!.home,
-              textStyle: TextStyle(fontSize: 15.sp,
-              fontFamily: Constants.getTextFamily(currentLanguage)),
+              textStyle: TextStyle(
+                  fontSize: 15.sp,
+                  fontFamily: Constants.getTextFamily(currentLanguage)),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -680,7 +695,9 @@ class _MainPageState extends State<MainPage> {
             GButton(
               icon: Icons.search,
               text: AppLocalizations.of(context)!.search,
-              textStyle: TextStyle(fontSize: 15.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
+              textStyle: TextStyle(
+                  fontSize: 15.sp,
+                  fontFamily: Constants.getTextFamily(currentLanguage)),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -692,7 +709,9 @@ class _MainPageState extends State<MainPage> {
             GButton(
               icon: Icons.favorite_border_outlined,
               text: AppLocalizations.of(context)!.favorites,
-              textStyle: TextStyle(fontSize: 15.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
+              textStyle: TextStyle(
+                  fontSize: 15.sp,
+                  fontFamily: Constants.getTextFamily(currentLanguage)),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -704,7 +723,9 @@ class _MainPageState extends State<MainPage> {
             GButton(
               icon: Icons.person_outline,
               text: AppLocalizations.of(context)!.profile,
-              textStyle: TextStyle(fontSize: 15.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
+              textStyle: TextStyle(
+                  fontSize: 15.sp,
+                  fontFamily: Constants.getTextFamily(currentLanguage)),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {

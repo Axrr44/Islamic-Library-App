@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../components/custom_textfield.dart';
 import '../config/app_colors.dart';
 import '../services/authentication.dart';
@@ -26,7 +26,7 @@ class RestPasswordPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Enter Your Email and we will send you a password rest link",
+                AppLocalizations.of(context)!.textOfResetPassword,
                 style: TextStyle(fontSize: 20.sp, color: AppColor.black),
                 textAlign: TextAlign.center,
               ),
@@ -35,7 +35,7 @@ class RestPasswordPage extends StatelessWidget {
               ),
               CustomTextField(
                   controller: _emailController,
-                  name: "Email",
+                  name: AppLocalizations.of(context)!.email,
                   prefixIcon: Icons.email_outlined,
                   width: width,
                   height: height / 13,
@@ -61,7 +61,7 @@ class RestPasswordPage extends StatelessWidget {
                     }
                   },
                   child: Text(
-                    "Reset password",
+                    AppLocalizations.of(context)!.resetPassword,
                     style: TextStyle(fontSize: 20.sp),
                   ),
                 ),

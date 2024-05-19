@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/pages/tafseer_conent_page.dart';
+import 'package:freelancer/utilities/constants.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../config/app_colors.dart';
 import '../models/tafseer_books.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/app_data.dart';
 import '../services/app_data_pref.dart';
 
@@ -25,8 +27,6 @@ class _TafseerPageState extends State<TafseerPage> {
   late int _surahId;
   late Tafseer _mufseerLastRead;
   late int _indexOfScrolling;
-
-
 
   @override
   void initState() {
@@ -50,7 +50,6 @@ class _TafseerPageState extends State<TafseerPage> {
     String currentLanguage = Localizations.localeOf(context).languageCode;
     final bool isMobile = shortestSide < 600;
 
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -64,7 +63,7 @@ class _TafseerPageState extends State<TafseerPage> {
                 stops: const [0.2, 0.6])),
         child: Column(
           children: [
-            _header(width, height, context,isMobile,currentLanguage),
+            _header(width, height, context, isMobile, currentLanguage),
             Container(
               height: 400.h,
               padding: EdgeInsets.symmetric(horizontal: 40.w),
@@ -80,9 +79,9 @@ class _TafseerPageState extends State<TafseerPage> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                        MaterialStateProperty.all(AppColor.primary1),
+                            MaterialStateProperty.all(AppColor.primary1),
                         foregroundColor:
-                        MaterialStateProperty.all(AppColor.white),
+                            MaterialStateProperty.all(AppColor.white),
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5.w),
@@ -92,12 +91,12 @@ class _TafseerPageState extends State<TafseerPage> {
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => TafseerContentPage(
-                              surahId: _indexOfSurah + 1,
-                              mufseer: _mufseer,
-                            )));
+                                  surahId: _indexOfSurah + 1,
+                                  mufseer: _mufseer,
+                                )));
                       },
                       child: Text(
-                        "Tafseer",
+                        AppLocalizations.of(context)!.fseer,
                         style: TextStyle(fontSize: 20.sp),
                       ),
                     ),
@@ -116,7 +115,6 @@ class _TafseerPageState extends State<TafseerPage> {
     _mufseerLastRead = await AppDataPreferences.getTafseerMufseer();
     _indexOfScrolling = await AppDataPreferences.getTafseerIndex();
   }
-
 
   FutureBuilder<List<Tafseer>> _listOfTafseer() {
     return FutureBuilder<List<Tafseer>>(
@@ -234,7 +232,7 @@ class _TafseerPageState extends State<TafseerPage> {
                   },
                   itemHeight: 100.h,
                   items: surahList.map<DropdownMenuItem<String>>(
-                        (String value) {
+                    (String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Center(
@@ -264,7 +262,8 @@ class _TafseerPageState extends State<TafseerPage> {
     );
   }
 
-  Widget _header(double width, double height, BuildContext context,bool isMobile,String currentLanguage) {
+  Widget _header(double width, double height, BuildContext context,
+      bool isMobile, String currentLanguage) {
     return Container(
       width: width,
       height: isMobile ? height / 3 : height / 2 - 100,
@@ -288,8 +287,9 @@ class _TafseerPageState extends State<TafseerPage> {
                         Navigator.pop(context);
                       },
                       icon: Icon(
-                        currentLanguage == Languages.EN.languageCode ?
-                        Icons.keyboard_arrow_left_rounded : Icons.keyboard_arrow_right_rounded,
+                        currentLanguage == Languages.EN.languageCode
+                            ? Icons.keyboard_arrow_left_rounded
+                            : Icons.keyboard_arrow_right_rounded,
                         size: 35.w,
                         color: AppColor.white,
                       ),
@@ -301,8 +301,9 @@ class _TafseerPageState extends State<TafseerPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Tafseer",
+                      AppLocalizations.of(context)!.tafseer,
                       style: TextStyle(
+                          fontFamily: Constants.getTextFamily(currentLanguage),
                           fontSize: 40.sp,
                           color: AppColor.primary1,
                           fontWeight: FontWeight.bold),
@@ -323,22 +324,22 @@ class _TafseerPageState extends State<TafseerPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                  borderRadius:
+                      BorderRadius.circular(isMobile == true ? 15.w : 10.w),
                   child: Container(
                     color: AppColor.primary1,
                     child: IconButton(
-                        onPressed: () async{
+                        onPressed: () async {
                           await _loadTafseerData();
-                          if(_indexOfTafseer != -1)
-                            {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => TafseerContentPage(
-                                    mufseer: _mufseerLastRead,
-                                    surahId: _surahId,
-                                    isScrollable: true,
-                                    indexOfScrollable: _indexOfScrolling,
-                                  )));
-                            }
+                          if (_indexOfTafseer != -1) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => TafseerContentPage(
+                                      mufseer: _mufseerLastRead,
+                                      surahId: _surahId,
+                                      isScrollable: true,
+                                      indexOfScrollable: _indexOfScrolling,
+                                    )));
+                          }
                         },
                         icon: Icon(
                           color: AppColor.white,
@@ -351,8 +352,11 @@ class _TafseerPageState extends State<TafseerPage> {
                   height: 5.h,
                 ),
                 Text(
-                  "Last read",
-                  style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                  AppLocalizations.of(context)!.lastRead,
+                  style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.grey,
+                      fontFamily: Constants.getTextFamily(currentLanguage)),
                 )
               ],
             )
