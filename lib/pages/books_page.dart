@@ -49,15 +49,6 @@ class _BooksPageState extends State<BooksPage> {
     return Scaffold(
       extendBody: true,
       body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  AppColor.primary1.withOpacity(0.1),
-                  AppColor.white.withOpacity(0.2)
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: const [0.2, 0.6])),
         child: DefaultTabController(
           length: 2,
           child: NestedScrollView(
@@ -71,11 +62,12 @@ class _BooksPageState extends State<BooksPage> {
                 elevation: 0,
                 backgroundColor: innerBoxIsScrolled == false
                     ? AppColor.black.withOpacity(0)
-                    : AppColor.black,
+                    : AppColor.primary1,
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(isMobile == true ? 0 : 20.h),
                   child: TabBar(
-                      unselectedLabelColor: Colors.grey.withOpacity(0.7),
+                      unselectedLabelColor: !innerBoxIsScrolled ? Colors.grey.withOpacity(0.7)
+                          : AppColor.white.withOpacity(0.6) ,
                       overlayColor: MaterialStateProperty.all(
                           innerBoxIsScrolled == false
                               ? AppColor.black.withOpacity(0.1)
@@ -83,11 +75,11 @@ class _BooksPageState extends State<BooksPage> {
                       labelPadding: EdgeInsets.symmetric(horizontal: 10.w,
                           vertical: isMobile == true ? 0 : 10.h),
                       labelStyle: TextStyle(fontSize: 20.sp),
-                      labelColor: innerBoxIsScrolled == false
+                      labelColor: !innerBoxIsScrolled
                           ? AppColor.black
                           : AppColor.white,
-                      indicatorColor: innerBoxIsScrolled == false
-                          ? AppColor.black
+                      indicatorColor: !innerBoxIsScrolled
+                          ? AppColor.primary1
                           : AppColor.white,
                       tabs:   [
                         Tab(
@@ -220,7 +212,7 @@ class _BooksPageState extends State<BooksPage> {
       child: GridView.builder(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: width / 2,
-              mainAxisExtent: height / 4,
+              mainAxisExtent: height / 5,
               childAspectRatio: 1,
               crossAxisSpacing: 5.w,
               mainAxisSpacing: 5.h),
@@ -238,15 +230,30 @@ class _BooksPageState extends State<BooksPage> {
                             bookName: AppData.getBookName(context, index),
                           )));
                 },
-                child: ListTile(
-                  leading: Icon(
-                    Icons.menu_book_outlined,
-                    color: AppColor.black,
-                    size: 20.w,
-                  ),
-                  title: Text(
-                    AppData.getBookName(context, index),
-                    style: TextStyle(fontSize: 14.sp),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.menu_book_outlined,
+                            color: AppColor.black,
+                            size: 20.w,
+                          ),
+                        ],
+                      ),
+                      ListTile(
+                        trailing: Icon(Icons.arrow_forward_ios_rounded,
+                        size: 15.w,),
+                        title: Text(
+                          AppData.getBookName(context, index),
+                          style: TextStyle(fontSize: 14.sp),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -300,102 +307,138 @@ class _BooksPageState extends State<BooksPage> {
 
   Widget _header(double width, double height, BuildContext context,bool isMobile,
       String currentLanguage) {
-    return Container(
-      width: width,
-      height: isMobile == true ? height / 3 : height / 2 - 100,
-      alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding:
-            EdgeInsets.only(top: 50.h, bottom: 10.h, right: 20.w, left: 20.w),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
-                  child: Container(
-                    color: AppColor.primary1,
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(
-                        currentLanguage == Languages.EN.languageCode ?
-                        Icons.keyboard_arrow_left_rounded : Icons.keyboard_arrow_right_rounded,
-                        size: 35.w,
-                        color: AppColor.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.hadiths,
-                      style: TextStyle(
-                        fontFamily: Constants.getTextFamily(currentLanguage),
-                          fontSize: 40.sp,
-                          color: AppColor.primary1,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      width: width / 2,
-                      child: Text(
-                        "This is test for design",
-                        style: TextStyle(
-                            fontSize: 15.sp, color: AppColor.primary6),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+    return Stack(
+      children: [
+        ShaderMask(
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.grey.withOpacity(0.1) , Colors.grey.withOpacity(0)],
+            ).createShader(bounds);
+          },
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/images/islamic_pattern_2.png"),
+                  fit: BoxFit.cover
+              ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
-                  child: Container(
-                    color: AppColor.primary1,
-                    child: IconButton(
-                        onPressed: () async {
-                          await _loadHadithData();
-                          if (_hadithBookId != -1) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ContentBooksPage(
-                                      chapterId: _chapterId,
-                                      isChapter: _isChapter,
-                                      bookId: _hadithBookId,
-                                      bookName: _chapterName,
-                                      isScrollable: true,
-                                      indexOfScrollable: _hadithIndex,
-                                    )));
-                          }
+            width: width,
+            height: height / 3 - 40.h,
+            alignment: Alignment.bottomCenter,
+          ),
+        ),
+        Container(
+        width: width,
+        height: isMobile == true ? height / 3 : height / 2 - 100,
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding:
+              EdgeInsets.only(top: 50.h, bottom: 10.h, right: 20.w, left: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                    child: Container(
+                      color: AppColor.primary1,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
                         },
                         icon: Icon(
-                          color: AppColor.white,
-                          Icons.bookmark_outline_rounded,
+                          currentLanguage == Languages.EN.languageCode ?
+                          Icons.keyboard_arrow_left_rounded : Icons.keyboard_arrow_right_rounded,
                           size: 35.w,
-                        )),
+                          color: AppColor.primary6,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 5.h,
-                ),
-                Text(
-                  AppLocalizations.of(context)!.lastRead,
-                  style: TextStyle(fontSize: 12.sp, color: Colors.grey),
-                )
-              ],
-            )
-          ],
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.hadiths,
+                        style: TextStyle(
+                          fontFamily: Constants.getTextFamily(currentLanguage),
+                            fontSize: 40.sp,
+                            color: AppColor.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        width: width / 2,
+                        child: Text(
+                          "This is test for design",
+                          style: TextStyle(
+                              fontSize: 15.sp, color: Colors.grey),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppColor.white,
+                        border: Border.all(
+                          color: AppColor.black,
+                          width: 1.w,
+                        ),
+                        borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                      ),
+                      child: Container(
+                        color: AppColor.white.withOpacity(0.0),
+                        child: IconButton(
+                          onPressed: () async {
+                            await _loadHadithData();
+                            if (_hadithBookId != -1) {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ContentBooksPage(
+                                  chapterId: _chapterId,
+                                  isChapter: _isChapter,
+                                  bookId: _hadithBookId,
+                                  bookName: _chapterName,
+                                  isScrollable: true,
+                                  indexOfScrollable: _hadithIndex,
+                                ),
+                              ));
+                            }
+                          },
+                          icon: Icon(
+                            color: AppColor.black,
+                            Icons.bookmark_outline_rounded,
+                            size: 35.w,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5.h,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.lastRead,
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
+      ]
     );
   }
 }

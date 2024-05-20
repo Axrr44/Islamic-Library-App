@@ -7,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:http/http.dart' as http;
 import '../components/custom_dialog.dart';
-import '../config/app_colors.dart';
 import '../config/app_languages.dart';
 import '../models/quran_model.dart';
 import '../services/app_data.dart';
@@ -39,7 +38,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
   void scrollToPage(int pageIndex) {
     _pageController.animateToPage(
       pageIndex,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
     );
   }
@@ -220,7 +219,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
 
       spans.add(
         TextSpan(
-          text: ayahText + " ",
+          text: "$ayahText ",
           style: TextStyle(
             fontFamily: currentLanguage == Languages.EN.languageCode ? 'EnglishQuran' : 'Hafs',
             fontSize: currentLanguage == Languages.EN.languageCode ? 17.sp : 20.sp,

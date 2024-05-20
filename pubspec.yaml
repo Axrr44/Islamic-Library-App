@@ -112,6 +112,18 @@ flutter:
     - assets/images/travel.png
     - assets/images/islamic.png
     - assets/images/login_image.jpg
+    - assets/images/islamc_pattern_1.png
+    - assets/images/islamic_pattern_2.png
+    - assets/images/islamic_pattern_3.png
+    - assets/images/islamic_pattern_4.png
+    - assets/images/wave_lines_1.png
+    - assets/images/wave_lines_2.png
+    - assets/images/wave_lines_3.png
+    - assets/images/wave_lines_4.png
+    - assets/images/wave_lines_5.png
+    - assets/images/wave_lines_6.png
+    - assets/images/text_pattern.png
+    - assets/images/text_patter_2.png
     - assets/images/islamic_book.jpg
     - assets/images/login_image2.svg
     - assets/images/facebook-official.svg
@@ -155,18 +167,7 @@ flutter:
 
     - family: Custom
       fonts:
-        - asset: assets/fonts/Kanit-Light.ttf
-          weight: 300
-        - asset: assets/fonts/Kanit-Black.ttf
-          weight: 900
-        - asset: assets/fonts/Kanit-ExtraBold.ttf
-          weight: 800
-        - asset: assets/fonts/Kanit-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Kanit-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Kanit-SemiBold.ttf
-          weight: 600
+        - asset: assets/fonts/Montserrat-Regular.ttf
 
 
 

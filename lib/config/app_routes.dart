@@ -1,7 +1,6 @@
 import '../pages/books_page.dart';
 import '../pages/main_page.dart';
 import '../pages/notification_page.dart';
-import '../pages/quran_aya_page.dart';
 import '../pages/quran_sura_page.dart';
 import '../pages/rest_password_page.dart';
 import '../pages/sgin_in.dart';

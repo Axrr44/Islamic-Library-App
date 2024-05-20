@@ -37,15 +37,6 @@ class _QuranSuraPageState extends State<QuranSuraPage>
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  AppColor.primary1.withOpacity(0.1),
-                  AppColor.white.withOpacity(0.2)
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: const [0.2, 0.6])),
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverToBoxAdapter(
@@ -57,25 +48,25 @@ class _QuranSuraPageState extends State<QuranSuraPage>
               elevation: 0,
               backgroundColor: innerBoxIsScrolled == false
                   ? AppColor.black.withOpacity(0)
-                  : AppColor.black,
+                  : AppColor.primary1,
               bottom: PreferredSize(
                 preferredSize: Size.fromHeight(isMobile == true ? 0 : 20.h),
                 child: TabBar(
                     controller: _tabController,
-                    unselectedLabelColor: Colors.grey.withOpacity(0.7),
-                    overlayColor: MaterialStateProperty.all(
-                        innerBoxIsScrolled == false
-                            ? AppColor.black.withOpacity(0.1)
-                            : AppColor.white.withOpacity(0.1)),
+                    unselectedLabelColor: innerBoxIsScrolled
+                        ? AppColor.white.withOpacity(0.7)
+                        : Colors.grey.withOpacity(0.7),
+                    overlayColor: MaterialStateProperty.all(!innerBoxIsScrolled
+                        ? AppColor.black.withOpacity(0.1)
+                        : AppColor.white.withOpacity(0.1)),
                     labelPadding: EdgeInsets.symmetric(
                         horizontal: 10.w,
                         vertical: isMobile == true ? 0 : 10.h),
                     labelStyle: TextStyle(fontSize: 20.sp),
-                    labelColor: innerBoxIsScrolled == false
-                        ? AppColor.black
-                        : AppColor.white,
-                    indicatorColor: innerBoxIsScrolled == false
-                        ? AppColor.black
+                    labelColor:
+                        !innerBoxIsScrolled ? AppColor.black : AppColor.white,
+                    indicatorColor: !innerBoxIsScrolled
+                        ? AppColor.primary1
                         : AppColor.white,
                     tabs: [
                       Tab(
@@ -120,7 +111,14 @@ class _QuranSuraPageState extends State<QuranSuraPage>
           return Card(
             color: AppColor.white,
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => QuranAyaPage(
+                      surahId: AppData.getNumberSurahByJuz(index),
+                      initialPage:
+                      AppData.getNumberPageByJuz(index) -1,
+                    )));
+              },
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: height / 20),
                 padding: EdgeInsets.symmetric(horizontal: width / 20),
@@ -283,96 +281,129 @@ class _QuranSuraPageState extends State<QuranSuraPage>
 
   Widget _header(double width, double height, BuildContext context,
       bool isMobile, String currentLanguage) {
-    return Container(
-      width: width,
-      height: isMobile == true ? height / 3 : height / 2 - 100,
-      alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding:
-            EdgeInsets.only(top: 50.h, bottom: 10.h, right: 20.w, left: 20.w),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(isMobile == true ? 15.w : 10.w),
-                  child: Container(
-                    color: AppColor.primary1,
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(
-                        currentLanguage == Languages.EN.languageCode
-                            ? Icons.keyboard_arrow_left_rounded
-                            : Icons.keyboard_arrow_right_rounded,
-                        size: 35.w,
-                        color: AppColor.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.quran,
-                      style: TextStyle(
-                          fontSize: 40.sp,
-                          color: AppColor.primary1,
-                          fontFamily: Constants.getTextFamily(currentLanguage),
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      width: width / 2,
-                      child: Text(
-                        "This is test for design",
-                        style: TextStyle(
-                            fontSize: 15.sp, color: AppColor.primary6),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+    return Stack(children: [
+      ShaderMask(
+        shaderCallback: (bounds) {
+          return LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.grey.withOpacity(0.1) , Colors.grey.withOpacity(0)],
+          ).createShader(bounds);
+        },
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/images/islamic_pattern_2.png"),
+                fit: BoxFit.cover
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(isMobile == true ? 15.w : 10.w),
-                  child: Container(
-                    color: AppColor.primary1,
-                    child: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          color: AppColor.white,
-                          Icons.bookmark_outline_rounded,
-                          size: 35.w,
-                        )),
-                  ),
-                ),
-                SizedBox(
-                  height: 5.h,
-                ),
-                Text(
-                  AppLocalizations.of(context)!.lastRead,
-                  style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.grey,
-                      fontFamily: Constants.getTextFamily(currentLanguage)),
-                )
-              ],
-            )
-          ],
+          ),
+          width: width,
+          height: height / 3 - 40.h,
+          alignment: Alignment.bottomCenter,
         ),
       ),
-    );
+      Container(
+        width: width,
+        height: isMobile == true ? height / 3 : height / 2 - 100,
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding:
+              EdgeInsets.only(top: 50.h, bottom: 10.h, right: 20.w, left: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius:
+                        BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                    child: Container(
+                      color: AppColor.primary1,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          currentLanguage == Languages.EN.languageCode
+                              ? Icons.keyboard_arrow_left_rounded
+                              : Icons.keyboard_arrow_right_rounded,
+                          size: 35.w,
+                          color: AppColor.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.quran,
+                        style: TextStyle(
+                            fontSize: 40.sp,
+                            color: AppColor.black,
+                            fontFamily:
+                                Constants.getTextFamily(currentLanguage),
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        width: width / 2,
+                        child: Text(
+                          "This is test for design",
+                          style: TextStyle(fontSize: 15.sp, color: Colors.grey),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ClipRRect(
+                    borderRadius:
+                        BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppColor.white,
+                        border: Border.all(
+                          color: AppColor.black,
+                          width: 1.w,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                            isMobile == true ? 15.w : 10.w),
+                      ),
+                      child: Container(
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.bookmark_outline_rounded,
+                            color: AppColor.black,
+                            size: 35.w,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5.h,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.lastRead,
+                    style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Colors.grey,
+                        fontFamily: Constants.getTextFamily(currentLanguage)),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    ]);
   }
 
   String convertToString(int number) {

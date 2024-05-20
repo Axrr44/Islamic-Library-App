@@ -193,6 +193,139 @@ class AppData{
         return 'غير معروف';
     }
   }
+  static int getNumberPageByJuz(int numberJuz) {
+    switch (numberJuz) {
+      case 0:
+        return 1;
+      case 1:
+        return 22;
+      case 2:
+        return 42;
+      case 3:
+        return 62;
+      case 4:
+        return 82;
+      case 5:
+        return 102;
+      case 6:
+        return 121;
+      case 7:
+        return 142;
+      case 8:
+        return 162;
+      case 9:
+        return 182;
+      case 10:
+        return 201;
+      case 11:
+        return 222;
+      case 12:
+        return 242;
+      case 13:
+        return 262;
+      case 14:
+        return 282;
+      case 15:
+        return 302;
+      case 16:
+        return 322;
+      case 17:
+        return 342;
+      case 18:
+        return 362;
+      case 19:
+        return 382;
+      case 20:
+        return 402;
+      case 21:
+        return 422;
+      case 22:
+        return 442;
+      case 23:
+        return 462;
+      case 24:
+        return 482;
+      case 25:
+        return 502;
+      case 26:
+        return 522;
+      case 27:
+        return 542;
+      case 28:
+        return 562;
+      case 29:
+        return 582;
+      default:
+        throw ArgumentError("Number out of range. Please enter a number between 0 and 29.");
+    }
+  }
+  static int getNumberSurahByJuz(int numberJuz) {
+    switch (numberJuz) {
+      case 0:
+        return 1;
+      case 1:
+        return 2;
+      case 2:
+        return 2;
+      case 3:
+        return 3;
+      case 4:
+        return 4;
+      case 5:
+        return 4;
+      case 6:
+        return 5;
+      case 7:
+        return 6;
+      case 8:
+        return 7;
+      case 9:
+        return 8;
+      case 10:
+        return 9;
+      case 11:
+        return 11;
+      case 12:
+        return 12;
+      case 13:
+        return 15;
+      case 14:
+        return 17;
+      case 15:
+        return 18;
+      case 16:
+        return 21;
+      case 17:
+        return 23;
+      case 18:
+        return 25;
+      case 19:
+        return 27;
+      case 20:
+        return 29;
+      case 21:
+        return 33;
+      case 22:
+        return 36;
+      case 23:
+        return 39;
+      case 24:
+        return 41;
+      case 25:
+        return 46;
+      case 26:
+        return 51;
+      case 27:
+        return 58;
+      case 28:
+        return 67;
+      case 29:
+        return 78;
+      default:
+        throw ArgumentError("Number out of range. Please enter a number between 0 and 29.");
+    }
+  }
+
 
 
 

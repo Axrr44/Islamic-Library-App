@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -57,15 +58,6 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
 
     return Scaffold(
         body: Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [
-                AppColor.primary1.withOpacity(0.1),
-                AppColor.white.withOpacity(0.2)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              stops: const [0.2, 0.6])),
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverToBoxAdapter(
@@ -139,7 +131,8 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                 Row(
                   children: [
                     Text(
-                      (index + 1).toString(),
+                      currentLanguage == Languages.EN.languageCode ? (index + 1).toString() : 
+                      ArabicNumbers.convert((index + 1).toString()),
                       style: TextStyle(
                           fontSize: 15.sp,
                           color: AppColor.white,
@@ -217,7 +210,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                 )),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: const Text("Tafseer"),
+                  child: Text(AppLocalizations.of(context)!.fseer),
                 ),
                 Expanded(
                     child: Divider(

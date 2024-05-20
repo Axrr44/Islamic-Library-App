@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:freelancer/pages/profile_page.dart';
 import 'package:freelancer/pages/search_page.dart';
 import 'package:freelancer/utilities/constants.dart';
@@ -69,15 +68,6 @@ class _MainPageState extends State<MainPage> {
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  AppColor.primary1.withOpacity(0.1),
-                  AppColor.white.withOpacity(0.2)
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: const [0.2, 0.6])),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -352,7 +342,10 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       Text(
                         AppLocalizations.of(context)!.quran,
-                        style: TextStyle(fontSize: 20.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
+                        style: TextStyle(
+                            fontSize: 20.sp,
+                            fontFamily:
+                                Constants.getTextFamily(currentLanguage)),
                       ),
                       Transform.scale(
                         scale: 1.w,
@@ -370,7 +363,10 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       Text(
                         AppLocalizations.of(context)!.hadiths,
-                        style: TextStyle(fontSize: 20.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
+                        style: TextStyle(
+                            fontSize: 20.sp,
+                            fontFamily:
+                                Constants.getTextFamily(currentLanguage)),
                       ),
                       Transform.scale(
                         scale: 1.w,
@@ -388,7 +384,10 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       Text(
                         AppLocalizations.of(context)!.tafseer,
-                        style: TextStyle(fontSize: 20.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
+                        style: TextStyle(
+                            fontSize: 20.sp,
+                            fontFamily:
+                                Constants.getTextFamily(currentLanguage)),
                       ),
                       Transform.scale(
                         scale: 1.w,
@@ -514,88 +513,126 @@ class _MainPageState extends State<MainPage> {
       double width, double height, int notificationCount, bool isMobile) {
     String currentLanguage = Localizations.localeOf(context).languageCode;
 
-    return Container(
-      width: width,
-      height: height / 3 - 40.h,
-      alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding: EdgeInsets.all(20.w),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _nameOfPage,
-                  style: TextStyle(
-                      fontFamily: Constants.getTextFamily(currentLanguage),
-                      fontSize: _nameOfPage.length > 10 ? 30.sp : 40.sp,
-                      color: AppColor.primary1,
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  width: width / 2,
-                  child: Text(
-                    "This is test for design",
-                    style: TextStyle(fontSize: 15.sp, color: AppColor.primary6),
-                  ),
-                ),
-              ],
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        ShaderMask(
+        shaderCallback: (bounds) {
+          return LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.grey.withOpacity(0.1) , Colors.grey.withOpacity(0)],
+          ).createShader(bounds);
+        },
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/islamic_pattern_2.png"),
+              fit: BoxFit.cover,
             ),
-            _nameOfPage != AppLocalizations.of(context)!.home
-                ? Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            isMobile == true ? 15.w : 10.w),
+          ),
+          width: width,
+          height: height / 3 - 40.h,
+        ),
+      ),
+        Container(
+          width: width,
+          height: height / 3 - 40.h,
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: EdgeInsets.all(20.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _nameOfPage,
+                      style: TextStyle(
+                          fontFamily: Constants.getTextFamily(currentLanguage),
+                          fontSize: _nameOfPage.length > 10 ? 30.sp : 40.sp,
+                          color: AppColor.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      width: width / 2,
+                      child: Text(
+                        "This is test for design",
+                        style: TextStyle(fontSize: 15.sp, color: Colors.grey),
+                      ),
+                    ),
+                  ],
+                ),
+                _nameOfPage != AppLocalizations.of(context)!.home
+                    ? Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          isMobile == true ? 15.w : 10.w),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColor.white,
+                          border: Border.all(
+                            color: AppColor.black, // Set the border color
+                            width: 1.w, // Set the border width
+                          ),
+                          borderRadius: BorderRadius.circular(isMobile == true
+                              ? 15.w
+                              : 10.w), // Match the ClipRRect border radius
+                        ),
                         child: Container(
-                          color: AppColor.primary1,
                           child: IconButton(
-                              onPressed: () {
-                                _actionOfHeaderButton();
-                              },
-                              icon: Icon(
-                                _iconHeader(_nameOfPage),
-                                size: 35.w,
-                                color: AppColor.white,
-                              )),
+                            onPressed: () {
+                              _actionOfHeaderButton();
+                            },
+                            icon: Icon(
+                              _iconHeader(_nameOfPage),
+                              size: 35.w,
+                              color: AppColor.black,
+                            ),
+                          ),
                         ),
                       ),
-                      if (notificationCount > 0 &&
-                          _nameOfPage == AppLocalizations.of(context)!.home)
-                        Positioned(
-                          right: 8.w,
-                          top: 8.w,
-                          child: Container(
-                            padding: EdgeInsets.all(4.w),
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            constraints: BoxConstraints(
-                              minWidth: 16.w,
-                              minHeight: 16.w,
-                            ),
-                            child: Center(
-                              child: Text(
-                                notificationCount.toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10.sp,
-                                ),
+                    ),
+                    if (notificationCount > 0 &&
+                        _nameOfPage == AppLocalizations.of(context)!.home)
+                      Positioned(
+                        right: 8.w,
+                        top: 8.w,
+                        child: Container(
+                          padding: EdgeInsets.all(4.w),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 16.w,
+                            minHeight: 16.w,
+                          ),
+                          child: Center(
+                            child: Text(
+                              notificationCount.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10.sp,
                               ),
                             ),
                           ),
                         ),
-                    ],
-                  )
-                : Container()
-          ],
-        ),
-      ),
+                      ),
+                  ],
+                )
+                    : Container()
+              ],
+            ),
+          ),
+        )
+      ]
     );
+
   }
 
   void _actionOfHeaderButton() {

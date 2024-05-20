@@ -75,15 +75,6 @@ class ContentBooksPage extends StatelessWidget {
               List<Chapter> chapters = parseChapters(snapshot.data);
 
               return Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [
-                          AppColor.primary1.withOpacity(0.1),
-                          AppColor.white.withOpacity(0.2)
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        stops: const [0.2, 0.6])),
                 child: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) => [
                     SliverToBoxAdapter(
