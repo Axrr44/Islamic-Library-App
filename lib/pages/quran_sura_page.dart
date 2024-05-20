@@ -35,6 +35,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     final bool isMobile = shortestSide < 600;
 
+
     return Scaffold(
       body: Container(
         child: NestedScrollView(
