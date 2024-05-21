@@ -9,11 +9,13 @@ import 'config/app_languages.dart';
 import 'config/app_routes.dart';
 
 Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  //WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(
   //   name: "NewApp2",
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
+
+
   runApp(DevicePreview(
     builder: (context) => const MyApp(),
   ));
@@ -36,15 +38,14 @@ class MyApp extends StatelessWidget {
           return customProgress();
         },
         child: MaterialApp(
-          theme: ThemeData(fontFamily: 'Custom'),
-          home: const Material(
-            child: ViewPager(),
-          ),
-          routes: AppRoutes.ROUTES,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          locale: Languages.AR
-        ),
+            theme: ThemeData(fontFamily: 'Custom'),
+            home: const Material(
+              child: ViewPager(),
+            ),
+            routes: AppRoutes.ROUTES,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Languages.AR),
       ),
     );
   }

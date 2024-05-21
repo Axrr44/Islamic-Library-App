@@ -51,76 +51,9 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  void _search(String query) async {
-    if (_searchController.text.trim().isEmpty) return;
-
-    setState(() {
-      print("loading.....");
-      _isLoading = true;
-      _searchResults.clear();
-    });
-
-    List<String> searchTerms = query.split(' ');
-
-    late Map arabicSearchResults;
-    late Map translationSearchResults ;
-
-    List<Map<String, String>> quranResults = [];
-    List<Map<String, String>> hadithResults = [];
-    List<Map<String, String>> tafseerResults = [];
-
-    if(_searchIsQuranChecked || _searchIsTafseerChecked)
-      {
-       arabicSearchResults = quran.searchWords(searchTerms);
-       translationSearchResults = quran.searchWordsInTranslation(searchTerms);
-      }
-
-    if (_searchIsQuranChecked) {
-      quranResults = await _getQuranSearchResult(
-          arabicSearchResults, translationSearchResults);
-    }
-    if (_searchIsHadithChecked) {
-      hadithResults = await _getHadithSearchResult(query);
-    }
-    if (_searchIsTafseerChecked) {
-      tafseerResults = await _getTafseerResult(
-          arabicSearchResults, translationSearchResults);
-    }
-
-    setState(() {
-      // Combine all results
-      _searchResults = quranResults + hadithResults + tafseerResults;
-      _isLoading = false;
-      print("end loading.....");
-    });
-  }
-
   List<Hadith> parseHadiths(String? jsonString) {
     final parsed = jsonDecode(jsonString!);
     return List<Hadith>.from(parsed['hadiths'].map((x) => Hadith.fromJson(x)));
-  }
-
-  String _cleanArabic(String text) {
-    const charactersToRemove = [
-      '\u064B', // Tanween Fathah
-      '\u064C', // Tanween Dammah
-      '\u064D', // Tanween Kasrah
-      '\u064E', // Fathah
-      '\u064F', // Dammah
-      '\u0650', // Kasrah
-      '\u0651', // Shaddah
-      '\u0652', // Sukun
-      '\u0653', // Maddah Above
-      '\u0654', // Hamza Above
-      '\u0655', // Hamza Below
-    ];
-
-    // Create a regular expression pattern from the list of characters
-    final pattern = charactersToRemove.join('|');
-    final regExp = RegExp(pattern);
-
-    // Replace the specified characters with an empty string
-    return text.replaceAll(regExp, '');
   }
 
   Future<void> _loadSearchDialogData() async {
@@ -218,6 +151,50 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  void _search(String query) async {
+    if (_searchController.text.trim().isEmpty) return;
+
+    setState(() {
+      print("loading.....");
+      _isLoading = true;
+      _searchResults.clear();
+    });
+
+
+    late Map arabicSearchResults;
+    late Map translationSearchResults ;
+
+    List<Map<String, String>> quranResults = [];
+    List<Map<String, String>> hadithResults = [];
+    List<Map<String, String>> tafseerResults = [];
+
+    if(_searchIsQuranChecked || _searchIsTafseerChecked)
+    {
+      arabicSearchResults = quran.searchWord(query) ;
+      translationSearchResults = quran.searchWordInTranslation(query);
+    }
+
+
+    if (_searchIsQuranChecked) {
+      quranResults = await _getQuranSearchResult(
+          arabicSearchResults, translationSearchResults);
+    }
+    if (_searchIsHadithChecked) {
+      hadithResults = await _getHadithSearchResult(query);
+    }
+    if (_searchIsTafseerChecked) {
+      tafseerResults = await _getTafseerResult(
+          arabicSearchResults, translationSearchResults);
+    }
+
+    setState(() {
+      // Combine all results
+      _searchResults = quranResults + hadithResults + tafseerResults;
+      _isLoading = false;
+      print("end loading.....");
+    });
+  }
+
   Future<List<Map<String, String>>> _getQuranSearchResult(
       Map arabicSearchResults, Map translationSearchResults) async {
     List<Map<String, String>> quranResults = [];
@@ -249,7 +226,7 @@ class _SearchPageState extends State<SearchPage> {
     List<Map<String, String>> hadithResults = [];
 
     for (var hadith in _hadiths) {
-      final cleanArabic = _cleanArabic(hadith.arabic!);
+      final cleanArabic = Constants.removeDiacritics(hadith.arabic!);
       final cleanEnglish = hadith.english!.toLowerCase();
       final cleanQuery = query.toLowerCase();
 
@@ -314,4 +291,5 @@ class _SearchPageState extends State<SearchPage> {
     print(_searchResults);
     return Container();
   }
+
 }
