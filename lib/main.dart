@@ -42,10 +42,11 @@ class MyApp extends StatelessWidget {
             home: const Material(
               child: ViewPager(),
             ),
+
             routes: AppRoutes.ROUTES,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            locale: Languages.AR),
+            locale: Languages.EN),
       ),
     );
   }

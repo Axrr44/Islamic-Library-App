@@ -231,28 +231,16 @@ class _BooksPageState extends State<BooksPage> {
                           )));
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                  padding: EdgeInsets.symmetric(vertical: 10.h,horizontal: 10.w),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.menu_book_outlined,
-                            color: AppColor.black,
-                            size: 20.w,
-                          ),
-                        ],
-                      ),
-                      ListTile(
-                        trailing: Icon(Icons.arrow_forward_ios_rounded,
-                        size: 15.w,),
-                        title: Text(
+                        Text(
                           AppData.getBookName(context, index),
                           style: TextStyle(fontSize: 14.sp),
                         ),
-                      ),
+                      Icon(Icons.arrow_forward_ios_rounded,
+                        size: 15.w,)
                     ],
                   ),
                 ),
@@ -373,11 +361,14 @@ class _BooksPageState extends State<BooksPage> {
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
-                        width: width / 2,
+                        width: width / 2 + 50.w,
                         child: Text(
-                          "This is test for design",
+                          AppLocalizations.of(context)!.hadithsSubTitle,
                           style: TextStyle(
-                              fontSize: 15.sp, color: Colors.grey),
+                              fontSize: currentLanguage == Languages.EN.languageCode ?
+                              10.sp : 15.sp, color: Colors.grey,fontFamily:
+                          currentLanguage == Languages.EN.languageCode ? 'EnglishQuran'
+                              : 'Hafs'),
                         ),
                       ),
                     ],

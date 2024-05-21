@@ -193,6 +193,7 @@ class _SearchPageState extends State<SearchPage> {
       _isLoading = false;
       print("end loading.....");
     });
+
   }
 
   Future<List<Map<String, String>>> _getQuranSearchResult(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:freelancer/utilities/constants.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class ViewPager extends StatefulWidget {
   const ViewPager({super.key});
@@ -14,7 +16,14 @@ class ViewPager extends StatefulWidget {
 class _ViewPagerState extends State<ViewPager> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
-  String _buttonName = "Next";
+  late String _buttonName;
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _buttonName = AppLocalizations.of(context)!.next;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,34 +38,49 @@ class _ViewPagerState extends State<ViewPager> {
   }
 
   Container _contentOfPageView(double width, double height) {
+    String currentLanguage = Localizations.localeOf(context).languageCode;
+
     return Container(
-        child: PageView(
-          onPageChanged: (int page) {
-            setState(() {
-              // Update button name based on current page
-              _currentPage = page;
-              _buttonName = _currentPage != 2 ? "Next" : "Let's go";
-            });
-          },
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            Center(
-              child: _buildPages("assets/images/destination.png", "Page 1",
-                  "this is test for description in page 1", width, height),
-            ),
-            Center(
-              child: _buildPages("assets/images/photography.png", "Page 2",
-                  "this is test for description in page 2", width, height),
-            ),
-            Center(
-              child: _buildPages("assets/images/travel.png", "Page 3",
-                  "this is test for description in page 3", width, height),
-            ),
-          ],
-        ),
-      );
+      child: PageView(
+        onPageChanged: (int page) {
+          setState(() {
+            // Update button name based on current page
+            _currentPage = page;
+            if (_currentPage == 4) {
+              _buttonName = AppLocalizations.of(context)!.letsGo;
+            } else {
+              _buttonName = AppLocalizations.of(context)!.next;
+            }
+          });
+        },
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          Center(
+            child: _buildPages("assets/images/book.png", AppLocalizations.of(context)!.quran,
+                AppLocalizations.of(context)!.contentPage1, width, height,currentLanguage),
+          ),
+          Center(
+            child: _buildPages("assets/images/hand_book.png", AppLocalizations.of(context)!.hadiths,
+                AppLocalizations.of(context)!.contentPage2, width, height,currentLanguage),
+          ),
+          Center(
+            child: _buildPages("assets/images/quran1.png", AppLocalizations.of(context)!.tafseer,
+                AppLocalizations.of(context)!.contentPage3, width, height,currentLanguage),
+          ),
+          Center(
+            child: _buildPages("assets/images/audiobook.png", AppLocalizations.of(context)!.audio,
+                AppLocalizations.of(context)!.contentPage4, width, height,currentLanguage),
+          ),
+          Center(
+            child: _buildPages("assets/images/arabic.png", AppLocalizations.of(context)!.languages,
+                AppLocalizations.of(context)!.contentPage5, width, height,currentLanguage),
+          ),
+        ],
+      ),
+    );
   }
+
 
   Container _nextButton(TextDirection textDirection, double height, double width, BuildContext context) {
     return Container(
@@ -72,7 +96,7 @@ class _ViewPagerState extends State<ViewPager> {
           height: 50.h,
           child: ElevatedButton(
               onPressed: () {
-                if (_currentPage != 2) {
+                if (_currentPage != 4) {
                   _pageController.animateToPage(++_currentPage,
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut);
@@ -98,28 +122,36 @@ class _ViewPagerState extends State<ViewPager> {
   }
 
   Widget _buildPages(String image, String title, String description, double width,
-      double height) {
+      double height,String currentLanguage) {
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+    final bool isMobile = shortestSide < 600;
     return Column(
       // Aligns children horizontally at the center
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
-          height: height / 8,
+          height: isMobile ? height / 8 : height / 12,
         ),
         Text(
           title,
           style: TextStyle(fontSize: 50.sp, fontWeight: FontWeight.bold),
         ),
         SizedBox(
-          height: height / 1000,
+          height: height / 12,
         ),
-        SizedBox(width: width, height: height / 2, child: Image.asset(image)),
+        SizedBox(width: 250.h, height: 250.h, child: Image.asset(image,fit: BoxFit.cover,)),
         SizedBox(
-          height: height / 1000,
+          height: height / 12,
         ),
-        Text(
-          description,
-          style: TextStyle(fontSize: 15.sp),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Text(
+            description,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 15.sp,
+                fontFamily: Constants.getTextFamily(currentLanguage)),
+          ),
         )
       ],
     );

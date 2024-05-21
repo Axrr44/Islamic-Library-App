@@ -42,5 +42,25 @@
   "favorite" : "Favorite",
   "mark" : "Mark",
   "resetPassword" : "Reset Password",
-  "textOfResetPassword" : "Enter Your Email and we will send you a password rest link"
+  "textOfResetPassword" : "Enter Your Email and we will send you a password rest link",
+  "next" : "Next",
+  "letsGo" : "Let`s go",
+  "audio" : "Audios",
+  "contentPage1" : "The application contains the entire Holy Quran",
+  "contentPage2" : "The application contains more than 10 Islamic books",
+  "contentPage3" : "The application contains several tafseer of the Holy Quran",
+  "contentPage4" : "The application contains several reciters to listen to verses of the Holy Quran",
+  "contentPage5" : "The application supports both Arabic and English languages",
+
+  "tafseerDescription" : "Many mufseer from Grand Ulema",
+  "homeSubTitle" : "My Lord, increase me in knowledge",
+  "searchSubTitle" : "Search to get results faster",
+  "favoriteSubTitle" : "Favorite it and come back later",
+  "quranSubTitle" : "Read, rise and recite",
+  "hadithsSubTitle" : "whatever the Messenger commands you, then do it and whatever he forbids you, then avoid it",
+  "tafseerSubTitle" : "Then do they not reflect upon the Qur'an?"
+
+
+
+
 }

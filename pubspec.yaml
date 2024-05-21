@@ -125,6 +125,12 @@ flutter:
     - assets/images/wave_lines_6.png
     - assets/images/text_pattern.png
     - assets/images/text_patter_2.png
+    - assets/images/arabic.png
+    - assets/images/audiobook.png
+    - assets/images/book.png
+    - assets/images/hand_book.png
+    - assets/images/quran.png
+    - assets/images/quran1.png
     - assets/images/islamic_book.jpg
     - assets/images/login_image2.svg
     - assets/images/facebook-official.svg

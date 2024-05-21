@@ -191,7 +191,7 @@ class HomePage extends StatelessWidget {
                             SizedBox(
                               width: 200.w,
                               child: Text(
-                                "This is test for this button in this app",
+                                AppLocalizations.of(context)!.tafseerDescription,
                                 style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 15.sp,

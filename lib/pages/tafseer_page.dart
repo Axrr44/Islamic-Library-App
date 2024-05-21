@@ -52,50 +52,55 @@ class _TafseerPageState extends State<TafseerPage> {
 
     return Scaffold(
       body: Container(
-        child: Column(
-          children: [
-            _header(width, height, context, isMobile, currentLanguage),
-            Container(
-              height: 400.h,
-              padding: EdgeInsets.symmetric(horizontal: 40.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _listOfTafseer(),
-                  _listOfSurah(),
-                  SizedBox(
-                    width: width / 2,
-                    height: isMobile ? 50.h : 60.h,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(AppColor.black),
-                        foregroundColor:
-                            MaterialStateProperty.all(AppColor.white),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.w),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _header(width, height, context, isMobile, currentLanguage),
+              Container(
+                height: 400.h,
+                padding: EdgeInsets.symmetric(horizontal: 40.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 50.h),
+                    _listOfTafseer(),
+                    SizedBox(height: 20.h),
+                    _listOfSurah(),
+                    SizedBox(height: 20.h),
+                    SizedBox(
+                      width: width / 2,
+                      height: isMobile ? 50.h : 60.h,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(AppColor.black),
+                          foregroundColor:
+                              MaterialStateProperty.all(AppColor.white),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.w),
+                            ),
                           ),
                         ),
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => TafseerContentPage(
+                                    surahId: _indexOfSurah + 1,
+                                    mufseer: _mufseer,
+                                  )));
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)!.fseer,
+                          style: TextStyle(fontSize: 20.sp),
+                        ),
                       ),
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => TafseerContentPage(
-                                  surahId: _indexOfSurah + 1,
-                                  mufseer: _mufseer,
-                                )));
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.fseer,
-                        style: TextStyle(fontSize: 20.sp),
-                      ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -324,9 +329,11 @@ class _TafseerPageState extends State<TafseerPage> {
                       SizedBox(
                         width: width / 2,
                         child: Text(
-                          "This is test for design",
+                          AppLocalizations.of(context)!.tafseerSubTitle,
                           style: TextStyle(
-                              fontSize: 15.sp, color: AppColor.primary6),
+                              fontSize: 15.sp, color: Colors.grey,fontFamily:
+                          currentLanguage == Languages.EN.languageCode ? 'EnglishQuran'
+                          : 'Hafs'),
                         ),
                       ),
                     ],

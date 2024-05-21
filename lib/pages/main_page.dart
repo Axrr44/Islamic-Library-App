@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/pages/profile_page.dart';
 import 'package:freelancer/pages/search_page.dart';
 import 'package:freelancer/utilities/constants.dart';
@@ -560,8 +561,10 @@ class _MainPageState extends State<MainPage> {
                     SizedBox(
                       width: width / 2,
                       child: Text(
-                        "This is test for design",
-                        style: TextStyle(fontSize: 15.sp, color: Colors.grey),
+                        _subTitleHeader(_nameOfPage),
+                        style: TextStyle(fontSize: 15.sp, color: Colors.grey,fontFamily:
+                        currentLanguage == Languages.EN.languageCode ? 'EnglishQuran'
+                        : 'Hafs'),
                       ),
                     ),
                   ],
@@ -632,14 +635,11 @@ class _MainPageState extends State<MainPage> {
         )
       ]
     );
-
   }
 
   void _actionOfHeaderButton() {
     String currentLanguage = Localizations.localeOf(context).languageCode;
-    if (_nameOfPage == AppLocalizations.of(context)!.home) {
-      Navigator.of(context).pushNamed(AppRoutes.NOTIFICATION_ROUTES);
-    } else if (_nameOfPage == AppLocalizations.of(context)!.search) {
+   if (_nameOfPage == AppLocalizations.of(context)!.search) {
       _showFilterSearchDialog(currentLanguage);
     } else if (_nameOfPage == AppLocalizations.of(context)!.favorites) {
       _showFilterFavoriteDialog(currentLanguage);
@@ -648,6 +648,42 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  String _subTitleHeader(String currentPage) {
+    switch (currentPage) {
+      case "Home":
+        {
+          return AppLocalizations.of(context)!.homeSubTitle;
+          break;
+        }
+      case "Search":
+        {
+          return AppLocalizations.of(context)!.searchSubTitle;
+          break;
+        }
+      case "Favorites":
+        {
+          return AppLocalizations.of(context)!.favoriteSubTitle;
+          break;
+        }
+      case "الرئيسية":
+        {
+          return AppLocalizations.of(context)!.homeSubTitle;
+          break;
+        }
+      case "البحث":
+        {
+          return AppLocalizations.of(context)!.searchSubTitle;
+          break;
+        }
+      case "المفضلة":
+        {
+          return AppLocalizations.of(context)!.favoriteSubTitle;
+          break;
+        }
+    }
+    return "";
+  }
+  
   IconData _iconHeader(String currentPage) {
     switch (currentPage) {
       case "Home":

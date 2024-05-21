@@ -352,7 +352,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                       SizedBox(
                         width: width / 2,
                         child: Text(
-                          "This is test for design",
+                          AppLocalizations.of(context)!.quranSubTitle,
                           style: TextStyle(fontSize: 15.sp, color: Colors.grey),
                         ),
                       ),

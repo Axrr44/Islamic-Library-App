@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -219,7 +218,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
 
       spans.add(
         TextSpan(
-          text: "$ayahText ",
+          text: " $ayahText ",
           style: TextStyle(
             fontFamily: currentLanguage == Languages.EN.languageCode ? 'EnglishQuran' : 'Hafs',
             fontSize: currentLanguage == Languages.EN.languageCode ? 17.sp : 20.sp,
@@ -229,36 +228,15 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
         ),
       );
 
-      // Add the end of ayah SVG
+      // Add the end of ayah
       spans.add(
-        WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: isPortrait ? 5.w : 5.h),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SvgPicture.asset(
-                  "assets/images/end_of_ayah.svg",
-                  height: isPortrait ? 30.h : 30.w,
-                ),
-                Text(
-                  currentLanguage == Languages.EN.languageCode
-                      ? ayah.numberInSurah.toString()
-                      : ArabicNumbers.convert(ayah.numberInSurah),
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
-              ],
-            ),
-          ),
-        ),
+        TextSpan(text: currentLanguage == Languages.EN.languageCode ?
+        "\uFD3E${ayah.numberInSurah}\uFD3F" : "${ArabicNumbers.convert(ayah.numberInSurah)}",
+        style: TextStyle(fontSize: currentLanguage == Languages.EN.languageCode
+            ? 20.sp : 30.sp,fontFamily: "Hafs",fontWeight: currentLanguage == Languages.EN.languageCode
+        ? FontWeight.normal : FontWeight.bold))
       );
     }
-
     return spans;
   }
 
