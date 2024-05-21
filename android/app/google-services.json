@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "99752408527",
+    "project_id": "the-islamic-library-30896",
+    "storage_bucket": "the-islamic-library-30896.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:99752408527:android:f4662503adc49a1ff74eba",
+        "android_client_info": {
+          "package_name": "com.muehldorfsd.theislamiclibrary"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLsH-F47f6w1ksMohGCaMgvyt59QBSSO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
