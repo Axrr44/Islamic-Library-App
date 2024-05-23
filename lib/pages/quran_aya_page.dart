@@ -11,8 +11,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:freelancer/components/custom_appbar.dart';
 import 'package:freelancer/config/app_colors.dart';
+import 'package:freelancer/config/toast_message.dart';
+import 'package:freelancer/models/favorite_model.dart';
 import 'package:freelancer/providers/tafseer_dialog_provider.dart';
 import 'package:freelancer/services/app_data_pref.dart';
+import 'package:freelancer/services/firestore_service.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:provider/provider.dart';
 import 'package:quran/quran.dart' as quran;
@@ -24,6 +27,7 @@ import '../config/app_languages.dart';
 import '../models/quran_model.dart';
 import '../models/reciter_model.dart';
 import '../models/tafseer_books.dart';
+import '../models/tafseer_content.dart';
 import '../providers/quran_aya_page_provider.dart';
 import '../services/app_data.dart';
 
@@ -319,8 +323,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                         size: 20.w,
                       )),
                   IconButton(
-                      onPressed: () {
-                        Share.share(getDataByPage());
+                      onPressed: () async{
+                        await Share.share(getDataByPage());
                       },
                       icon: Icon(
                         Icons.share,
@@ -330,6 +334,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                       onPressed: () {
                         AppDataPreferences.setQuranLastRead(
                             surahIdLastRead, verseIdLastRead);
+                        ToastMessage.showMessage(AppLocalizations.of(context)!.save);
                       },
                       icon: Icon(
                         Icons.bookmark_outline_rounded,
@@ -589,7 +594,15 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
   }
 
   void _onLongPressDialog(Ayah ayah) {
-    final ayahText = quran.getVerse(ayah.surah.number, ayah.numberInSurah);
+    String currentLanguage = Localizations.localeOf(context).languageCode;
+    bool isEnglish = currentLanguage == Languages.EN.languageCode;
+    String ayahText = "";
+    if (isEnglish) {
+      ayahText = quran.getVerseTranslation(ayah.surah.number, ayah.numberInSurah);
+    } else {
+      ayahText = quran.getVerse(ayah.surah.number, ayah.numberInSurah);
+    }
+
     copy() {
       final value = ClipboardData(
         text: ayahText,
@@ -665,8 +678,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                       color: Colors.grey,
                     ),
                     InkWell(
-                      onTap: () {
-                        Share.share(ayahText);
+                      onTap: () async {
+                        await Share.share(ayahText);
                         Navigator.of(context).pop();
                       },
                       child: ListTile(
@@ -688,7 +701,15 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                       color: Colors.grey,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        FireStoreService.addFavorite(
+                          Favorite(type: "Quran",
+                              title: isEnglish ? quran.getSurahNameEnglish(ayah.surah.number) :
+                              quran.getSurahNameArabic(ayah.surah.number),
+                              content: ayahText)
+                        );
+                        ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteIt);
+                      },
                       child: ListTile(
                         leading: Text(
                           AppLocalizations.of(context)!.favorite,
@@ -733,6 +754,10 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     }
   }
 
+  void _pause() {
+    audioPlayer.pause();
+  }
+
   void playAllSurahsInOrder() async {
     for (int surahId in listOfSurah) {
       await _playSurahAndWait(surahId);
@@ -756,114 +781,75 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     String currentLanguage = Localizations.localeOf(context).languageCode;
-    final tafseerProvider =
-        Provider.of<TafseerDialogProvider>(context, listen: false);
+    final tafseerProvider = Provider.of<TafseerDialogProvider>(context, listen: false);
+
     showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return SizedBox(
-              height: height / 2 + 50.h,
-              width: width,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.fseer,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 25.sp),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      Text(
-                        ayahText,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 25.sp,
-                            fontFamily:
-                                currentLanguage == Languages.EN.languageCode
-                                    ? "EnglishQuran"
-                                    : "Hafs"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(20.w),
-                        child: const Divider(color: Colors.grey),
-                      ),
-                      _listOfTafseer(currentLanguage, tafseerProvider)
-                    ],
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: height / 2 + 50.h,
+          width: width,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.fseer,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 25.sp),
                   ),
-                ),
-              ));
-        });
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Text(
+                    ayahText,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 25.sp,
+                      fontFamily: currentLanguage == Languages.EN.languageCode
+                          ? "EnglishQuran"
+                          : "Hafs",
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20.w),
+                    child: const Divider(color: Colors.grey),
+                  ),
+                  _listOfTafseer(currentLanguage, tafseerProvider),
+                  SizedBox(height: 50.h,),
+                  Consumer<TafseerDialogProvider>(
+                    builder: (context, provider, _) {
+                      return _tafseerAyah(ayah, provider);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
-  FutureBuilder<List<Tafseer>> _listOfTafseer(
-      String currentLanguage, TafseerDialogProvider provider) {
-    return FutureBuilder<List<Tafseer>>(
-      future: AppData.fetchTafseerData(currentLanguage),
+  FutureBuilder<TafseerResponse?> _tafseerAyah(Ayah ayah, TafseerDialogProvider tafseerProvider) {
+    return FutureBuilder(
+      future: _fetchTafseerData(ayah.surah.number, ayah.numberInSurah, tafseerProvider),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          CircularProgressIndicator(
+          return const CircularProgressIndicator(
             color: AppColor.primary1,
           );
-          return Container();
-        }
-        else if (snapshot.hasError) {
+        } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
-        }
-        else {
-          List<Tafseer>? tafseerList = snapshot.data;
-          if (tafseerList != null && tafseerList.isNotEmpty) {
-            return Consumer<TafseerDialogProvider>(builder: (context,provider,_){
-              return Container(
-                height: 50.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    border: Border.all(color: AppColor.black, width: 1.w),
-                    borderRadius: BorderRadius.circular(5.w)),
-                child: SizedBox(
-                  height: double.infinity,
-                  child: DropdownButton<Tafseer>(
-                    hint: Text(
-                      "Select tafseer",
-                      style: TextStyle(fontSize: 15.sp),
-                    ),
-                    iconSize: 0,
-                    underline: Container(),
-                    isExpanded: true,
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    value: provider.mufseer =
-                    tafseerList[provider.indexOfTafseer],
-                    onChanged: (Tafseer? newValue) {
-                      for (var tafseer in tafseerList) {
-                        if (tafseer.name == newValue!.name) {
-                          provider
-                              .setIndexOfMufseer(tafseerList.indexOf(tafseer));
-                          provider.mufseer = tafseerList[provider.indexOfTafseer];
-                        }
-                      }
-                    },
-                    itemHeight: 50.h,
-                    items: tafseerList.map<DropdownMenuItem<Tafseer>>(
-                          (Tafseer value) {
-                        return DropdownMenuItem<Tafseer>(
-                          value: value,
-                          child: Center(
-                            child: Text(
-                              value.name.toString(),
-                              style: TextStyle(
-                                  fontSize: 15.sp, color: AppColor.black),
-                            ),
-                          ),
-                        );
-                      },
-                    ).toList(),
-                  ),
-                ),
-              );
-            });
+        } else {
+          TafseerResponse? tafseer = snapshot.data;
+          if (tafseer != null) {
+            return Text(
+              tafseer.text,
+              style: TextStyle(fontSize: 15.sp, height: 1.5.h),
+              textAlign: TextAlign.center,
+            );
           } else {
             return Center(
               child: Text(
@@ -877,7 +863,85 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     );
   }
 
-  void _pause() {
-    audioPlayer.pause();
+  FutureBuilder<List<Tafseer>> _listOfTafseer(String currentLanguage, TafseerDialogProvider provider) {
+    return FutureBuilder<List<Tafseer>>(
+      future: AppData.fetchTafseerData(currentLanguage),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(
+            color: AppColor.primary1,
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<Tafseer>? tafseerList = snapshot.data;
+          if (tafseerList != null && tafseerList.isNotEmpty) {
+            return Container(
+              height: 50.h,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColor.black, width: 1.w),
+                borderRadius: BorderRadius.circular(5.w),
+              ),
+              child: SizedBox(
+                height: double.infinity,
+                child: DropdownButton<Tafseer>(
+                  hint: Text(
+                    "Select tafseer",
+                    style: TextStyle(fontSize: 15.sp),
+                  ),
+                  iconSize: 0,
+                  underline: Container(),
+                  isExpanded: true,
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  value: provider.mufseer = tafseerList[provider.indexOfTafseer],
+                  onChanged: (Tafseer? newValue) {
+                    if (newValue != null) {
+                      provider.setIndexOfMufseer(tafseerList.indexOf(newValue));
+                      provider.mufseer = newValue;
+                      provider.notifyListeners(); // Notify listeners to rebuild with new tafseer
+                    }
+                  },
+                  itemHeight: 50.h,
+                  items: tafseerList.map<DropdownMenuItem<Tafseer>>((Tafseer value) {
+                    return DropdownMenuItem<Tafseer>(
+                      value: value,
+                      child: Center(
+                        child: Text(
+                          value.name,
+                          style: TextStyle(fontSize: 15.sp, color: AppColor.black),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            );
+          } else {
+            return Center(
+              child: Text(
+                'No Tafseer data available',
+                style: TextStyle(fontSize: 30.sp),
+              ),
+            );
+          }
+        }
+      },
+    );
   }
+
+  Future<TafseerResponse?> _fetchTafseerData(int surahId, int verseNumber, TafseerDialogProvider provider) async {
+    final response = await http.get(Uri.parse(
+      'http://api.quran-tafseer.com/tafseer/${provider.mufseer.id}/$surahId/$verseNumber',
+    ));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      return TafseerResponse.fromJson(data);
+    } else {
+      return null;
+    }
+  }
+
+
 }

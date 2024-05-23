@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:arabic_numbers/arabic_numbers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:freelancer/models/favorite_model.dart';
+import 'package:freelancer/services/firestore_service.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -78,7 +81,8 @@ class ContentBooksPage extends StatelessWidget {
                 child: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) => [
                     SliverToBoxAdapter(
-                      child: _header(currentLanguage, metadata, context, width,isMobile),
+                      child: _header(
+                          currentLanguage, metadata, context, width, isMobile),
                     ),
                   ],
                   body: _listOfHadiths(hadiths, chapters, currentLanguage),
@@ -178,7 +182,12 @@ class ContentBooksPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 if (index < hadiths.length) {
                   return _listViewBuilder(
-                      chapters, hadiths, index, currentLanguage, context,);
+                    chapters,
+                    hadiths,
+                    index,
+                    currentLanguage,
+                    context,
+                  );
                 } else {
                   return const SizedBox
                       .shrink(); // The last item is just for the separator
@@ -219,7 +228,8 @@ class ContentBooksPage extends StatelessWidget {
       int index, String currentLanguage, BuildContext context) {
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     final bool isMobile = shortestSide < 600;
-    final bool isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     Chapter chapter = chapters.firstWhere(
         (element) => element.id == hadiths[index].chapterId,
         orElse: () =>
@@ -227,23 +237,29 @@ class ContentBooksPage extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 15.h),
-      height: isPortrait == true ? isMobile == true ? 50.h : 60.h :
-      isMobile == true ? 50.w : 60.w,
+      height: isPortrait == true
+          ? isMobile == true
+              ? 50.h
+              : 60.h
+          : isMobile == true
+              ? 50.w
+              : 60.w,
       child: Card(
         color: AppColor.black,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: isPortrait == true
-          ? 10.h : 20.h),
+          padding: EdgeInsets.symmetric(
+              horizontal: 10.w, vertical: isPortrait == true ? 10.h : 20.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
                   Text(
-                    currentLanguage == Languages.EN.languageCode ? (index + 1).toString()
-                    : ArabicNumbers.convert(index + 1),
+                    currentLanguage == Languages.EN.languageCode
+                        ? (index + 1).toString()
+                        : ArabicNumbers.convert(index + 1),
                     style: TextStyle(
-                      fontFamily: Utility.getTextFamily(currentLanguage),
+                        fontFamily: Utility.getTextFamily(currentLanguage),
                         fontSize: 15.sp,
                         color: AppColor.white,
                         fontWeight: FontWeight.w600),
@@ -255,25 +271,19 @@ class ContentBooksPage extends StatelessWidget {
                       color: AppColor.white,
                     ),
                   ),
-                  Text(
-                    currentLanguage == Languages.EN.languageCode
-                        ? chapter.english!.length <= 40
-                            ? chapter.english!
-                            : "${chapter.english!.substring(0, 35)}..."
-                        : chapter.arabic!.length <= 40
-                            ? chapter.arabic!
-                            : "${chapter.arabic!.substring(0, 35)}...",
-                    style: TextStyle(
-                        fontFamily: Utility.getTextFamily(currentLanguage),
-                        fontSize: currentLanguage == Languages.EN.languageCode
-                            ? chapter.english!.length <= 25
-                                ? 15.sp
-                                : 10.sp
-                            : chapter.arabic!.length <= 25
-                                ? 15.sp
-                                : 10.sp,
-                        color: AppColor.white,
-                        fontWeight: FontWeight.w600),
+                  SingleChildScrollView(
+                    child: Row(
+                      children: [
+                        Text(currentLanguage == Languages.EN.languageCode ?
+                          chapter.english! : chapter.arabic!,
+                          style: TextStyle(
+                              fontFamily: Utility.getTextFamily(currentLanguage),
+                              fontSize: 15.sp,
+                              color: AppColor.white,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -360,7 +370,9 @@ class ContentBooksPage extends StatelessWidget {
                             Text(
                               AppLocalizations.of(context)!.share,
                               style: TextStyle(
-                                  fontSize: 15.sp, color: AppColor.black,),
+                                fontSize: 15.sp,
+                                color: AppColor.black,
+                              ),
                             )
                           ],
                         ),
@@ -371,7 +383,13 @@ class ContentBooksPage extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(3.w),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          FireStoreService.addFavorite(Favorite(
+                              type: "Hadith",
+                              title: bookName,
+                              content: hadith));
+                          ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteIt);
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -397,7 +415,7 @@ class ContentBooksPage extends StatelessWidget {
                         onTap: () {
                           AppDataPreferences.setHadithLastRead(
                               bookId, index, isChapter, chapterId, bookName);
-                          ToastMessage.showMessage("Save");
+                          ToastMessage.showMessage(AppLocalizations.of(context)!.save);
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -423,7 +441,7 @@ class ContentBooksPage extends StatelessWidget {
   }
 
   Widget _header(String currentLanguage, Metadata metadata,
-      BuildContext context, double width,bool isMobile) {
+      BuildContext context, double width, bool isMobile) {
     return Column(
       children: [
         Padding(
@@ -432,7 +450,8 @@ class ContentBooksPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                borderRadius:
+                    BorderRadius.circular(isMobile == true ? 15.w : 10.w),
                 child: Container(
                   color: AppColor.primary1,
                   child: IconButton(
@@ -440,8 +459,9 @@ class ContentBooksPage extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     icon: Icon(
-                      currentLanguage == Languages.EN.languageCode ?
-                      Icons.keyboard_arrow_left_rounded : Icons.keyboard_arrow_right_rounded,
+                      currentLanguage == Languages.EN.languageCode
+                          ? Icons.keyboard_arrow_left_rounded
+                          : Icons.keyboard_arrow_right_rounded,
                       size: 35.w,
                       color: AppColor.white,
                     ),
@@ -455,8 +475,10 @@ class ContentBooksPage extends StatelessWidget {
                 bookName.length <= 20
                     ? bookName
                     : "${bookName.substring(0, 17)}...",
-                style: TextStyle(fontSize: bookName.length < 20 ? 25.sp : 22.sp, fontWeight: FontWeight.bold,
-                fontFamily: Utility.getTextFamily(currentLanguage)),
+                style: TextStyle(
+                    fontSize: bookName.length < 20 ? 25.sp : 22.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: Utility.getTextFamily(currentLanguage)),
               )
             ],
           ),

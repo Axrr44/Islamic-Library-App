@@ -63,7 +63,10 @@
   "tafseerSubTitle" : "Then do they not reflect upon the Qur'an?",
   "messageDialogPR" : "Password reset link sent! Check your email",
   "warningSearch" : "If you are searching for a frequently repeated word, such as the word “Allah” this may take some time",
-  "reciter" : "Choose the reciter"
+  "reciter" : "Choose the reciter",
+  "favoriteIt" : "Favorite",
+  "save" : "Save"
+
 
 
 

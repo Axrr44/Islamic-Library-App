@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:arabic_numbers/arabic_numbers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancer/models/favorite_model.dart';
+import 'package:freelancer/services/firestore_service.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:quran/quran.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -145,13 +148,17 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                         color: AppColor.white,
                       ),
                     ),
-                    Text(
-                      widget.mufseer!.name,
-                      style: TextStyle(
-                          fontSize:
-                              widget.mufseer!.name.length <= 25 ? 15.sp : 10.sp,
-                          color: AppColor.white,
-                          fontWeight: FontWeight.w600),
+                    SingleChildScrollView(
+                      child: Row(
+                        children: [
+                          Text(widget.mufseer!.name,
+                            style: TextStyle(
+                                fontSize:15.sp,
+                                color: AppColor.white,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -355,7 +362,15 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
               child: Padding(
                 padding: EdgeInsets.all(3.w),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    FireStoreService.addFavorite(
+                      Favorite(
+                          type: "Tafseer",
+                          title: widget.mufseer!.name,
+                          content: tafseerText)
+                    );
+                    ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteIt);
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -381,7 +396,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                   onTap: () {
                     AppDataPreferences.setTafseerLastRead(
                         widget.mufseer!, widget.surahId, index);
-                    ToastMessage.showMessage("Save");
+                    ToastMessage.showMessage(AppLocalizations.of(context)!.save);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

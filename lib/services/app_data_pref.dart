@@ -151,14 +151,41 @@ class AppDataPreferences {
 
 
 
-  // setting
-  static void setCurrentLanguage(String currentLanguage) async {
+  // Setting
+  static Future<void> setCurrentLanguage(String currentLanguage) async {
     await _initPrefs();
     _prefs?.setString("current-language",currentLanguage);
   }
   static Future<String> getCurrentLanguage() async {
     await _initPrefs();
     return _prefs?.getString("current-language") ??'en';
+  }
+
+  //Favorite
+  static Future<void> setFavoritePageQuranCheck(bool value) async{
+    await _initPrefs();
+    await _prefs?.setBool("Favorite-QuranCheckBox", value);
+  }
+  static Future<void> setFavoritePageHadithCheck(bool value) async{
+    await _initPrefs();
+    await _prefs?.setBool("Favorite-HadithCheckBox", value);
+  }
+  static Future<void> setFavoritePageTafseerCheck(bool value) async{
+    await _initPrefs();
+    await _prefs?.setBool("Favorite-TafseerCheckBox", value);
+  }
+
+  static Future<bool> getFavoritePageQuranCheck() async{
+    await _initPrefs();
+    return _prefs?.getBool("Favorite-QuranCheckBox") ?? true;
+  }
+  static Future<bool> getFavoritePageHadithCheck() async{
+    await _initPrefs();
+    return _prefs?.getBool("Favorite-HadithCheckBox") ?? true;
+  }
+  static Future<bool> getFavoritePageTafseerCheck() async{
+    await _initPrefs();
+    return _prefs?.getBool("Favorite-TafseerCheckBox") ?? true;
   }
 }
 

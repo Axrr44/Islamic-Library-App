@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:freelancer/config/app_languages.dart';
+import 'package:freelancer/pages/favorites_page.dart';
 import 'package:freelancer/pages/profile_page.dart';
 import 'package:freelancer/pages/search_page.dart';
+import 'package:freelancer/providers/favorite_provider.dart';
 import 'package:freelancer/services/authentication.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:provider/provider.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
 import '../models/hadith_drop_down_item.dart';
@@ -34,14 +37,14 @@ class _MainPageState extends State<MainPage> {
   late bool _searchIsQuranChecked;
   late bool _searchIsHadithChecked;
   late bool _searchIsTafseerChecked;
+  late bool _favoriteIsQuranChecked;
+  late bool _favoriteIsHadithChecked;
+  late bool _favoriteIsTafseerChecked;
 
   final pages = [
     const HomePage(),
     const SearchPage(),
-    Text(
-      "Test2",
-      style: TextStyle(fontSize: 50.sp),
-    ),
+    const FavoritesPage(),
     const ProfilePage(),
   ];
 
@@ -329,6 +332,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _showFilterFavoriteDialog(String currentLanguage) {
+    final checkboxValues = Provider.of<FavoriteProvider>(context, listen: false);
+
     showDialog(
       context: context,
       builder: (context) {
@@ -338,73 +343,101 @@ class _MainPageState extends State<MainPage> {
             child: SizedBox(
               width: 200.w,
               height: 250.w,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+              child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.quran,
-                        style: TextStyle(
-                            fontSize: 20.sp,
-                            fontFamily:
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.quran,
+                            style: TextStyle(
+                                fontSize: 20.sp,
+                                fontFamily:
                                 Utility.getTextFamily(currentLanguage)),
+                          ),
+                          Transform.scale(
+                            scale: 1.w,
+                            child: Checkbox(
+                              value: _favoriteIsQuranChecked,
+                              onChanged: (value) {
+                                AppDataPreferences.setFavoritePageQuranCheck(_favoriteIsQuranChecked);
+                                setState(() {
+                                  _favoriteIsQuranChecked = value!;
+                                });
+                                checkboxValues.updateCheckboxValues(_favoriteIsQuranChecked,
+                                    _favoriteIsHadithChecked,
+                                    _favoriteIsTafseerChecked);
+                              },
+                              activeColor: AppColor.black,
+                              checkColor: AppColor.white,
+                            ),
+                          )
+                        ],
                       ),
-                      Transform.scale(
-                        scale: 1.w,
-                        child: Checkbox(
-                          value: true,
-                          onChanged: (value) {},
-                          activeColor: AppColor.black,
-                          checkColor: AppColor.white,
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.hadiths,
-                        style: TextStyle(
-                            fontSize: 20.sp,
-                            fontFamily:
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.hadiths,
+                            style: TextStyle(
+                                fontSize: 20.sp,
+                                fontFamily:
                                 Utility.getTextFamily(currentLanguage)),
+                          ),
+                          Transform.scale(
+                            scale: 1.w,
+                            child: Checkbox(
+                              value: _favoriteIsHadithChecked,
+                              onChanged: (value) {
+                                AppDataPreferences.setFavoritePageHadithCheck(_favoriteIsHadithChecked);
+                                setState(() {
+                                  _favoriteIsHadithChecked = value!;
+                                });
+                                checkboxValues.updateCheckboxValues(_favoriteIsQuranChecked,
+                                    _favoriteIsHadithChecked,
+                                    _favoriteIsTafseerChecked);
+                              },
+                              activeColor: AppColor.black,
+                              checkColor: AppColor.white,
+                            ),
+                          )
+                        ],
                       ),
-                      Transform.scale(
-                        scale: 1.w,
-                        child: Checkbox(
-                          value: true,
-                          onChanged: (value) {},
-                          activeColor: AppColor.black,
-                          checkColor: AppColor.white,
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.tafseer,
-                        style: TextStyle(
-                            fontSize: 20.sp,
-                            fontFamily:
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.tafseer,
+                            style: TextStyle(
+                                fontSize: 20.sp,
+                                fontFamily:
                                 Utility.getTextFamily(currentLanguage)),
+                          ),
+                          Transform.scale(
+                            scale: 1.w,
+                            child: Checkbox(
+                              value: _favoriteIsTafseerChecked,
+                              onChanged: (value) {
+                                AppDataPreferences.setFavoritePageTafseerCheck(_favoriteIsTafseerChecked);
+                                setState(() {
+                                  _favoriteIsTafseerChecked = value!;
+                                });
+                                checkboxValues.updateCheckboxValues(_favoriteIsQuranChecked,
+                                    _favoriteIsHadithChecked,
+                                    _favoriteIsTafseerChecked);
+                              },
+                              activeColor: AppColor.black,
+                              checkColor: AppColor.white,
+                            ),
+                          )
+                        ],
                       ),
-                      Transform.scale(
-                        scale: 1.w,
-                        child: Checkbox(
-                          value: true,
-                          onChanged: (value) {},
-                          activeColor: AppColor.black,
-                          checkColor: AppColor.white,
-                        ),
-                      )
                     ],
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),
