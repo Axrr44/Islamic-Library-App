@@ -72,17 +72,15 @@ class _MainPageState extends State<MainPage> {
     final bool isMobile = shortestSide < 600;
 
     return Scaffold(
-      body: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _header(width, height, notificationCount, isMobile),
-              Container(
-                alignment: Alignment.center,
-                child: pages[_currentPage],
-              ),
-            ],
-          ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _header(width, height, notificationCount, isMobile),
+            Container(
+              alignment: Alignment.center,
+              child: pages[_currentPage],
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: _bottomNavigation(),

@@ -249,51 +249,55 @@ class ContentBooksPage extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: 10.w, vertical: isPortrait == true ? 10.h : 20.h),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    currentLanguage == Languages.EN.languageCode
-                        ? (index + 1).toString()
-                        : ArabicNumbers.convert(index + 1),
-                    style: TextStyle(
-                        fontFamily: Utility.getTextFamily(currentLanguage),
-                        fontSize: 15.sp,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      currentLanguage == Languages.EN.languageCode
+                          ? (index + 1).toString()
+                          : ArabicNumbers.convert(index + 1),
+                      style: TextStyle(
+                          fontFamily: Utility.getTextFamily(currentLanguage),
+                          fontSize: 15.sp,
+                          color: AppColor.white,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w),
+                      child: VerticalDivider(
+                        thickness: 3.w,
                         color: AppColor.white,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w),
-                    child: VerticalDivider(
-                      thickness: 3.w,
-                      color: AppColor.white,
+                      ),
                     ),
-                  ),
-                  SingleChildScrollView(
-                    child: Row(
-                      children: [
-                        Text(currentLanguage == Languages.EN.languageCode ?
-                          chapter.english! : chapter.arabic!,
-                          style: TextStyle(
-                              fontFamily: Utility.getTextFamily(currentLanguage),
-                              fontSize: 15.sp,
-                              color: AppColor.white,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ],
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          Text(currentLanguage == Languages.EN.languageCode ?
+                            chapter.english! : chapter.arabic!,
+                            style: TextStyle(
+                                fontFamily: Utility.getTextFamily(currentLanguage),
+                                fontSize: 15.sp,
+                                color: AppColor.white,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              _popUpMenu(
-                  context,
-                  currentLanguage == Languages.EN.languageCode
-                      ? hadiths[index].english!
-                      : hadiths[index].arabic!,
-                  index)
-            ],
+                  ],
+                ),
+                _popUpMenu(
+                    context,
+                    currentLanguage == Languages.EN.languageCode
+                        ? hadiths[index].english!
+                        : hadiths[index].arabic!,
+                    index)
+              ],
+            ),
           ),
         ),
       ),

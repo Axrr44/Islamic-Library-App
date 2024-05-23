@@ -128,42 +128,48 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
           child: Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: 10.w, vertical: isPortrait == true ? 10.h : 20.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      currentLanguage == Languages.EN.languageCode ? (index + 1).toString() : 
-                      ArabicNumbers.convert((index + 1).toString()),
-                      style: TextStyle(
-                          fontSize: 15.sp,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        currentLanguage == Languages.EN.languageCode
+                            ? (index + 1).toString()
+                            : ArabicNumbers.convert((index + 1).toString()),
+                        style: TextStyle(
+                            fontSize: 15.sp,
+                            color: AppColor.white,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5.w),
+                        child: VerticalDivider(
+                          thickness: 3.w,
                           color: AppColor.white,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5.w),
-                      child: VerticalDivider(
-                        thickness: 3.w,
-                        color: AppColor.white,
+                        ),
                       ),
-                    ),
-                    SingleChildScrollView(
-                      child: Row(
-                        children: [
-                          Text(widget.mufseer!.name,
-                            style: TextStyle(
-                                fontSize:15.sp,
-                                color: AppColor.white,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            Text(
+                              widget.mufseer!.name,
+                              style: TextStyle(
+                                  fontSize: 15.sp,
+                                  color: AppColor.white,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                _popUpMenu(context, index + 1, index, currentLanguage)
-              ],
+                    ],
+                  ),
+                  _popUpMenu(context, index + 1, index, currentLanguage)
+                ],
+              ),
             ),
           ),
         ),
@@ -363,13 +369,12 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                 padding: EdgeInsets.all(3.w),
                 child: InkWell(
                   onTap: () {
-                    FireStoreService.addFavorite(
-                      Favorite(
-                          type: "Tafseer",
-                          title: widget.mufseer!.name,
-                          content: tafseerText)
-                    );
-                    ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteIt);
+                    FireStoreService.addFavorite(Favorite(
+                        type: "Tafseer",
+                        title: widget.mufseer!.name,
+                        content: tafseerText));
+                    ToastMessage.showMessage(
+                        AppLocalizations.of(context)!.favoriteIt);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -396,7 +401,8 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                   onTap: () {
                     AppDataPreferences.setTafseerLastRead(
                         widget.mufseer!, widget.surahId, index);
-                    ToastMessage.showMessage(AppLocalizations.of(context)!.save);
+                    ToastMessage.showMessage(
+                        AppLocalizations.of(context)!.save);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -468,8 +474,8 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
     );
   }
 
-  Widget _header(
-      String currentLanguage, BuildContext context, double width, bool isMobile) {
+  Widget _header(String currentLanguage, BuildContext context, double width,
+      bool isMobile) {
     return Column(
       children: [
         Padding(
@@ -486,8 +492,9 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                       Navigator.pop(context);
                     },
                     icon: Icon(
-                      currentLanguage == Languages.EN.languageCode ? Icons.keyboard_arrow_left_rounded
-                      : Icons.keyboard_arrow_right_rounded,
+                      currentLanguage == Languages.EN.languageCode
+                          ? Icons.keyboard_arrow_left_rounded
+                          : Icons.keyboard_arrow_right_rounded,
                       size: 35.w,
                       color: AppColor.white,
                     ),
@@ -504,8 +511,9 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                   currentLanguage == Languages.EN.languageCode
                       ? quran.getSurahNameEnglish(widget.surahId)
                       : quran.getSurahNameArabic(widget.surahId),
-                  style:
-                      TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold,
+                  style: TextStyle(
+                      fontSize: 25.sp,
+                      fontWeight: FontWeight.bold,
                       fontFamily: Utility.getTextFamily(currentLanguage)),
                 ),
               )

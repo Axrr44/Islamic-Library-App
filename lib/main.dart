@@ -32,7 +32,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => TafseerDialogProvider()),
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
       ],
-      child: DevicePreview(builder: (context) => MyApp(),),
+      child: MyApp(),
     ),
   );
 }
