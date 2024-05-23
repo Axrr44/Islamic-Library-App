@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/utilities/utility.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -106,7 +106,7 @@ class HomePage extends StatelessWidget {
                                         ? AppLocalizations.of(context)!.quran
                                         : AppLocalizations.of(context)!.hadiths,
                                     style: TextStyle(
-                                        fontFamily: Constants.getTextFamily(
+                                        fontFamily: Utility.getTextFamily(
                                             currentLanguage),
                                         color: index == 0
                                             ? AppColor.white
@@ -179,7 +179,7 @@ class HomePage extends StatelessWidget {
                                   fontSize: 30.sp,
                                   fontWeight: FontWeight.w700,
                                   fontFamily:
-                                      Constants.getTextFamily(currentLanguage)),
+                                      Utility.getTextFamily(currentLanguage)),
                               textAlign: TextAlign.center,
                             ),
                           ],

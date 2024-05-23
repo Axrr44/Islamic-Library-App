@@ -35,6 +35,16 @@ class AppDataPreferences {
     await _prefs?.setInt("Search-MufseerId", value);
   }
 
+  static Future<void> setSearchPageMufseerIndex(int value) async {
+    await _initPrefs();
+    await _prefs?.setInt("Search-MufseerIndex", value);
+  }
+
+  static Future<int> getSearchPageMufseerIndex() async {
+    await _initPrefs();
+    return _prefs?.getInt("Search-MufseerIndex") ?? 0;
+  }
+
   static Future<void> setSearchPageHadithId(int value) async {
     await _initPrefs();
     await _prefs?.setInt("Search-HadithId", value);
@@ -59,11 +69,6 @@ class AppDataPreferences {
     await _initPrefs();
     return _prefs?.getInt("Search-MufseerId") ??
         (currentLanguage == Languages.EN.languageCode ? 9 : 1);
-  }
-
-  static Future<int> getSearchPageMufseerIndex() async {
-    await _initPrefs();
-    return _prefs?.getInt("Search-MufseerId") ?? 0;
   }
 
   static Future<int> getSearchPageHadithId() async {
@@ -108,7 +113,6 @@ class AppDataPreferences {
     await _prefs?.setBool("Hadith-Chapter", isChapter);
     await _prefs?.setString("Hadith-ChapterName", chapterName);
   }
-
   static Future<int> getHadithBookId() async {
     await _initPrefs();
     return _prefs?.getInt("Hadith-MufseerId") ?? -1;
@@ -128,6 +132,33 @@ class AppDataPreferences {
   static Future<String> getHadithChapterName() async {
     await _initPrefs();
     return _prefs?.getString("Hadith-ChapterName") ?? "";
+  }
+
+  // Quran last read
+  static Future<void> setQuranLastRead(int surahId, int verseId) async{
+    await _initPrefs();
+    await _prefs!.setInt("Quran-surahId", surahId);
+    await _prefs!.setInt("Quran-verseId", verseId);
+  }
+  static Future<int> getSurahId() async {
+    await _initPrefs();
+    return _prefs!.getInt("Quran-surahId") ?? -1;
+  }
+  static Future<int> getVerseId() async {
+    await _initPrefs();
+    return _prefs!.getInt("Quran-verseId") ?? -1;
+  }
+
+
+
+  // setting
+  static void setCurrentLanguage(String currentLanguage) async {
+    await _initPrefs();
+    _prefs?.setString("current-language",currentLanguage);
+  }
+  static Future<String> getCurrentLanguage() async {
+    await _initPrefs();
+    return _prefs?.getString("current-language") ??'en';
   }
 }
 

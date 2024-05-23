@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/utilities/utility.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -33,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   leading: Icon(Icons.person_rounded),
                   title: Text("${AppLocalizations.of(context)!.fullName} : User abu test",style: TextStyle(
                     color: Colors.black,
-                      fontFamily: Constants.getTextFamily(currentLanguage)
+                      fontFamily: Utility.getTextFamily(currentLanguage)
                   ,fontSize: 15.sp,fontWeight: FontWeight.bold)),
                 )
               ),
@@ -47,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   leading: Icon(Icons.email),
                   title: Text("${AppLocalizations.of(context)!.email} :Email@gmail.com",style: TextStyle(
                     color: Colors.black,
-                      fontFamily: Constants.getTextFamily(currentLanguage)
+                      fontFamily: Utility.getTextFamily(currentLanguage)
                       ,fontSize: 15.sp,fontWeight: FontWeight.bold)),
                 ),
               ),

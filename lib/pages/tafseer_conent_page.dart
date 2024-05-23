@@ -3,7 +3,7 @@ import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/utilities/utility.dart';
 import 'package:quran/quran.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
@@ -491,7 +491,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                       : quran.getSurahNameArabic(widget.surahId),
                   style:
                       TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold,
-                      fontFamily: Constants.getTextFamily(currentLanguage)),
+                      fontFamily: Utility.getTextFamily(currentLanguage)),
                 ),
               )
             ],

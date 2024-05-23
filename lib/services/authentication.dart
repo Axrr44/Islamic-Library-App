@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../components/custom_dialog.dart';
 import '../config/app_routes.dart';
 
@@ -59,7 +59,9 @@ class AuthServices {
   static signOut(BuildContext context) async {
     context.loaderOverlay.show();
     try {
+      GoogleSignIn googleSignIn = GoogleSignIn();
       await auth.signOut();
+      await googleSignIn.disconnect();
       Navigator.of(context).pushReplacementNamed(AppRoutes.SGIN_IN_ROUTES);
     } catch (e) {
       ///Catch error
@@ -72,24 +74,31 @@ class AuthServices {
     try {
       await auth.sendPasswordResetEmail(email: email);
       context.loaderOverlay.hide();
-      customDialog(context, "Password reset lint sent! Check your email");
+      customDialog(context, AppLocalizations.of(context)!.messageDialogPR);
     } on FirebaseAuthException catch (e) {
       context.loaderOverlay.hide();
       customDialog(context, e.message.toString());
     }
   }
 
-  static Future<UserCredential> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  static Future<UserCredential?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+      if (googleUser == null) return null;
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-    return await auth.signInWithCredential(credential);
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      return await auth.signInWithCredential(credential);
+    } catch (e) {
+      print('Error signing in with Google: $e');
+      return null;
+    }
   }
 
   static showMessage(BuildContext context, String message) {

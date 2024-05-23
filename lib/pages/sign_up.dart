@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/utilities/utility.dart';
 import '../components/custom_textfield.dart';
 import '../config/app_colors.dart';
 import '../services/authentication.dart';
@@ -91,7 +91,7 @@ class SignUp extends StatelessWidget {
                     },
                     child: Text(
                       AppLocalizations.of(context)!.signUp,
-                      style: TextStyle(fontSize: 20.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
+                      style: TextStyle(fontSize: 20.sp,fontFamily: Utility.getTextFamily(currentLanguage)),
                     ),
                   ),
                 ),
@@ -101,7 +101,7 @@ class SignUp extends StatelessWidget {
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text(
                     AppLocalizations.of(context)!.alreadyHave,
-                    style: TextStyle(fontSize: 15.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
+                    style: TextStyle(fontSize: 15.sp,fontFamily: Utility.getTextFamily(currentLanguage)),
                   ),
                   SizedBox(
                     width: 5.w,
@@ -113,7 +113,7 @@ class SignUp extends StatelessWidget {
                       child: Text(
                         AppLocalizations.of(context)!.signIn,
                         style: TextStyle(
-                          fontFamily: Constants.getTextFamily(currentLanguage),
+                          fontFamily: Utility.getTextFamily(currentLanguage),
                             fontSize: 20.sp,
                             fontWeight: FontWeight.bold,
                             color: AppColor.primary2),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/pages/tafseer_conent_page.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/utilities/utility.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../config/app_colors.dart';
 import '../models/tafseer_books.dart';
@@ -19,13 +19,13 @@ class TafseerPage extends StatefulWidget {
 
 class _TafseerPageState extends State<TafseerPage> {
   late Future<List<Tafseer>> _tafseerListFuture;
-  late Future<List<String>> _surahListSurah;
-  int _indexOfTafseer = 0;
-  Tafseer _mufseer = Tafseer.empty();
-  int _indexOfSurah = 0;
-
-  late int _surahId;
   late Tafseer _mufseerLastRead;
+  int _indexOfTafseer = 0;
+  late Future<List<String>> _surahListSurah;
+  Tafseer _mufseer = Tafseer.empty();
+
+  int _indexOfSurah = 0;
+  late int _surahId;
   late int _indexOfScrolling;
 
   @override
@@ -119,10 +119,12 @@ class _TafseerPageState extends State<TafseerPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           context.loaderOverlay.show();
           return Container();
-        } else if (snapshot.hasError) {
+        }
+        else if (snapshot.hasError) {
           context.loaderOverlay.hide();
           return Text('Error: ${snapshot.error}');
-        } else {
+        }
+        else {
           context.loaderOverlay.hide();
           List<Tafseer>? tafseerList = snapshot.data;
           if (tafseerList != null && tafseerList.isNotEmpty) {
@@ -321,7 +323,7 @@ class _TafseerPageState extends State<TafseerPage> {
                         AppLocalizations.of(context)!.tafseer,
                         style: TextStyle(
                             fontFamily:
-                                Constants.getTextFamily(currentLanguage),
+                                Utility.getTextFamily(currentLanguage),
                             fontSize: 40.sp,
                             color: AppColor.black,
                             fontWeight: FontWeight.bold),
@@ -384,7 +386,7 @@ class _TafseerPageState extends State<TafseerPage> {
                     style: TextStyle(
                         fontSize: 12.sp,
                         color: Colors.grey,
-                        fontFamily: Constants.getTextFamily(currentLanguage)),
+                        fontFamily: Utility.getTextFamily(currentLanguage)),
                   )
                 ],
               )

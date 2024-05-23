@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freelancer/pages/quran_aya_page.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/services/app_data_pref.dart';
+import 'package:freelancer/utilities/utility.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:arabic_numbers/arabic_numbers.dart';
 import '../config/app_colors.dart';
@@ -20,11 +23,19 @@ class QuranSuraPage extends StatefulWidget {
 class _QuranSuraPageState extends State<QuranSuraPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  int surahIdLastRead = 0;
+  int verseIdLastRead = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadQuranData();
   }
 
   @override
@@ -34,7 +45,6 @@ class _QuranSuraPageState extends State<QuranSuraPage>
     String currentLanguage = Localizations.localeOf(context).languageCode;
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     final bool isMobile = shortestSide < 600;
-
 
     return Scaffold(
       body: Container(
@@ -75,7 +85,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                           AppLocalizations.of(context)!.surah,
                           style: TextStyle(
                               fontFamily:
-                                  Constants.getTextFamily(currentLanguage)),
+                                  Utility.getTextFamily(currentLanguage)),
                         ),
                       ),
                       Tab(
@@ -83,7 +93,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                           AppLocalizations.of(context)!.juz,
                           style: TextStyle(
                               fontFamily:
-                                  Constants.getTextFamily(currentLanguage)),
+                                  Utility.getTextFamily(currentLanguage)),
                         ),
                       ),
                     ]),
@@ -102,6 +112,11 @@ class _QuranSuraPageState extends State<QuranSuraPage>
     );
   }
 
+  Future<void> _loadQuranData() async {
+    surahIdLastRead = await AppDataPreferences.getSurahId();
+    verseIdLastRead = await AppDataPreferences.getVerseId();
+  }
+
   Widget _listOfJuz(double height, double width, String currentLanguage) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -115,10 +130,9 @@ class _QuranSuraPageState extends State<QuranSuraPage>
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => QuranAyaPage(
-                      surahId: AppData.getNumberSurahByJuz(index),
-                      initialPage:
-                      AppData.getNumberPageByJuz(index) -1,
-                    )));
+                          surahId: AppData.getNumberSurahByJuz(index),
+                          initialPage: AppData.getNumberPageByJuz(index) - 1,
+                        )));
               },
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: height / 20),
@@ -225,7 +239,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w700,
                                 fontFamily:
-                                    Constants.getTextFamily(currentLanguage),
+                                    Utility.getTextFamily(currentLanguage),
                               ),
                             ),
                             Column(
@@ -235,7 +249,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                       ? "${quran.getVerseCount(index)}   Verse"
                                       : "${ArabicNumbers.convert(quran.getVerseCount(index))}   اية",
                                   style: TextStyle(
-                                      fontFamily: Constants.getTextFamily(
+                                      fontFamily: Utility.getTextFamily(
                                           currentLanguage),
                                       fontSize: 15.sp,
                                       fontWeight: FontWeight.w700),
@@ -248,7 +262,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                       ? "${quran.getJuzNumber(index, 1)}   Juz"
                                       : "${ArabicNumbers.convert(quran.getJuzNumber(index, 1))}   جزء",
                                   style: TextStyle(
-                                      fontFamily: Constants.getTextFamily(
+                                      fontFamily: Utility.getTextFamily(
                                           currentLanguage),
                                       fontSize: 15.sp,
                                       fontWeight: FontWeight.w700),
@@ -288,15 +302,14 @@ class _QuranSuraPageState extends State<QuranSuraPage>
           return LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.grey.withOpacity(0.1) , Colors.grey.withOpacity(0)],
+            colors: [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0)],
           ).createShader(bounds);
         },
         child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("assets/images/islamic_pattern_2.png"),
-                fit: BoxFit.cover
-            ),
+                fit: BoxFit.cover),
           ),
           width: width,
           height: height / 3 - 40.h,
@@ -346,7 +359,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                             fontSize: 40.sp,
                             color: AppColor.black,
                             fontFamily:
-                                Constants.getTextFamily(currentLanguage),
+                                Utility.getTextFamily(currentLanguage),
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
@@ -378,7 +391,19 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                       ),
                       child: Container(
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await _loadQuranData();
+                            if (surahIdLastRead != -1) {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => QuranAyaPage(
+                                        surahId: surahIdLastRead,
+                                        initialPage: quran.getPageNumber(
+                                                surahIdLastRead,
+                                                verseIdLastRead) -
+                                            1,
+                                      )));
+                            }
+                          },
                           icon: Icon(
                             Icons.bookmark_outline_rounded,
                             color: AppColor.black,
@@ -396,7 +421,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                     style: TextStyle(
                         fontSize: 12.sp,
                         color: Colors.grey,
-                        fontFamily: Constants.getTextFamily(currentLanguage)),
+                        fontFamily: Utility.getTextFamily(currentLanguage)),
                   )
                 ],
               )

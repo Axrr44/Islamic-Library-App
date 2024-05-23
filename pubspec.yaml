@@ -83,6 +83,10 @@ dependencies:
   #Scrollable list :
   scrollable_positioned_list: ^0.3.8
 
+  #Audio player :
+  audioplayers: ^6.0.0
+
+  provider:
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -131,6 +135,8 @@ flutter:
     - assets/images/hand_book.png
     - assets/images/quran.png
     - assets/images/quran1.png
+    - assets/images/quran4.png
+    - assets/images/hadithBook.png
     - assets/images/islamic_book.jpg
     - assets/images/login_image2.svg
     - assets/images/facebook-official.svg
@@ -174,7 +180,7 @@ flutter:
 
     - family: Custom
       fonts:
-        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/JosefinSans-Regular.ttf
 
 
 

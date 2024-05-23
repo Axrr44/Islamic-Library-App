@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freelancer/utilities/utility.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:http/http.dart' as http;
+import '../models/reciter_model.dart';
 import '../models/tafseer_books.dart';
 import '../config/app_languages.dart';
 
@@ -323,6 +325,23 @@ class AppData{
         return 78;
       default:
         throw ArgumentError("Number out of range. Please enter a number between 0 and 29.");
+    }
+  }
+  static Future<List<Reciter>> fetchAndFilterReciters(String language) async {
+    final response = await http.get(Uri.parse('https://www.mp3quran.net/api/v3/reciters?language=$language'));
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['reciters'];
+      List<Reciter> reciters = jsonResponse.map((reciter) => Reciter.fromJson(reciter)).toList();
+
+      // Filter reciters
+      List<Reciter> filteredReciters = reciters.where((reciter) {
+        return reciter.moshaf.any((m) => Utility.surahId.every((n) => m.surahList.contains(n)));
+      }).toList();
+
+      return filteredReciters;
+    } else {
+      throw Exception('Failed to load reciters');
     }
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/utilities/utility.dart';
 import '../components/custom_textfield.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
@@ -72,7 +72,7 @@ class SignIn extends StatelessWidget {
                     child: Text(
                       AppLocalizations.of(context)!.signIn,
                       style: TextStyle(fontSize: 20.sp,
-                      fontFamily: Constants.getTextFamily(currentLanguage)),
+                      fontFamily: Utility.getTextFamily(currentLanguage)),
                     ),
                   ),
                 ),
@@ -87,7 +87,7 @@ class SignIn extends StatelessWidget {
                     child: Text(AppLocalizations.of(context)!.forgetPassword,
                         style:
                             TextStyle(fontSize: 15.sp, color: AppColor.black,
-                            fontFamily: Constants.getTextFamily(currentLanguage)))),
+                            fontFamily: Utility.getTextFamily(currentLanguage)))),
                 SizedBox(
                   height: height / 20,
                 ),
@@ -99,39 +99,37 @@ class SignIn extends StatelessWidget {
                 SizedBox(
                   height: height / 20,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: width / 7,
-                      height: width / 7,
-                      child: IconButton(
-                        onPressed: () {
-                          AuthServices.signInWithGoogle();
-                        },
-                        icon: SvgPicture.asset('assets/images/google-icon.svg'),
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                Colors.grey.withOpacity(0.2))),
+                SizedBox(
+                  width: width / 2 + 40 ,
+                  height: width / 7,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      AuthServices.signInWithGoogle();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    SizedBox(
-                      width: width / 10,
-                    ),
-                    SizedBox(
-                      width: width / 7,
-                      height: width / 7,
-                      child: IconButton(
-                        padding: EdgeInsets.all(12.w),
-                        onPressed: () {},
-                        icon: SvgPicture.asset(
-                            'assets/images/facebook-official.svg'),
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                Colors.grey.withOpacity(0.2))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                      SvgPicture.asset(
+                        'assets/images/google-icon.svg',
+                        height: 24.0.w,
+                        width: 24.0.w,
                       ),
-                    )
-                  ],
+                      Text.rich(TextSpan(children: [
+                        TextSpan(text: AppLocalizations.of(context)!.signInWith,style: TextStyle(fontSize: 15.sp,fontFamily: Utility.getTextFamily(currentLanguage),
+                        color: Colors.black)),
+                        TextSpan(text: AppLocalizations.of(context)!.google,style: TextStyle(fontSize: 15.sp,fontFamily: Utility.getTextFamily(currentLanguage),
+                        fontWeight: FontWeight.bold,color: Colors.black))
+                      ]))
+                    ],),
+                  ),
+                ),
+                SizedBox(
+                  width: width / 10,
                 ),
                 SizedBox(
                   height: height / 10,
@@ -139,7 +137,7 @@ class SignIn extends StatelessWidget {
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text(
                     AppLocalizations.of(context)!.dontHaveAccount,
-                    style: TextStyle(fontSize: 15.sp,fontFamily: Constants.getTextFamily(currentLanguage),
+                    style: TextStyle(fontSize: 15.sp,fontFamily: Utility.getTextFamily(currentLanguage),
                     fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
@@ -153,7 +151,7 @@ class SignIn extends StatelessWidget {
                       child: Text(
                         AppLocalizations.of(context)!.signUp,
                         style: TextStyle(
-                          fontFamily: Constants.getTextFamily(currentLanguage),
+                          fontFamily: Utility.getTextFamily(currentLanguage),
                             fontSize: 20.sp,
                             fontWeight: FontWeight.bold,
                             color: AppColor.primary2),

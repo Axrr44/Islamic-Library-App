@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/pages/profile_page.dart';
 import 'package:freelancer/pages/search_page.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/services/authentication.dart';
+import 'package:freelancer/utilities/utility.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -124,6 +125,7 @@ class _MainPageState extends State<MainPage> {
                             setState(() {
                               _indexOfTafseer = tafseerList.indexOf(newValue!);
                               _mufseer = newValue;
+                              AppDataPreferences.setSearchPageMufseerIndex(_indexOfTafseer);
                               AppDataPreferences.setSearchPageMufseerId(
                                   newValue.id);
                             });
@@ -174,6 +176,7 @@ class _MainPageState extends State<MainPage> {
         AppData.getBookName(
             context, await AppDataPreferences.getSearchPageHadithId()),
         await AppDataPreferences.getSearchPageHadithId());
+    _indexOfTafseer = await AppDataPreferences.getSearchPageMufseerIndex() ;
   }
 
   void _showFilterSearchDialog(String currentLanguage) {
@@ -198,7 +201,7 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily:
-                                  Constants.getTextFamily(currentLanguage)),
+                                  Utility.getTextFamily(currentLanguage)),
                         ),
                         Transform.scale(
                           scale: 1.w,
@@ -225,7 +228,7 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily:
-                                  Constants.getTextFamily(currentLanguage)),
+                                  Utility.getTextFamily(currentLanguage)),
                         ),
                         Transform.scale(
                           scale: 1.w,
@@ -295,7 +298,7 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily:
-                                  Constants.getTextFamily(currentLanguage)),
+                                  Utility.getTextFamily(currentLanguage)),
                         ),
                         Transform.scale(
                           scale: 1.w,
@@ -346,7 +349,7 @@ class _MainPageState extends State<MainPage> {
                         style: TextStyle(
                             fontSize: 20.sp,
                             fontFamily:
-                                Constants.getTextFamily(currentLanguage)),
+                                Utility.getTextFamily(currentLanguage)),
                       ),
                       Transform.scale(
                         scale: 1.w,
@@ -367,7 +370,7 @@ class _MainPageState extends State<MainPage> {
                         style: TextStyle(
                             fontSize: 20.sp,
                             fontFamily:
-                                Constants.getTextFamily(currentLanguage)),
+                                Utility.getTextFamily(currentLanguage)),
                       ),
                       Transform.scale(
                         scale: 1.w,
@@ -388,7 +391,7 @@ class _MainPageState extends State<MainPage> {
                         style: TextStyle(
                             fontSize: 20.sp,
                             fontFamily:
-                                Constants.getTextFamily(currentLanguage)),
+                                Utility.getTextFamily(currentLanguage)),
                       ),
                       Transform.scale(
                         scale: 1.w,
@@ -426,7 +429,7 @@ class _MainPageState extends State<MainPage> {
                     Text(
                       AppLocalizations.of(context)!.languages,
                       style: TextStyle(
-                        fontFamily: Constants.getTextFamily(currentLanguage),
+                        fontFamily: Utility.getTextFamily(currentLanguage),
                         fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -482,7 +485,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {AuthServices.signOut(context);},
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(AppColor.black),
@@ -553,7 +556,7 @@ class _MainPageState extends State<MainPage> {
                     Text(
                       _nameOfPage,
                       style: TextStyle(
-                          fontFamily: Constants.getTextFamily(currentLanguage),
+                          fontFamily: Utility.getTextFamily(currentLanguage),
                           fontSize: _nameOfPage.length > 10 ? 30.sp : 40.sp,
                           color: AppColor.black,
                           fontWeight: FontWeight.bold),
@@ -756,7 +759,7 @@ class _MainPageState extends State<MainPage> {
               text: AppLocalizations.of(context)!.home,
               textStyle: TextStyle(
                   fontSize: 15.sp,
-                  fontFamily: Constants.getTextFamily(currentLanguage)),
+                  fontFamily: Utility.getTextFamily(currentLanguage)),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -770,7 +773,7 @@ class _MainPageState extends State<MainPage> {
               text: AppLocalizations.of(context)!.search,
               textStyle: TextStyle(
                   fontSize: 15.sp,
-                  fontFamily: Constants.getTextFamily(currentLanguage)),
+                  fontFamily: Utility.getTextFamily(currentLanguage)),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -784,7 +787,7 @@ class _MainPageState extends State<MainPage> {
               text: AppLocalizations.of(context)!.favorites,
               textStyle: TextStyle(
                   fontSize: 15.sp,
-                  fontFamily: Constants.getTextFamily(currentLanguage)),
+                  fontFamily: Utility.getTextFamily(currentLanguage)),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -798,7 +801,7 @@ class _MainPageState extends State<MainPage> {
               text: AppLocalizations.of(context)!.profile,
               textStyle: TextStyle(
                   fontSize: 15.sp,
-                  fontFamily: Constants.getTextFamily(currentLanguage)),
+                  fontFamily: Utility.getTextFamily(currentLanguage)),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {

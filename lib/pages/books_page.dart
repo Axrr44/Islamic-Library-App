@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/utilities/utility.dart';
 import '../components/custom_dialog.dart';
 import '../config/app_languages.dart';
 import '../models/hadith_drop_down_item.dart';
@@ -87,7 +87,7 @@ class _BooksPageState extends State<BooksPage> {
                             AppLocalizations.of(context)!.all,
                             style: TextStyle(
                                 fontFamily:
-                                Constants.getTextFamily(currentLanguage)),
+                                Utility.getTextFamily(currentLanguage)),
                           ),
                         ),
                         Tab(
@@ -95,7 +95,7 @@ class _BooksPageState extends State<BooksPage> {
                             AppLocalizations.of(context)!.chapter,
                             style: TextStyle(
                                 fontFamily:
-                                Constants.getTextFamily(currentLanguage)),
+                                Utility.getTextFamily(currentLanguage)),
                           ),
                         ),
                       ]),
@@ -177,7 +177,7 @@ class _BooksPageState extends State<BooksPage> {
                                         ? chapters[index].english.toString()
                                         : chapters[index].arabic.toString(),
                                     style: TextStyle(
-                                      fontFamily: Constants.getTextFamily(language),
+                                      fontFamily: Utility.getTextFamily(language),
                                         fontSize: 15.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -355,7 +355,7 @@ class _BooksPageState extends State<BooksPage> {
                       Text(
                         AppLocalizations.of(context)!.hadiths,
                         style: TextStyle(
-                          fontFamily: Constants.getTextFamily(currentLanguage),
+                          fontFamily: Utility.getTextFamily(currentLanguage),
                             fontSize: 40.sp,
                             color: AppColor.black,
                             fontWeight: FontWeight.bold),

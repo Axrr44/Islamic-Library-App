@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/utilities/utility.dart';
 import '../config/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -48,7 +48,7 @@ class CustomTextField extends StatelessWidget {
           style: TextStyle(
             color: Colors.black,
             fontSize: 16.sp,
-            fontFamily: Constants.getTextFamily(currentLanguage)
+            fontFamily: Utility.getTextFamily(currentLanguage)
           ),
           decoration: InputDecoration(
             prefixIcon: Icon(
@@ -58,7 +58,7 @@ class CustomTextField extends StatelessWidget {
             isDense: true,
             labelText: name,
             counterText: "",
-            labelStyle: TextStyle(color: AppColor.black, fontSize: 16.sp,fontFamily: Constants.getTextFamily(currentLanguage)),
+            labelStyle: TextStyle(color: AppColor.black, fontSize: 16.sp,fontFamily: Utility.getTextFamily(currentLanguage)),
             border: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
               borderRadius: BorderRadius.all(Radius.circular(10)),

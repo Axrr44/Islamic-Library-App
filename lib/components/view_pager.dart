@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/utilities/constants.dart';
+import 'package:freelancer/utilities/utility.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -57,11 +57,11 @@ class _ViewPagerState extends State<ViewPager> {
         physics: const NeverScrollableScrollPhysics(),
         children: [
           Center(
-            child: _buildPages("assets/images/book.png", AppLocalizations.of(context)!.quran,
+            child: _buildPages("assets/images/quran4.png", AppLocalizations.of(context)!.quran,
                 AppLocalizations.of(context)!.contentPage1, width, height,currentLanguage),
           ),
           Center(
-            child: _buildPages("assets/images/hand_book.png", AppLocalizations.of(context)!.hadiths,
+            child: _buildPages("assets/images/hadithBook.png", AppLocalizations.of(context)!.hadiths,
                 AppLocalizations.of(context)!.contentPage2, width, height,currentLanguage),
           ),
           Center(
@@ -139,7 +139,7 @@ class _ViewPagerState extends State<ViewPager> {
         SizedBox(
           height: height / 12,
         ),
-        SizedBox(width: 250.h, height: 250.h, child: Image.asset(image,fit: BoxFit.cover,)),
+        SizedBox(width: 230.h, height: 230.h, child: Image.asset(image,fit: BoxFit.cover,)),
         SizedBox(
           height: height / 12,
         ),
@@ -150,7 +150,7 @@ class _ViewPagerState extends State<ViewPager> {
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 15.sp,
-                fontFamily: Constants.getTextFamily(currentLanguage)),
+                fontFamily: Utility.getTextFamily(currentLanguage)),
           ),
         )
       ],
