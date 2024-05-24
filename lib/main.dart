@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancer/providers/favorite_provider.dart';
+import 'package:freelancer/providers/language_provider.dart';
 import 'package:freelancer/providers/quran_aya_page_provider.dart';
 import 'package:freelancer/providers/tafseer_dialog_provider.dart';
 import 'package:freelancer/services/app_data_pref.dart';
@@ -15,7 +16,6 @@ import 'config/app_languages.dart';
 import 'config/app_routes.dart';
 import 'firebase_options.dart';
 
-String _language = "en";
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,16 +23,15 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  _language = await AppDataPreferences.getCurrentLanguage();
-
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => QuranAyaPageProvider()),
         ChangeNotifierProvider(create: (_) => TafseerDialogProvider()),
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -42,26 +41,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(360, 690),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      child: GlobalLoaderOverlay(
-        overlayColor: Colors.grey.withOpacity(0.3),
-        useDefaultLoading: false,
-        overlayWidgetBuilder: (_) {
-          return customProgress();
-        },
-        child: MaterialApp(
-            theme: ThemeData(fontFamily: 'Custom'),
-            home: const Material(
-              child: ViewPager(),
-            ),
-            routes: AppRoutes.ROUTES,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: Languages.AR),
-      ),
+    return Consumer<LanguageProvider>(
+      builder: (context,provider,_)
+      {
+        return ScreenUtilInit(
+          designSize: const Size(360, 690),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          child: GlobalLoaderOverlay(
+            overlayColor: Colors.grey.withOpacity(0.3),
+            useDefaultLoading: false,
+            overlayWidgetBuilder: (_) {
+              return customProgress();
+            },
+            child: MaterialApp(
+                theme: ThemeData(fontFamily: 'Custom'),
+                initialRoute: AppRoutes.SPLASH_SCREEN_REOUTS,
+                routes: AppRoutes.ROUTES,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                locale: Locale(provider.currentLanguage)),
+          ),
+        );
+      }
     );
   }
   Future<String> getCurrentLanguage(){

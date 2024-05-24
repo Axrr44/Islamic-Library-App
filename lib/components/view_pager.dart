@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancer/services/app_data_pref.dart';
 import 'package:freelancer/utilities/utility.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
@@ -102,7 +103,8 @@ class _ViewPagerState extends State<ViewPager> {
                       curve: Curves.easeInOut);
                 } else {
                   Navigator.of(context)
-                      .pushReplacementNamed(AppRoutes.MAIN_ROUTES);
+                      .pushReplacementNamed(AppRoutes.SGIN_IN_ROUTES);
+                  AppDataPreferences.setShowViewPager(false);
                 }
               },
               style: ButtonStyle(

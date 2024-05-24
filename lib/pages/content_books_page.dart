@@ -237,67 +237,75 @@ class ContentBooksPage extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 15.h),
-      height: isPortrait == true
-          ? isMobile == true
+      height: isPortrait
+          ? isMobile
               ? 50.h
               : 60.h
-          : isMobile == true
+          : isMobile
               ? 50.w
               : 60.w,
       child: Card(
         color: AppColor.black,
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: 10.w, vertical: isPortrait == true ? 10.h : 20.h),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      currentLanguage == Languages.EN.languageCode
-                          ? (index + 1).toString()
-                          : ArabicNumbers.convert(index + 1),
-                      style: TextStyle(
-                          fontFamily: Utility.getTextFamily(currentLanguage),
-                          fontSize: 15.sp,
-                          color: AppColor.white,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5.w),
-                      child: VerticalDivider(
-                        thickness: 3.w,
-                        color: AppColor.white,
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          Text(currentLanguage == Languages.EN.languageCode ?
-                            chapter.english! : chapter.arabic!,
-                            style: TextStyle(
-                                fontFamily: Utility.getTextFamily(currentLanguage),
-                                fontSize: 15.sp,
-                                color: AppColor.white,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                _popUpMenu(
-                    context,
+              horizontal: 10.w, vertical: isPortrait ? 10.h : 20.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text(
                     currentLanguage == Languages.EN.languageCode
-                        ? hadiths[index].english!
-                        : hadiths[index].arabic!,
-                    index)
-              ],
-            ),
+                        ? (index + 1).toString()
+                        : ArabicNumbers.convert(index + 1),
+                    style: TextStyle(
+                        fontFamily: Utility.getTextFamily(currentLanguage),
+                        fontSize: 15.sp,
+                        color: AppColor.white,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: VerticalDivider(
+                      thickness: 3.w,
+                      color: AppColor.white,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        currentLanguage == Languages.EN.languageCode
+                            ? chapter.english!.length >= 50
+                                ? "${chapter.english!.substring(0, 47)}..."
+                                : chapter.english!
+                            : chapter.arabic!.length >= 50
+                                ? "${chapter.arabic!.substring(0, 47)}..."
+                                : chapter.arabic!,
+                        style: TextStyle(
+                          fontFamily: Utility.getTextFamily(currentLanguage),
+                          fontSize:
+                              (currentLanguage == Languages.EN.languageCode
+                                          ? chapter.english!.length
+                                          : chapter.arabic!.length) >=
+                                      25
+                                  ? 7.sp
+                                  : 15.sp,
+                          color: AppColor.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              _popUpMenu(
+                  context,
+                  currentLanguage == Languages.EN.languageCode
+                      ? hadiths[index].english!
+                      : hadiths[index].arabic!,
+                  index)
+            ],
           ),
         ),
       ),
@@ -392,7 +400,8 @@ class ContentBooksPage extends StatelessWidget {
                               type: "Hadith",
                               title: bookName,
                               content: hadith));
-                          ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteIt);
+                          ToastMessage.showMessage(
+                              AppLocalizations.of(context)!.favoriteIt);
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -419,7 +428,8 @@ class ContentBooksPage extends StatelessWidget {
                         onTap: () {
                           AppDataPreferences.setHadithLastRead(
                               bookId, index, isChapter, chapterId, bookName);
-                          ToastMessage.showMessage(AppLocalizations.of(context)!.save);
+                          ToastMessage.showMessage(
+                              AppLocalizations.of(context)!.save);
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -58,7 +58,7 @@ class SignUp extends StatelessWidget {
                     inputType: TextInputType.text),
                 CustomTextField(
                     controller: _confirmController,
-                    name: AppLocalizations.of(context)!.forgetPassword,
+                    name: AppLocalizations.of(context)!.confirmPassword,
                     prefixIcon: Icons.lock_outline,
                     width: width,
                     height: height / 13,

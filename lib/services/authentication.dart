@@ -81,7 +81,7 @@ class AuthServices {
     }
   }
 
-  static Future<UserCredential?> signInWithGoogle() async {
+  static Future<UserCredential?> signInWithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -94,7 +94,13 @@ class AuthServices {
         idToken: googleAuth.idToken,
       );
 
-      return await auth.signInWithCredential(credential);
+      UserCredential userCredential = await auth.signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
+      }
+
+      return userCredential;
     } catch (e) {
       print('Error signing in with Google: $e');
       return null;
@@ -107,5 +113,25 @@ class AuthServices {
       message,
       style: TextStyle(fontSize: 20.sp),
     )));
+  }
+
+  static User? getCurrentUser() {
+    return auth.currentUser;
+  }
+
+  static Future<Map<String, dynamic>?> fetchUserInfo() async {
+    User? user = getCurrentUser();
+    if (user != null) {
+      String name = user.displayName ?? '';
+      String email = user.email ?? '';
+      String uid = user.uid;
+
+      return {
+        'name': name,
+        'email': email,
+        'uid': uid,
+      };
+    }
+    return null;
   }
 }

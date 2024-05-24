@@ -54,7 +54,8 @@ class _BooksPageState extends State<BooksPage> {
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverToBoxAdapter(
-                child: _header(width, height, context,isMobile,currentLanguage),
+                child:
+                    _header(width, height, context, isMobile, currentLanguage),
               ),
               SliverAppBar(
                 pinned: true,
@@ -66,28 +67,29 @@ class _BooksPageState extends State<BooksPage> {
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(isMobile == true ? 0 : 20.h),
                   child: TabBar(
-                      unselectedLabelColor: !innerBoxIsScrolled ? Colors.grey.withOpacity(0.7)
-                          : AppColor.white.withOpacity(0.6) ,
+                      unselectedLabelColor: !innerBoxIsScrolled
+                          ? Colors.grey.withOpacity(0.7)
+                          : AppColor.white.withOpacity(0.6),
                       overlayColor: MaterialStateProperty.all(
                           innerBoxIsScrolled == false
                               ? AppColor.black.withOpacity(0.1)
                               : AppColor.white.withOpacity(0.1)),
-                      labelPadding: EdgeInsets.symmetric(horizontal: 10.w,
+                      labelPadding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
                           vertical: isMobile == true ? 0 : 10.h),
                       labelStyle: TextStyle(fontSize: 20.sp),
-                      labelColor: !innerBoxIsScrolled
-                          ? AppColor.black
-                          : AppColor.white,
+                      labelColor:
+                          !innerBoxIsScrolled ? AppColor.black : AppColor.white,
                       indicatorColor: !innerBoxIsScrolled
                           ? AppColor.primary1
                           : AppColor.white,
-                      tabs:   [
+                      tabs: [
                         Tab(
                           child: Text(
                             AppLocalizations.of(context)!.all,
                             style: TextStyle(
                                 fontFamily:
-                                Utility.getTextFamily(currentLanguage)),
+                                    Utility.getTextFamily(currentLanguage)),
                           ),
                         ),
                         Tab(
@@ -95,7 +97,7 @@ class _BooksPageState extends State<BooksPage> {
                             AppLocalizations.of(context)!.chapter,
                             style: TextStyle(
                                 fontFamily:
-                                Utility.getTextFamily(currentLanguage)),
+                                    Utility.getTextFamily(currentLanguage)),
                           ),
                         ),
                       ]),
@@ -104,7 +106,7 @@ class _BooksPageState extends State<BooksPage> {
             ],
             body: TabBarView(
               children: [
-                _listOfHadiths(width, height, context),
+                _listOfHadiths(width, height, context, currentLanguage),
                 _listOfChapters(width, height, context, currentLanguage)
               ],
             ),
@@ -114,9 +116,8 @@ class _BooksPageState extends State<BooksPage> {
     );
   }
 
-
-  Widget _listOfChapters(
-      double width, double height, BuildContext context, String language) {
+  Widget _listOfChapters(double width, double height, BuildContext context,
+      String currentLanguage) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Padding(
@@ -149,35 +150,36 @@ class _BooksPageState extends State<BooksPage> {
                           mainAxisSpacing: 10.h,
                         ),
                         itemBuilder: (context, index) {
+                          bool isDarimi =
+                              chapters[index].english.toString().trim().isEmpty;
                           return Card(
-                            color: AppColor.white,
+                            color: isDarimi ? Colors.grey.withOpacity(0.5):AppColor.white,
                             child: InkWell(
-                              onTap: () {
+                              onTap: isDarimi ? null : () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ContentBooksPage(
-                                          chapterId: index + 1,
-                                          isChapter: true,
-                                          bookId: _selectedItem!.index,
-                                          bookName: language ==
-                                                  Languages.EN.languageCode
-                                              ? chapters[index]
-                                                  .english
-                                                  .toString()
-                                              : chapters[index]
-                                                  .arabic
-                                                  .toString(),
-                                        )));
+                                  builder: (context) => ContentBooksPage(
+                                    chapterId: index + 1,
+                                    isChapter: true,
+                                    bookId: _selectedItem!.index,
+                                    bookName: currentLanguage == Languages.EN.languageCode
+                                        ? chapters[index].english.toString()
+                                        : chapters[index].arabic.toString(),
+                                  ),
+                                ));
                               },
                               child: Center(
                                 child: Padding(
                                   padding: EdgeInsets.all(10.w),
                                   child: Text(
                                     textAlign: TextAlign.center,
-                                    language == Languages.EN.languageCode
-                                        ? chapters[index].english.toString()
+                                    currentLanguage == Languages.EN.languageCode
+                                        ? isDarimi
+                                            ? "Only Arabic"
+                                            : chapters[index].english.toString()
                                         : chapters[index].arabic.toString(),
                                     style: TextStyle(
-                                      fontFamily: Utility.getTextFamily(language),
+                                        fontFamily: Utility.getTextFamily(
+                                            currentLanguage),
                                         fontSize: 15.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -206,7 +208,8 @@ class _BooksPageState extends State<BooksPage> {
     _chapterName = await AppDataPreferences.getHadithChapterName();
   }
 
-  Widget _listOfHadiths(double width, double height, BuildContext context) {
+  Widget _listOfHadiths(double width, double height, BuildContext context,
+      String currentLanguage) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: GridView.builder(
@@ -218,29 +221,39 @@ class _BooksPageState extends State<BooksPage> {
               mainAxisSpacing: 5.h),
           itemCount: 13,
           itemBuilder: (_, index) {
+            bool isDarimi =
+                "Sunan ad-Darimi" == AppData.getBookName(context, index);
             return Card(
-              color: AppColor.white,
+              color: isDarimi ? Colors.grey.withOpacity(0.5):AppColor.white,
               child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ContentBooksPage(
+                onTap: isDarimi
+                    ? null
+                    : () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ContentBooksPage(
                             chapterId: 0,
                             isChapter: false,
                             bookId: index,
                             bookName: AppData.getBookName(context, index),
-                          )));
-                },
+                          ),
+                        ));
+                      },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.h,horizontal: 10.w),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                        Text(
-                          AppData.getBookName(context, index),
-                          style: TextStyle(fontSize: 14.sp),
-                        ),
-                      Icon(Icons.arrow_forward_ios_rounded,
-                        size: 15.w,)
+                      Text(
+                        isDarimi
+                            ? "Only arabic"
+                            : AppData.getBookName(context, index),
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 15.w,
+                      )
                     ],
                   ),
                 ),
@@ -273,8 +286,8 @@ class _BooksPageState extends State<BooksPage> {
           },
           items: List.generate(12, (index) {
             return DropdownMenuItem<IndexDropdownItem>(
-              value: IndexDropdownItem(
-                  AppData.getBookName(context, index), index),
+              value:
+                  IndexDropdownItem(AppData.getBookName(context, index), index),
               child: Center(
                 child: Text(
                   AppData.getBookName(context, index),
@@ -293,31 +306,29 @@ class _BooksPageState extends State<BooksPage> {
     );
   }
 
-  Widget _header(double width, double height, BuildContext context,bool isMobile,
-      String currentLanguage) {
-    return Stack(
-      children: [
-        ShaderMask(
-          shaderCallback: (bounds) {
-            return LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.grey.withOpacity(0.1) , Colors.grey.withOpacity(0)],
-            ).createShader(bounds);
-          },
-          child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/images/islamic_pattern_2.png"),
-                  fit: BoxFit.cover
-              ),
-            ),
-            width: width,
-            height: height / 3 - 40.h,
-            alignment: Alignment.bottomCenter,
+  Widget _header(double width, double height, BuildContext context,
+      bool isMobile, String currentLanguage) {
+    return Stack(children: [
+      ShaderMask(
+        shaderCallback: (bounds) {
+          return LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0)],
+          ).createShader(bounds);
+        },
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/images/islamic_pattern_2.png"),
+                fit: BoxFit.cover),
           ),
+          width: width,
+          height: height / 3 - 40.h,
+          alignment: Alignment.bottomCenter,
         ),
-        Container(
+      ),
+      Container(
         width: width,
         height: isMobile == true ? height / 3 : height / 2 - 100,
         alignment: Alignment.bottomCenter,
@@ -332,7 +343,8 @@ class _BooksPageState extends State<BooksPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                    borderRadius:
+                        BorderRadius.circular(isMobile == true ? 15.w : 10.w),
                     child: Container(
                       color: AppColor.primary1,
                       child: IconButton(
@@ -340,8 +352,9 @@ class _BooksPageState extends State<BooksPage> {
                           Navigator.pop(context);
                         },
                         icon: Icon(
-                          currentLanguage == Languages.EN.languageCode ?
-                          Icons.keyboard_arrow_left_rounded : Icons.keyboard_arrow_right_rounded,
+                          currentLanguage == Languages.EN.languageCode
+                              ? Icons.keyboard_arrow_left_rounded
+                              : Icons.keyboard_arrow_right_rounded,
                           size: 35.w,
                           color: AppColor.primary6,
                         ),
@@ -355,7 +368,7 @@ class _BooksPageState extends State<BooksPage> {
                       Text(
                         AppLocalizations.of(context)!.hadiths,
                         style: TextStyle(
-                          fontFamily: Utility.getTextFamily(currentLanguage),
+                            fontFamily: Utility.getTextFamily(currentLanguage),
                             fontSize: 40.sp,
                             color: AppColor.black,
                             fontWeight: FontWeight.bold),
@@ -365,10 +378,15 @@ class _BooksPageState extends State<BooksPage> {
                         child: Text(
                           AppLocalizations.of(context)!.hadithsSubTitle,
                           style: TextStyle(
-                              fontSize: currentLanguage == Languages.EN.languageCode ?
-                              10.sp : 15.sp, color: Colors.grey,fontFamily:
-                          currentLanguage == Languages.EN.languageCode ? 'EnglishQuran'
-                              : 'Hafs'),
+                              fontSize:
+                                  currentLanguage == Languages.EN.languageCode
+                                      ? 10.sp
+                                      : 15.sp,
+                              color: Colors.grey,
+                              fontFamily:
+                                  currentLanguage == Languages.EN.languageCode
+                                      ? 'EnglishQuran'
+                                      : 'Hafs'),
                         ),
                       ),
                     ],
@@ -379,7 +397,8 @@ class _BooksPageState extends State<BooksPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                    borderRadius:
+                        BorderRadius.circular(isMobile == true ? 15.w : 10.w),
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: AppColor.white,
@@ -387,7 +406,8 @@ class _BooksPageState extends State<BooksPage> {
                           color: AppColor.black,
                           width: 1.w,
                         ),
-                        borderRadius: BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                        borderRadius: BorderRadius.circular(
+                            isMobile == true ? 15.w : 10.w),
                       ),
                       child: Container(
                         color: AppColor.white.withOpacity(0.0),
@@ -429,7 +449,6 @@ class _BooksPageState extends State<BooksPage> {
           ),
         ),
       ),
-      ]
-    );
+    ]);
   }
 }

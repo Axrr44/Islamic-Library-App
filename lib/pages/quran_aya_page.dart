@@ -45,7 +45,6 @@ class QuranAyaPage extends StatefulWidget {
 class _QuranAyaPageState extends State<QuranAyaPage> {
   late PageController _pageController;
   late List<Reciter> _reciters;
-  bool showExtraWidget = false;
   int surahIdLastRead = 0;
   List<int> listOfSurah = [];
   int verseIdLastRead = 0;
@@ -103,9 +102,6 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
 
   @override
   Widget build(BuildContext context) {
-    final quranProvider =
-        Provider.of<QuranAyaPageProvider>(context, listen: false);
-
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     String currentLanguage = Localizations.localeOf(context).languageCode;
@@ -116,150 +112,168 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
 
     return GestureDetector(
       onTap: () {
-        setState(() {
-          if (quranProvider.highlightedAyah == -1) {
-            showExtraWidget ? showExtraWidget = false : showExtraWidget = true;
-          }
-        });
+        final quranProvider =
+            Provider.of<QuranAyaPageProvider>(context, listen: false);
+        if (quranProvider.highlightedAyah == -1) {
+          quranProvider.updateExtraWidget();
+        }
         quranProvider.clearHighlight();
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         extendBody: true,
-        appBar: showExtraWidget
-            ? _appBar(isMobile, currentLanguage, width)
-            : const PreferredSize(preferredSize: Size.zero, child: SizedBox()),
-        body: PageView.builder(
-          controller: _pageController,
-          itemCount: quran.totalPagesCount,
-          itemBuilder: (context, page) {
-            return FutureBuilder<QuranData>(
-              future: fetchPageData(page + 1),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Colors.black),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData) {
-                  return const SizedBox();
-                } else {
-                  final quranData = snapshot.data!;
-                  int lastIndex = quranData.ayahs.length - 1;
-                  var lastAyah = quranData.ayahs[lastIndex];
-                  bool isCenterPage = page == 0 || page == 1;
-                  surahIdLastRead = quranData.ayahs.last.surah.number;
-                  verseIdLastRead = quranData.ayahs.last.numberInSurah;
-                  bool isFirst = true;
-                  quranData.surahs.forEach((key, value) {
-                    if (listOfSurah.length < quranData.surahs.length) {
-                      if (quranData.ayahs.first.numberInSurah == 1) {
-                        listOfSurah.add(value.number);
-                      } else {
-                        if (isFirst) {
-                          isFirst = false;
-                          return;
-                        }
-                        listOfSurah.add(value.number);
+        body: Column(
+          children: [
+            Consumer<QuranAyaPageProvider>(
+              builder: (context, quranProvider, _) {
+                return quranProvider.showExtraWidget
+                    ? _appBar(isMobile, currentLanguage, width)
+                    : const PreferredSize(
+                        preferredSize: Size.zero, child: SizedBox());
+              },
+            ),
+            _quranPages(height, currentLanguage, isPortrait),
+            Consumer<QuranAyaPageProvider>(
+              builder: (context, quranProvider, _) {
+                return quranProvider.showExtraWidget
+                    ? _bottomBar(
+                        isMobile, currentLanguage, width, quranProvider)
+                    : const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Expanded _quranPages(double height, String currentLanguage, bool isPortrait) {
+    return Expanded(
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: quran.totalPagesCount,
+        itemBuilder: (context, page) {
+          return FutureBuilder<QuranData>(
+            future: fetchPageData(page + 1),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(color: Colors.black),
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData) {
+                return const SizedBox();
+              } else {
+                final quranData = snapshot.data!;
+                int lastIndex = quranData.ayahs.length - 1;
+                var lastAyah = quranData.ayahs[lastIndex];
+                bool isCenterPage = page == 0 || page == 1;
+                surahIdLastRead = quranData.ayahs.last.surah.number;
+                verseIdLastRead = quranData.ayahs.last.numberInSurah;
+                bool isFirst = true;
+                quranData.surahs.forEach((key, value) {
+                  if (listOfSurah.length < quranData.surahs.length) {
+                    if (quranData.ayahs.first.numberInSurah == 1) {
+                      listOfSurah.add(value.number);
+                    } else {
+                      if (isFirst) {
+                        isFirst = false;
+                        return;
                       }
+                      listOfSurah.add(value.number);
                     }
-                  });
-                  return SafeArea(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        constraints: BoxConstraints(minHeight: height),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 40.h, right: 20.w, left: 20.w),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    currentLanguage == Languages.EN.languageCode
-                                        ? "Juz : ${lastAyah.juz}"
-                                        : AppData.getJuz(lastAyah.juz),
-                                    style: TextStyle(
-                                      fontSize: 15.sp,
-                                      fontFamily: currentLanguage ==
-                                              Languages.EN.languageCode
-                                          ? 'EnglishQuran'
-                                          : 'ArabicFont',
-                                    ),
+                  }
+                });
+                return SafeArea(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      constraints: BoxConstraints(minHeight: height),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 40.h, right: 20.w, left: 20.w),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  currentLanguage == Languages.EN.languageCode
+                                      ? "Juz : ${lastAyah.juz}"
+                                      : AppData.getJuz(lastAyah.juz),
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontFamily: currentLanguage ==
+                                            Languages.EN.languageCode
+                                        ? 'EnglishQuran'
+                                        : 'ArabicFont',
                                   ),
-                                  Text(
-                                    currentLanguage == Languages.EN.languageCode
-                                        ? lastAyah.surah.englishName
-                                        : quran.getSurahNameArabic(
-                                            lastAyah.surah.number),
-                                    style: TextStyle(
-                                      fontSize: 15.sp,
-                                      fontFamily: currentLanguage ==
-                                              Languages.EN.languageCode
-                                          ? 'EnglishQuran'
-                                          : 'ArabicFont',
-                                    ),
+                                ),
+                                Text(
+                                  currentLanguage == Languages.EN.languageCode
+                                      ? lastAyah.surah.englishName
+                                      : quran.getSurahNameArabic(
+                                          lastAyah.surah.number),
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontFamily: currentLanguage ==
+                                            Languages.EN.languageCode
+                                        ? 'EnglishQuran'
+                                        : 'ArabicFont',
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15.w, vertical: 15.h),
-                              child: Column(
-                                mainAxisAlignment: isCenterPage
-                                    ? MainAxisAlignment.center
-                                    : MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Consumer<QuranAyaPageProvider>(
-                                    builder: (context, quranProvider, _) {
-                                      return RichText(
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
-                                          children: buildTextSpans(
-                                              context,
-                                              quranData,
-                                              page,
-                                              currentLanguage,
-                                              isPortrait,
-                                              quranProvider),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15.w, vertical: 15.h),
+                            child: Column(
+                              mainAxisAlignment: isCenterPage
+                                  ? MainAxisAlignment.center
+                                  : MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Consumer<QuranAyaPageProvider>(
+                                  builder: (context, quranProvider, _) {
+                                    return RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        children: buildTextSpans(
+                                            context,
+                                            quranData,
+                                            page,
+                                            currentLanguage,
+                                            isPortrait,
+                                            quranProvider),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(10.h),
-                              child: Text(
-                                currentLanguage == Languages.EN.languageCode
-                                    ? (page + 1).toString()
-                                    : ArabicNumbers.convert(
-                                        (page + 1).toString()),
-                                style: TextStyle(fontSize: 15.sp),
-                              ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10.h),
+                            child: Text(
+                              currentLanguage == Languages.EN.languageCode
+                                  ? (page + 1).toString()
+                                  : ArabicNumbers.convert(
+                                      (page + 1).toString()),
+                              style: TextStyle(fontSize: 15.sp),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                }
-              },
-            );
-            setState(() {});
-          },
-        ),
-        bottomNavigationBar: showExtraWidget
-            ? _bottomBar(isMobile, currentLanguage, width, quranProvider)
-            : const SizedBox.shrink(),
+                  ),
+                );
+              }
+            },
+          );
+        },
       ),
     );
   }
@@ -323,7 +337,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                         size: 20.w,
                       )),
                   IconButton(
-                      onPressed: () async{
+                      onPressed: () async {
                         await Share.share(getDataByPage());
                       },
                       icon: Icon(
@@ -334,7 +348,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                       onPressed: () {
                         AppDataPreferences.setQuranLastRead(
                             surahIdLastRead, verseIdLastRead);
-                        ToastMessage.showMessage(AppLocalizations.of(context)!.save);
+                        ToastMessage.showMessage(
+                            AppLocalizations.of(context)!.save);
                       },
                       icon: Icon(
                         Icons.bookmark_outline_rounded,
@@ -598,7 +613,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     bool isEnglish = currentLanguage == Languages.EN.languageCode;
     String ayahText = "";
     if (isEnglish) {
-      ayahText = quran.getVerseTranslation(ayah.surah.number, ayah.numberInSurah);
+      ayahText =
+          quran.getVerseTranslation(ayah.surah.number, ayah.numberInSurah);
     } else {
       ayahText = quran.getVerse(ayah.surah.number, ayah.numberInSurah);
     }
@@ -702,13 +718,14 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                     ),
                     InkWell(
                       onTap: () {
-                        FireStoreService.addFavorite(
-                          Favorite(type: "Quran",
-                              title: isEnglish ? quran.getSurahNameEnglish(ayah.surah.number) :
-                              quran.getSurahNameArabic(ayah.surah.number),
-                              content: ayahText)
-                        );
-                        ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteIt);
+                        FireStoreService.addFavorite(Favorite(
+                            type: "Quran",
+                            title: isEnglish
+                                ? quran.getSurahNameEnglish(ayah.surah.number)
+                                : quran.getSurahNameArabic(ayah.surah.number),
+                            content: ayahText));
+                        ToastMessage.showMessage(
+                            AppLocalizations.of(context)!.favoriteIt);
                       },
                       child: ListTile(
                         leading: Text(
@@ -781,7 +798,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     String currentLanguage = Localizations.localeOf(context).languageCode;
-    final tafseerProvider = Provider.of<TafseerDialogProvider>(context, listen: false);
+    final tafseerProvider =
+        Provider.of<TafseerDialogProvider>(context, listen: false);
 
     showModalBottomSheet(
       context: context,
@@ -816,8 +834,14 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                     padding: EdgeInsets.all(20.w),
                     child: const Divider(color: Colors.grey),
                   ),
-                  _listOfTafseer(currentLanguage, tafseerProvider),
-                  SizedBox(height: 50.h,),
+                  Consumer<TafseerDialogProvider>(
+                    builder: (context, provider, _) {
+                      return _listOfTafseer(currentLanguage, tafseerProvider);
+                    },
+                  ),
+                  SizedBox(
+                    height: 50.h,
+                  ),
                   Consumer<TafseerDialogProvider>(
                     builder: (context, provider, _) {
                       return _tafseerAyah(ayah, provider);
@@ -832,9 +856,18 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     );
   }
 
-  FutureBuilder<TafseerResponse?> _tafseerAyah(Ayah ayah, TafseerDialogProvider tafseerProvider) {
+  FutureBuilder<TafseerResponse?> _tafseerAyah(
+      Ayah ayah, TafseerDialogProvider tafseerProvider) {
+    String currentLanguage = Localizations.localeOf(context).languageCode;
     return FutureBuilder(
-      future: _fetchTafseerData(ayah.surah.number, ayah.numberInSurah, tafseerProvider),
+      future: _fetchTafseerData(
+          ayah.surah.number,
+          ayah.numberInSurah,
+          currentLanguage == Languages.EN.languageCode
+              ? tafseerProvider.indexOfTafseer == 0
+                  ? 9
+                  : 10
+              : tafseerProvider.indexOfTafseer),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(
@@ -863,7 +896,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     );
   }
 
-  FutureBuilder<List<Tafseer>> _listOfTafseer(String currentLanguage, TafseerDialogProvider provider) {
+  FutureBuilder<List<Tafseer>> _listOfTafseer(
+      String currentLanguage, TafseerDialogProvider provider) {
     return FutureBuilder<List<Tafseer>>(
       future: AppData.fetchTafseerData(currentLanguage),
       builder: (context, snapshot) {
@@ -894,22 +928,24 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                   underline: Container(),
                   isExpanded: true,
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  value: provider.mufseer = tafseerList[provider.indexOfTafseer],
+                  value: provider.mufseer =
+                      tafseerList[provider.indexOfTafseer],
                   onChanged: (Tafseer? newValue) {
                     if (newValue != null) {
-                      provider.setIndexOfMufseer(tafseerList.indexOf(newValue));
                       provider.mufseer = newValue;
-                      provider.notifyListeners(); // Notify listeners to rebuild with new tafseer
+                      provider.setIndexOfMufseer(tafseerList.indexOf(newValue));
                     }
                   },
                   itemHeight: 50.h,
-                  items: tafseerList.map<DropdownMenuItem<Tafseer>>((Tafseer value) {
+                  items: tafseerList
+                      .map<DropdownMenuItem<Tafseer>>((Tafseer value) {
                     return DropdownMenuItem<Tafseer>(
                       value: value,
                       child: Center(
                         child: Text(
                           value.name,
-                          style: TextStyle(fontSize: 15.sp, color: AppColor.black),
+                          style:
+                              TextStyle(fontSize: 15.sp, color: AppColor.black),
                         ),
                       ),
                     );
@@ -930,9 +966,10 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     );
   }
 
-  Future<TafseerResponse?> _fetchTafseerData(int surahId, int verseNumber, TafseerDialogProvider provider) async {
+  Future<TafseerResponse?> _fetchTafseerData(
+      int surahId, int verseNumber, int mufseerId) async {
     final response = await http.get(Uri.parse(
-      'http://api.quran-tafseer.com/tafseer/${provider.mufseer.id}/$surahId/$verseNumber',
+      'http://api.quran-tafseer.com/tafseer/$mufseerId/$surahId/$verseNumber',
     ));
 
     if (response.statusCode == 200) {
@@ -942,6 +979,4 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
       return null;
     }
   }
-
-
 }

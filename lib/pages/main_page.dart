@@ -14,6 +14,7 @@ import '../config/app_colors.dart';
 import '../config/app_routes.dart';
 import '../models/hadith_drop_down_item.dart';
 import '../models/tafseer_books.dart';
+import '../providers/language_provider.dart';
 import '../services/app_data.dart';
 import '../services/app_data_pref.dart';
 import 'home_page.dart';
@@ -49,18 +50,14 @@ class _MainPageState extends State<MainPage> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _selectedLanguage = "English";
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _nameOfPage = AppLocalizations.of(context)!.home;
     String currentLanguage = Localizations.localeOf(context).languageCode;
     _tafseerListFuture = AppData.fetchTafseerData(currentLanguage);
     _loadSearchDialogData();
+    _loadFavoriteDialogData();
+    _loaSettingDialogData();
   }
 
   @override
@@ -126,7 +123,8 @@ class _MainPageState extends State<MainPage> {
                             setState(() {
                               _indexOfTafseer = tafseerList.indexOf(newValue!);
                               _mufseer = newValue;
-                              AppDataPreferences.setSearchPageMufseerIndex(_indexOfTafseer);
+                              AppDataPreferences.setSearchPageMufseerIndex(
+                                  _indexOfTafseer);
                               AppDataPreferences.setSearchPageMufseerId(
                                   newValue.id);
                             });
@@ -177,7 +175,20 @@ class _MainPageState extends State<MainPage> {
         AppData.getBookName(
             context, await AppDataPreferences.getSearchPageHadithId()),
         await AppDataPreferences.getSearchPageHadithId());
-    _indexOfTafseer = await AppDataPreferences.getSearchPageMufseerIndex() ;
+    _indexOfTafseer = await AppDataPreferences.getSearchPageMufseerIndex();
+  }
+
+  Future<void> _loadFavoriteDialogData() async {
+    _favoriteIsQuranChecked =
+        await AppDataPreferences.getFavoritePageQuranCheck();
+    _favoriteIsHadithChecked =
+        await AppDataPreferences.getFavoritePageHadithCheck();
+    _favoriteIsTafseerChecked =
+        await AppDataPreferences.getFavoritePageTafseerCheck();
+  }
+
+  Future<void> _loaSettingDialogData() async {
+    _selectedLanguage = await AppDataPreferences.getCurrentLanguage();
   }
 
   void _showFilterSearchDialog(String currentLanguage) {
@@ -330,7 +341,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _showFilterFavoriteDialog(String currentLanguage) {
-    final checkboxValues = Provider.of<FavoriteProvider>(context, listen: false);
+    final checkboxValues =
+        Provider.of<FavoriteProvider>(context, listen: false);
 
     showDialog(
       context: context,
@@ -354,18 +366,21 @@ class _MainPageState extends State<MainPage> {
                             style: TextStyle(
                                 fontSize: 20.sp,
                                 fontFamily:
-                                Utility.getTextFamily(currentLanguage)),
+                                    Utility.getTextFamily(currentLanguage)),
                           ),
                           Transform.scale(
                             scale: 1.w,
                             child: Checkbox(
                               value: _favoriteIsQuranChecked,
                               onChanged: (value) {
-                                AppDataPreferences.setFavoritePageQuranCheck(_favoriteIsQuranChecked);
                                 setState(() {
-                                  _favoriteIsQuranChecked = value!;
+                                  _favoriteIsQuranChecked =
+                                      !_favoriteIsQuranChecked;
                                 });
-                                checkboxValues.updateCheckboxValues(_favoriteIsQuranChecked,
+                                AppDataPreferences.setFavoritePageQuranCheck(
+                                    _favoriteIsQuranChecked);
+                                checkboxValues.updateCheckboxValues(
+                                    _favoriteIsQuranChecked,
                                     _favoriteIsHadithChecked,
                                     _favoriteIsTafseerChecked);
                               },
@@ -383,18 +398,21 @@ class _MainPageState extends State<MainPage> {
                             style: TextStyle(
                                 fontSize: 20.sp,
                                 fontFamily:
-                                Utility.getTextFamily(currentLanguage)),
+                                    Utility.getTextFamily(currentLanguage)),
                           ),
                           Transform.scale(
                             scale: 1.w,
                             child: Checkbox(
                               value: _favoriteIsHadithChecked,
                               onChanged: (value) {
-                                AppDataPreferences.setFavoritePageHadithCheck(_favoriteIsHadithChecked);
                                 setState(() {
-                                  _favoriteIsHadithChecked = value!;
+                                  _favoriteIsHadithChecked =
+                                      !_favoriteIsHadithChecked;
                                 });
-                                checkboxValues.updateCheckboxValues(_favoriteIsQuranChecked,
+                                AppDataPreferences.setFavoritePageHadithCheck(
+                                    _favoriteIsHadithChecked);
+                                checkboxValues.updateCheckboxValues(
+                                    _favoriteIsQuranChecked,
                                     _favoriteIsHadithChecked,
                                     _favoriteIsTafseerChecked);
                               },
@@ -412,18 +430,21 @@ class _MainPageState extends State<MainPage> {
                             style: TextStyle(
                                 fontSize: 20.sp,
                                 fontFamily:
-                                Utility.getTextFamily(currentLanguage)),
+                                    Utility.getTextFamily(currentLanguage)),
                           ),
                           Transform.scale(
                             scale: 1.w,
                             child: Checkbox(
                               value: _favoriteIsTafseerChecked,
                               onChanged: (value) {
-                                AppDataPreferences.setFavoritePageTafseerCheck(_favoriteIsTafseerChecked);
                                 setState(() {
-                                  _favoriteIsTafseerChecked = value!;
+                                  _favoriteIsTafseerChecked =
+                                      !_favoriteIsTafseerChecked;
                                 });
-                                checkboxValues.updateCheckboxValues(_favoriteIsQuranChecked,
+                                AppDataPreferences.setFavoritePageTafseerCheck(
+                                    _favoriteIsTafseerChecked);
+                                checkboxValues.updateCheckboxValues(
+                                    _favoriteIsQuranChecked,
                                     _favoriteIsHadithChecked,
                                     _favoriteIsTafseerChecked);
                               },
@@ -445,6 +466,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _showSettingDialog(String currentLanguage) {
+    var languageProvider =
+        Provider.of<LanguageProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) {
@@ -477,13 +500,15 @@ class _MainPageState extends State<MainPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Radio<String>(
-                          value: "English",
+                          value: "en",
                           activeColor: Colors.black,
                           groupValue: _selectedLanguage,
                           onChanged: (String? value) {
                             setState(() {
                               _selectedLanguage = value!;
                             });
+                            languageProvider.setCurrentLanguage('en');
+                            AppDataPreferences.resetSearchPreferences();
                           },
                         ),
                         Text(
@@ -492,13 +517,15 @@ class _MainPageState extends State<MainPage> {
                               TextStyle(fontSize: 15.sp, color: Colors.black),
                         ),
                         Radio<String>(
-                          value: "Arabic",
+                          value: "ar",
                           activeColor: Colors.black,
                           groupValue: _selectedLanguage,
                           onChanged: (String? value) {
                             setState(() {
                               _selectedLanguage = value!;
                             });
+                            languageProvider.setCurrentLanguage('ar');
+                            AppDataPreferences.resetSearchPreferences();
                           },
                         ),
                         Text(
@@ -516,7 +543,9 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {AuthServices.signOut(context);},
+                      onPressed: () {
+                        AuthServices.signOut(context);
+                      },
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(AppColor.black),
@@ -548,16 +577,13 @@ class _MainPageState extends State<MainPage> {
       double width, double height, int notificationCount, bool isMobile) {
     String currentLanguage = Localizations.localeOf(context).languageCode;
 
-
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        ShaderMask(
+    return Stack(alignment: Alignment.center, children: [
+      ShaderMask(
         shaderCallback: (bounds) {
           return LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.grey.withOpacity(0.1) , Colors.grey.withOpacity(0)],
+            colors: [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0)],
           ).createShader(bounds);
         },
         child: Container(
@@ -571,109 +597,113 @@ class _MainPageState extends State<MainPage> {
           height: height / 3 - 40.h,
         ),
       ),
-        Container(
-          width: width,
-          height: height / 3 - 40.h,
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: EdgeInsets.all(20.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _nameOfPage,
+      Container(
+        width: width,
+        height: height / 3 - 40.h,
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _nameOfPage,
+                    style: TextStyle(
+                        fontFamily: Utility.getTextFamily(currentLanguage),
+                        fontSize: _nameOfPage.length > 10 ? 30.sp : 40.sp,
+                        color: AppColor.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    width: width / 2,
+                    child: Text(
+                      _subTitleHeader(_nameOfPage),
                       style: TextStyle(
-                          fontFamily: Utility.getTextFamily(currentLanguage),
-                          fontSize: _nameOfPage.length > 10 ? 30.sp : 40.sp,
-                          color: AppColor.black,
-                          fontWeight: FontWeight.bold),
+                          fontSize: 15.sp,
+                          color: Colors.grey,
+                          fontFamily:
+                              currentLanguage == Languages.EN.languageCode
+                                  ? 'EnglishQuran'
+                                  : 'Hafs'),
                     ),
-                    SizedBox(
-                      width: width / 2,
-                      child: Text(
-                        _subTitleHeader(_nameOfPage),
-                        style: TextStyle(fontSize: 15.sp, color: Colors.grey,fontFamily:
-                        currentLanguage == Languages.EN.languageCode ? 'EnglishQuran'
-                        : 'Hafs'),
-                      ),
-                    ),
-                  ],
-                ),
-                _nameOfPage != AppLocalizations.of(context)!.home
-                    ? Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          isMobile == true ? 15.w : 10.w),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
-                          border: Border.all(
-                            color: AppColor.black, // Set the border color
-                            width: 1.w, // Set the border width
-                          ),
-                          borderRadius: BorderRadius.circular(isMobile == true
-                              ? 15.w
-                              : 10.w), // Match the ClipRRect border radius
-                        ),
-                        child: Container(
-                          child: IconButton(
-                            onPressed: () {
-                              _actionOfHeaderButton();
-                            },
-                            icon: Icon(
-                              _iconHeader(_nameOfPage),
-                              size: 35.w,
-                              color: AppColor.black,
+                  ),
+                ],
+              ),
+              _nameOfPage != AppLocalizations.of(context)!.home
+                  ? Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                              isMobile == true ? 15.w : 10.w),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: AppColor.white,
+                              border: Border.all(
+                                color: AppColor.black, // Set the border color
+                                width: 1.w, // Set the border width
+                              ),
+                              borderRadius: BorderRadius.circular(isMobile ==
+                                      true
+                                  ? 15.w
+                                  : 10.w), // Match the ClipRRect border radius
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (notificationCount > 0 &&
-                        _nameOfPage == AppLocalizations.of(context)!.home)
-                      Positioned(
-                        right: 8.w,
-                        top: 8.w,
-                        child: Container(
-                          padding: EdgeInsets.all(4.w),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                          constraints: BoxConstraints(
-                            minWidth: 16.w,
-                            minHeight: 16.w,
-                          ),
-                          child: Center(
-                            child: Text(
-                              notificationCount.toString(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10.sp,
+                            child: Container(
+                              child: IconButton(
+                                onPressed: () {
+                                  _actionOfHeaderButton();
+                                },
+                                icon: Icon(
+                                  _iconHeader(_nameOfPage),
+                                  size: 35.w,
+                                  color: AppColor.black,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
-                )
-                    : Container()
-              ],
-            ),
+                        if (notificationCount > 0 &&
+                            _nameOfPage == AppLocalizations.of(context)!.home)
+                          Positioned(
+                            right: 8.w,
+                            top: 8.w,
+                            child: Container(
+                              padding: EdgeInsets.all(4.w),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: 16.w,
+                                minHeight: 16.w,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  notificationCount.toString(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    )
+                  : Container()
+            ],
           ),
-        )
-      ]
-    );
+        ),
+      )
+    ]);
   }
 
   void _actionOfHeaderButton() {
     String currentLanguage = Localizations.localeOf(context).languageCode;
-   if (_nameOfPage == AppLocalizations.of(context)!.search) {
+    if (_nameOfPage == AppLocalizations.of(context)!.search) {
       _showFilterSearchDialog(currentLanguage);
     } else if (_nameOfPage == AppLocalizations.of(context)!.favorites) {
       _showFilterFavoriteDialog(currentLanguage);
@@ -717,7 +747,7 @@ class _MainPageState extends State<MainPage> {
     }
     return "";
   }
-  
+
   IconData _iconHeader(String currentPage) {
     switch (currentPage) {
       case "Home":

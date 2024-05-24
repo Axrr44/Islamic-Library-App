@@ -1,3 +1,6 @@
+import 'package:freelancer/components/view_pager.dart';
+import 'package:freelancer/pages/splash_page.dart';
+
 import '../pages/books_page.dart';
 import '../pages/main_page.dart';
 import '../pages/quran_sura_page.dart';
@@ -18,6 +21,8 @@ class AppRoutes{
   static const QURAN_AYA_ROUTES = "/quran-aya-page";
   static const BOOKS_ROUTES = "/books-page";
   static const TAFSEER_ROUTES = "/tafseer-page";
+  static const VIEW_PAGER_ROUTES = "/view-pager";
+  static const SPLASH_SCREEN_REOUTS = "/splash-screen";
 
   static final ROUTES = {SGIN_IN_ROUTES: (context) => SignIn(),
     SGIN_UP_ROUTES: (context) => SignUp(),
@@ -26,6 +31,8 @@ class AppRoutes{
     QURAN_SURA_ROUTES: (context) => const QuranSuraPage(),
     BOOKS_ROUTES: (context) => const BooksPage(),
     TAFSEER_ROUTES: (context) => const TafseerPage(),
+    VIEW_PAGER_ROUTES: (context) => const ViewPager(),
+    SPLASH_SCREEN_REOUTS: (context) => const SplashScreenPage(),
   };
 
 

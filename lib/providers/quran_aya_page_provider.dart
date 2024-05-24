@@ -12,17 +12,25 @@ import 'package:flutter/material.dart';
 class QuranAyaPageProvider extends ChangeNotifier {
   double _currentSliderValue = 0.0;
   Reciter? _selectedReciter;
-  int _highlightedAyah = -1; // Use -1 to indicate no ayah is highlighted
+  int _highlightedAyah = -1;
+  bool _showExtraWidget = false;
 
   double get currentSliderValue => _currentSliderValue;
 
   Reciter? get selectedReciter => _selectedReciter;
 
   int get highlightedAyah => _highlightedAyah;
+  bool get showExtraWidget => _showExtraWidget;
 
 
   void updateSliderValue(double newValue) {
     _currentSliderValue = newValue;
+    notifyListeners();
+  }
+
+  void updateExtraWidget()
+  {
+    _showExtraWidget = !_showExtraWidget;
     notifyListeners();
   }
 

@@ -104,7 +104,7 @@ class SignIn extends StatelessWidget {
                   height: width / 7,
                   child: ElevatedButton(
                     onPressed: () {
-                      AuthServices.signInWithGoogle();
+                      AuthServices.signInWithGoogle(context);
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(

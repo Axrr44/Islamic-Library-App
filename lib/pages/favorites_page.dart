@@ -24,87 +24,94 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  late Future<List<Favorite>> _favoritesFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _favoritesFuture = _loadFavorites();
-  }
-
-  Future<List<Favorite>> _loadFavorites() async {
-    final checkboxValues =
-    Provider.of<FavoriteProvider>(context, listen: false);
-
-    bool isQuranChecked = await AppDataPreferences.getFavoritePageQuranCheck();
-    bool isHadithChecked =
-    await AppDataPreferences.getFavoritePageHadithCheck();
-    bool isTafseerChecked =
-    await AppDataPreferences.getFavoritePageTafseerCheck();
-
-    List<String> ignoreTypes = [];
-    if (!isQuranChecked) ignoreTypes.add('Quran');
-    if (!isHadithChecked) ignoreTypes.add('Hadith');
-    if (!isTafseerChecked) ignoreTypes.add('Tafseer');
-
-    List<Favorite> favorites =
-    await FireStoreService.getFavoritesIgnoringTypes(ignoreTypes);
-
-    return favorites;
-  }
-
   @override
   Widget build(BuildContext context) {
     String currentLanguage = Localizations.localeOf(context).languageCode;
 
-    return FutureBuilder<List<Favorite>>(
-      future: _favoritesFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.black,
-              ));
-        }
-        else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-        else if (snapshot.hasData && snapshot.data!.isEmpty) {
-          return const Center(
-              child: Text(
-                'No favorites found.',
-                textAlign: TextAlign.center,
-              ));
-        }
-        else {
-          List<Favorite> favorites = snapshot.data ?? [];
-          return SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: ListView.separated(
-              itemBuilder: (context, index) {
-                if (index < favorites.length) {
-                  return _listViewBuilder(context, currentLanguage,
-                      favorites[index], index);
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-              separatorBuilder: (context, index) {
-                if (index <= favorites.length) {
-                  return _listViewSeparator(favorites[index]);
-                } else {
-                  return SizedBox.shrink();
-                }
-              },
-              itemCount: favorites.length + 1,
-            ),
-          );
-        }
+    return Consumer<FavoriteProvider>(
+      builder: (context, favoriteProvider, child) {
+        return FutureBuilder<List<Favorite>>(
+          future: favoriteProvider.loadFavorites(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.black,
+                ),
+              );
+            }
+            else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            else if (snapshot.hasData && snapshot.data!.isEmpty) {
+              return Center(
+                child: Text(
+                  'No favorites found.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20.sp),
+                ),
+              );
+            } else {
+              List<Favorite> favorites = snapshot.data ?? [];
+              return SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 20.w, right: 20.w, bottom: 30.h),
+                  child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      if (index < favorites.length) {
+                        return _listViewBuilder(
+                            context, currentLanguage, favorites[index], index);
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                    separatorBuilder: (context, index) {
+                      return _listViewSeparator(favorites[index],currentLanguage);
+                    },
+                    itemCount: favorites.length + 1,
+                  ),
+                ),
+              );
+            }
+          },
+        );
       },
     );
   }
 
-  Widget _listViewSeparator(Favorite favorite) {
+  Widget _listViewSeparator(Favorite favorite, String currentLanguage) {
+    List<String> tafseerContent = [];
+    if (favorite.type == 'Tafseer') {
+      tafseerContent = favorite.content.split('Split');
+      return Card(
+        color: AppColor.white,
+        child: Padding(
+          padding: EdgeInsets.all(10.w),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 5.h,
+              ),
+              Text(
+                tafseerContent[0],
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20.sp,fontFamily: currentLanguage == Languages.EN.languageCode
+                ? 'EnglishQuran' : 'Hafs'),
+              ),
+              separateTafseerContent(),
+              Text(
+                tafseerContent[1],
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15.sp),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Card(
       color: AppColor.white,
       child: Padding(
@@ -117,7 +124,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
             Text(
               favorite.content,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20.sp),
+              style: TextStyle(fontSize: 20.sp,fontFamily: currentLanguage ==
+              Languages.EN.languageCode ? favorite.type == 'Quran' ?
+              'EnglishQuran' : 'Custom' : favorite.type == 'Hafs' ?
+              'EnglishQuran' : 'ArabicFont'),
             ),
           ],
         ),
@@ -131,15 +141,21 @@ class _FavoritesPageState extends State<FavoritesPage> {
     final bool isMobile = shortestSide < 600;
     final bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    return Card(
-      color: AppColor.black,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 10.w,
-          vertical: isPortrait ? 10.h : 20.h,
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 15.h),
+      height: isPortrait
+          ? isMobile
+              ? 50.h
+              : 60.h
+          : isMobile
+              ? 50.w
+              : 60.w,
+      child: Card(
+        color: AppColor.black,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: 10.w, vertical: isPortrait ? 10.h : 20.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -150,11 +166,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
                         ? (index + 1).toString()
                         : ArabicNumbers.convert(index + 1),
                     style: TextStyle(
-                      fontFamily: Utility.getTextFamily(currentLanguage),
-                      fontSize: 15.sp,
-                      color: AppColor.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                        fontFamily: Utility.getTextFamily(currentLanguage),
+                        fontSize: 15.sp,
+                        color: AppColor.white,
+                        fontWeight: FontWeight.w600),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -163,29 +178,59 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       color: AppColor.white,
                     ),
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        Text(
-                          favorite.title,
-                          style: TextStyle(
-                            fontFamily: Utility.getTextFamily(currentLanguage),
-                            fontSize: 15.sp,
-                            color: AppColor.white,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  Row(
+                    children: [
+                      Text(
+                        favorite.title,
+                        style: TextStyle(
+                          fontFamily: Utility.getTextFamily(currentLanguage),
+                          fontSize: favorite.title.length >= 25 ? 7.sp : 15.sp,
+                          overflow: TextOverflow.ellipsis,
+                          color: AppColor.white,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              _popUpMenu(context, favorite),
+              _popUpMenu(context, favorite)
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget separateTafseerContent() {
+    return Column(
+      children: [
+        SizedBox(
+          height: 20.h,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+                child: Divider(
+              thickness: 2.h,
+              color: AppColor.black,
+            )),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Text(AppLocalizations.of(context)!.fseer),
+            ),
+            Expanded(
+                child: Divider(
+              thickness: 2.h,
+              color: AppColor.black,
+            )),
+          ],
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+      ],
     );
   }
 
@@ -234,7 +279,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       Text(
                         AppLocalizations.of(context)!.copy,
                         style:
-                        TextStyle(fontSize: 15.sp, color: AppColor.black),
+                            TextStyle(fontSize: 15.sp, color: AppColor.black),
                       ),
                     ],
                   ),
@@ -259,7 +304,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       Text(
                         AppLocalizations.of(context)!.share,
                         style:
-                        TextStyle(fontSize: 15.sp, color: AppColor.black),
+                            TextStyle(fontSize: 15.sp, color: AppColor.black),
                       ),
                     ],
                   ),

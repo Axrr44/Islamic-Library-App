@@ -116,60 +116,58 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
     if (index < quran.getVerseCount(widget.surahId)) {
       return Container(
         margin: EdgeInsets.symmetric(vertical: 15.h),
-        height: isPortrait == true
-            ? isMobile == true
-                ? 50.h
-                : 60.h
-            : isMobile == true
-                ? 50.w
-                : 60.w,
+        height: isPortrait
+            ? isMobile
+            ? 50.h
+            : 60.h
+            : isMobile
+            ? 50.w
+            : 60.w,
         child: Card(
           color: AppColor.black,
           child: Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: 10.w, vertical: isPortrait == true ? 10.h : 20.h),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        currentLanguage == Languages.EN.languageCode
-                            ? (index + 1).toString()
-                            : ArabicNumbers.convert((index + 1).toString()),
-                        style: TextStyle(
-                            fontSize: 15.sp,
-                            color: AppColor.white,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5.w),
-                        child: VerticalDivider(
-                          thickness: 3.w,
+                horizontal: 10.w, vertical: isPortrait ? 10.h : 20.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      currentLanguage == Languages.EN.languageCode
+                          ? (index + 1).toString()
+                          : ArabicNumbers.convert((index + 1).toString()),
+                      style: TextStyle(
+                          fontSize: 15.sp,
                           color: AppColor.white,
-                        ),
+                          fontWeight: FontWeight.w600),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w),
+                      child: VerticalDivider(
+                        thickness: 3.w,
+                        color: AppColor.white,
                       ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            Text(
-                              widget.mufseer!.name,
-                              style: TextStyle(
-                                  fontSize: 15.sp,
-                                  color: AppColor.white,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          widget.mufseer!.name,
+                          style: TextStyle(
+                            fontSize: widget.mufseer!.name.length >= 25
+                                ? 7.sp
+                                : 15.sp,
+                            overflow: TextOverflow.ellipsis,
+                            color: AppColor.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  _popUpMenu(context, index + 1, index, currentLanguage)
-                ],
-              ),
+                      ],
+                    ),
+                  ],
+                ),
+                _popUpMenu(context, index + 1, index, currentLanguage)
+              ],
             ),
           ),
         ),
@@ -178,6 +176,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
       return Container();
     }
   }
+
 
   void _scrollToIndexIfNeeded(BuildContext context) {
     if (widget.indexOfScrollable != null) {
@@ -372,7 +371,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                     FireStoreService.addFavorite(Favorite(
                         type: "Tafseer",
                         title: widget.mufseer!.name,
-                        content: tafseerText));
+                        content: "${verseText}Split$tafseerText"));
                     ToastMessage.showMessage(
                         AppLocalizations.of(context)!.favoriteIt);
                   },
