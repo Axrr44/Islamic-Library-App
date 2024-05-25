@@ -15,19 +15,11 @@ class AppDataPreferences {
     _prefs ??= await SharedPreferences.getInstance();
   }
 
-  static Future<void> setSearchPageQuranCheck(bool value) async {
-    await _initPrefs();
-    await _prefs?.setBool("Search-QuranCheckBox", value);
-  }
 
-  static Future<void> setSearchPageHadithsCheck(bool value) async {
-    await _initPrefs();
-    await _prefs?.setBool("Search-HadithsCheckBox", value);
-  }
 
-  static Future<void> setSearchPageTafseerCheck(bool value) async {
+  static Future<void> setFilterSearch(int value) async {
     await _initPrefs();
-    await _prefs?.setBool("Search-TafseerCheckBox", value);
+    await _prefs?.setInt("Search-Filter", value);
   }
 
   static Future<void> setSearchPageMufseerId(int value) async {
@@ -50,19 +42,9 @@ class AppDataPreferences {
     await _prefs?.setInt("Search-HadithId", value);
   }
 
-  static Future<bool> getSearchPageQuranCheck() async {
+  static Future<int?> getFilterSearch() async {
     await _initPrefs();
-    return _prefs?.getBool("Search-QuranCheckBox") ?? true;
-  }
-
-  static Future<bool> getSearchPageHadithsCheck() async {
-    await _initPrefs();
-    return _prefs?.getBool("Search-HadithsCheckBox") ?? true;
-  }
-
-  static Future<bool> getSearchPageTafseerCheck() async {
-    await _initPrefs();
-    return _prefs?.getBool("Search-TafseerCheckBox") ?? true;
+    return _prefs?.getInt("Search-Filter") ?? 0;
   }
 
   static Future<int> getSearchPageMufseerId(String currentLanguage) async {

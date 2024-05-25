@@ -24,11 +24,12 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (BuildContext context,
           AsyncSnapshot<Map<String, dynamic>?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error fetching user information'));
+          return const Center(child: CircularProgressIndicator(color : Colors.black));
+        }
+        else if (snapshot.hasError) {
+          return const Center(child: Text('Error fetching user information'));
         } else if (!snapshot.hasData || snapshot.data == null) {
-          return Center(child: Text('No user information available'));
+          return const Center(child: Text('No user information available'));
         } else {
           final userInfo = snapshot.data!;
           return Material(
@@ -39,14 +40,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   SizedBox(
                     height: 15.h,
-                    child: Divider(color: Colors.grey),
+                    child: const Divider(color: Colors.grey),
                   ),
-                  Container(
+                  SizedBox(
                     width: width,
                     child: Padding(
                       padding: EdgeInsets.all(5.w),
                       child: ListTile(
-                        leading: Icon(Icons.person_rounded),
+                        leading: const Icon(Icons.person_rounded),
                         title: Text(
                           "${AppLocalizations.of(context)!.fullName} : ${userInfo['name']}",
                           style: TextStyle(
@@ -61,14 +62,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   SizedBox(
                     height: 15.h,
-                    child: Divider(color: Colors.grey),
+                    child: const Divider(color: Colors.grey),
                   ),
-                  Container(
+                  SizedBox(
                     width: width,
                     child: Padding(
                       padding: EdgeInsets.all(5.w),
                       child: ListTile(
-                        leading: Icon(Icons.email),
+                        leading: const Icon(Icons.email),
                         title: Text(
                           "${AppLocalizations.of(context)!.email} : ${userInfo['email']}",
                           style: TextStyle(
@@ -83,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   SizedBox(
                     height: 15.h,
-                    child: Divider(color: Colors.grey),
+                    child: const Divider(color: Colors.grey),
                   ),
                 ],
               ),

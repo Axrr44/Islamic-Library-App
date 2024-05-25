@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -171,20 +170,27 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                 bool isCenterPage = page == 0 || page == 1;
                 surahIdLastRead = quranData.ayahs.last.surah.number;
                 verseIdLastRead = quranData.ayahs.last.numberInSurah;
+
+                listOfSurah.clear();
                 bool isFirst = true;
-                quranData.surahs.forEach((key, value) {
-                  if (listOfSurah.length < quranData.surahs.length) {
+                for (var entry in quranData.surahs.entries) {
+                  var key = entry.key;
+                  var value = entry.value;
+                  if (!listOfSurah.contains(value.number)) {
                     if (quranData.ayahs.first.numberInSurah == 1) {
                       listOfSurah.add(value.number);
                     } else {
-                      if (isFirst) {
-                        isFirst = false;
-                        return;
+                      if (quranData.surahs.length >= 2) {
+                        if (isFirst) {
+                          isFirst = false;
+                          continue; // Skip this iteration
+                        }
                       }
                       listOfSurah.add(value.number);
                     }
                   }
-                });
+                }
+
                 return SafeArea(
                   child: SingleChildScrollView(
                     child: Container(
@@ -512,12 +518,15 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                 color: Colors.black,
                 height: 1.5.h,
                 backgroundColor:
-                    ayah.numberInSurah == quranProvider.highlightedAyah
+                    (ayah.numberInSurah == quranProvider.highlightedAyah) &&
+                            (ayah.surah.number ==
+                                quranProvider.ayahHighlightedInSurah)
                         ? AppColor.primary7
                         : Colors.transparent),
             recognizer: LongPressGestureRecognizer()
               ..onLongPress = () {
-                quranProvider.updateHighlightAyah(ayah.numberInSurah);
+                quranProvider.updateHighlightAyah(
+                    ayah.numberInSurah, ayah.surah.number);
                 _onLongPressDialog(ayah);
               }),
       );
@@ -526,11 +535,14 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
       spans.add(TextSpan(
           text: currentLanguage == Languages.EN.languageCode
               ? "\uFD3E${ayah.numberInSurah}\uFD3F"
-              : "${ArabicNumbers.convert(ayah.numberInSurah)}",
+              : ArabicNumbers.convert(ayah.numberInSurah),
           style: TextStyle(
+              color: Colors.black,
               fontSize:
                   currentLanguage == Languages.EN.languageCode ? 20.sp : 30.sp,
-              fontFamily: "Hafs",
+              fontFamily: currentLanguage == Languages.EN.languageCode
+                  ? 'EnglishQuran'
+                  : 'Hafs',
               fontWeight: currentLanguage == Languages.EN.languageCode
                   ? FontWeight.normal
                   : FontWeight.bold)));
@@ -760,7 +772,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
       path = quranProvider.selectedReciter!.moshaf[1].server;
     }
     if (quranProvider.selectedReciter != null) {
-      String audioUrl = "${path}${Utility.formatNumber(surahId)}.mp3";
+      String audioUrl = "$path${Utility.formatNumber(surahId)}.mp3";
       try {
         await audioPlayer.play(UrlSource(audioUrl));
       } catch (e) {
@@ -867,7 +879,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
               ? tafseerProvider.indexOfTafseer == 0
                   ? 9
                   : 10
-              : tafseerProvider.indexOfTafseer),
+              : tafseerProvider.mufseer.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(
@@ -886,6 +898,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
           } else {
             return Center(
               child: Text(
+                textAlign: TextAlign.center,
                 'No Tafseer data available',
                 style: TextStyle(fontSize: 30.sp),
               ),
@@ -905,9 +918,11 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
           return const CircularProgressIndicator(
             color: AppColor.primary1,
           );
-        } else if (snapshot.hasError) {
+        }
+        else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
-        } else {
+        }
+        else {
           List<Tafseer>? tafseerList = snapshot.data;
           if (tafseerList != null && tafseerList.isNotEmpty) {
             return Container(
@@ -928,8 +943,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                   underline: Container(),
                   isExpanded: true,
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  value: provider.mufseer =
-                      tafseerList[provider.indexOfTafseer],
+                  value: provider.mufseer = tafseerList[provider.indexOfTafseer],
                   onChanged: (Tafseer? newValue) {
                     if (newValue != null) {
                       provider.mufseer = newValue;

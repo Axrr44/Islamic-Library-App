@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:freelancer/services/app_data_pref.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageProvider with ChangeNotifier {
   String _currentLanguage = 'en';

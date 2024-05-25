@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/pages/favorites_page.dart';
 import 'package:freelancer/pages/profile_page.dart';
 import 'package:freelancer/pages/search_page.dart';
 import 'package:freelancer/providers/favorite_provider.dart';
+import 'package:freelancer/providers/main_page_provider.dart';
+import 'package:freelancer/services/admob_service.dart';
 import 'package:freelancer/services/authentication.dart';
 import 'package:freelancer/utilities/utility.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import '../config/app_colors.dart';
-import '../config/app_routes.dart';
 import '../models/hadith_drop_down_item.dart';
 import '../models/tafseer_books.dart';
 import '../providers/language_provider.dart';
@@ -28,16 +31,15 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  BannerAd? _bannerAd;
+  InterstitialAd? _interstitialAd;
   late String _selectedLanguage;
+  late int _selectedFilterSearch;
   late IndexDropdownItem _selectedHadith;
   int _currentPage = 0;
-  late String _nameOfPage;
   late Future<List<Tafseer>> _tafseerListFuture;
   Tafseer _mufseer = Tafseer.empty();
   late int _indexOfTafseer = 0;
-  late bool _searchIsQuranChecked;
-  late bool _searchIsHadithChecked;
-  late bool _searchIsTafseerChecked;
   late bool _favoriteIsQuranChecked;
   late bool _favoriteIsHadithChecked;
   late bool _favoriteIsTafseerChecked;
@@ -50,15 +52,32 @@ class _MainPageState extends State<MainPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _createBannerAd();
+    _createInterstitialAd();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _nameOfPage = AppLocalizations.of(context)!.home;
-    String currentLanguage = Localizations.localeOf(context).languageCode;
-    _tafseerListFuture = AppData.fetchTafseerData(currentLanguage);
-    _loadSearchDialogData();
-    _loadFavoriteDialogData();
-    _loaSettingDialogData();
+
+    // Use Future.delayed to schedule the code to run after the build phase
+    Future.delayed(Duration.zero, () {
+      String currentLanguage = Localizations.localeOf(context).languageCode;
+      var mainProvider = Provider.of<MainPageProvider>(context, listen: false);
+      if (mainProvider.currentPageName == "Home" || mainProvider.currentPageName == "الرئيسية") {
+        mainProvider.setCurrentPageName(AppLocalizations.of(context)!.home);
+      } else if (mainProvider.currentPageName == AppLocalizations.of(context)!.search) {
+        mainProvider.setCurrentPageName(AppLocalizations.of(context)!.search);
+      }
+      _tafseerListFuture = AppData.fetchTafseerData(currentLanguage);
+      _loadSearchDialogData();
+      _loadFavoriteDialogData();
+      _loaSettingDialogData();
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -69,19 +88,17 @@ class _MainPageState extends State<MainPage> {
     final bool isMobile = shortestSide < 600;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _header(width, height, notificationCount, isMobile),
-            Container(
-              alignment: Alignment.center,
-              child: pages[_currentPage],
-            ),
-          ],
-        ),
+      body: Column(
+        children: [
+          _header(width, height, notificationCount, isMobile),
+          Expanded(
+            child: pages[_currentPage],
+          ),
+        ],
       ),
       bottomNavigationBar: _bottomNavigation(),
     );
+
   }
 
   FutureBuilder<List<Tafseer>> _listOfTafseer() {
@@ -117,7 +134,7 @@ class _MainPageState extends State<MainPage> {
                     isExpanded: true,
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
                     value: _mufseer = tafseerList[_indexOfTafseer],
-                    onChanged: !_searchIsTafseerChecked
+                    onChanged: _selectedFilterSearch != 2
                         ? null
                         : (Tafseer? newValue) {
                             setState(() {
@@ -139,7 +156,7 @@ class _MainPageState extends State<MainPage> {
                               value.name.toString(),
                               style: TextStyle(
                                   fontSize: 15.sp,
-                                  color: _searchIsTafseerChecked
+                                  color: _selectedFilterSearch == 2
                                       ? AppColor.black
                                       : Colors.grey,
                                   fontWeight: FontWeight.bold),
@@ -166,11 +183,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _loadSearchDialogData() async {
-    _searchIsQuranChecked = await AppDataPreferences.getSearchPageQuranCheck();
-    _searchIsHadithChecked =
-        await AppDataPreferences.getSearchPageHadithsCheck();
-    _searchIsTafseerChecked =
-        await AppDataPreferences.getSearchPageTafseerCheck();
+    _selectedFilterSearch = (await AppDataPreferences.getFilterSearch())!;
     _selectedHadith = IndexDropdownItem(
         AppData.getBookName(
             context, await AppDataPreferences.getSearchPageHadithId()),
@@ -213,23 +226,19 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily:
-                                  Utility.getTextFamily(currentLanguage)),
+                              Utility.getTextFamily(currentLanguage)),
                         ),
-                        Transform.scale(
-                          scale: 1.w,
-                          child: Checkbox(
-                            value: _searchIsQuranChecked,
-                            onChanged: (value) {
-                              setState(() {
-                                _searchIsQuranChecked = value!;
-                                AppDataPreferences.setSearchPageQuranCheck(
-                                    _searchIsQuranChecked);
-                              });
-                            },
-                            activeColor: AppColor.black,
-                            checkColor: AppColor.white,
-                          ),
-                        )
+                        Radio(
+                          value: 0,
+                          groupValue: _selectedFilterSearch,
+                          onChanged: (value) {
+                            setState(() {
+                              AppDataPreferences.setFilterSearch(value!);
+                              _selectedFilterSearch = value;
+                            });
+                          },
+                          activeColor: AppColor.black,
+                        ),
                       ],
                     ),
                     Row(
@@ -240,23 +249,19 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily:
-                                  Utility.getTextFamily(currentLanguage)),
+                              Utility.getTextFamily(currentLanguage)),
                         ),
-                        Transform.scale(
-                          scale: 1.w,
-                          child: Checkbox(
-                            value: _searchIsHadithChecked,
-                            onChanged: (value) {
-                              setState(() {
-                                _searchIsHadithChecked = value!;
-                                AppDataPreferences.setSearchPageHadithsCheck(
-                                    _searchIsHadithChecked);
-                              });
-                            },
-                            activeColor: AppColor.black,
-                            checkColor: AppColor.white,
-                          ),
-                        )
+                        Radio(
+                          value: 1,
+                          groupValue: _selectedFilterSearch,
+                          onChanged: (value) {
+                            setState(() {
+                              AppDataPreferences.setFilterSearch(value!);
+                              _selectedFilterSearch = value;
+                            });
+                          },
+                          activeColor: AppColor.black,
+                        ),
                       ],
                     ),
                     Container(
@@ -273,30 +278,30 @@ class _MainPageState extends State<MainPage> {
                           underline: Container(),
                           itemHeight: 50.h,
                           isExpanded: true,
-                          onChanged: !_searchIsHadithChecked
+                          onChanged: _selectedFilterSearch != 1
                               ? null
                               : (IndexDropdownItem? newValue) {
-                                  setState(() {
-                                    _selectedHadith = newValue!;
-                                    AppDataPreferences.setSearchPageHadithId(
-                                        newValue.index);
-                                  });
-                                },
+                            setState(() {
+                              _selectedHadith = newValue!;
+                              AppDataPreferences.setSearchPageHadithId(
+                                  newValue.index);
+                            });
+                          },
                           items: List.generate(13, (index) {
                             return DropdownMenuItem<IndexDropdownItem>(
                               value: IndexDropdownItem(
                                   AppData.getBookName(context, index), index),
                               child: Center(
                                   child: Text(
-                                textAlign: TextAlign.center,
-                                AppData.getBookName(context, index),
-                                style: TextStyle(
-                                    fontSize: 15.sp,
-                                    color: _searchIsHadithChecked
-                                        ? Colors.black
-                                        : Colors.grey,
-                                    fontWeight: FontWeight.bold),
-                              )),
+                                    textAlign: TextAlign.center,
+                                    AppData.getBookName(context, index),
+                                    style: TextStyle(
+                                        fontSize: 15.sp,
+                                        color: _selectedFilterSearch == 1
+                                            ? Colors.black
+                                            : Colors.grey,
+                                        fontWeight: FontWeight.bold),
+                                  )),
                             );
                           }),
                         ),
@@ -310,23 +315,19 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily:
-                                  Utility.getTextFamily(currentLanguage)),
+                              Utility.getTextFamily(currentLanguage)),
                         ),
-                        Transform.scale(
-                          scale: 1.w,
-                          child: Checkbox(
-                            value: _searchIsTafseerChecked,
-                            onChanged: (value) {
-                              setState(() {
-                                _searchIsTafseerChecked = value!;
-                                AppDataPreferences.setSearchPageTafseerCheck(
-                                    _searchIsTafseerChecked);
-                              });
-                            },
-                            activeColor: AppColor.black,
-                            checkColor: AppColor.white,
-                          ),
-                        )
+                        Radio(
+                          value: 2, // Unique value for Tafseer Radio
+                          groupValue: _selectedFilterSearch,
+                          onChanged: (value) {
+                            setState(() {
+                              AppDataPreferences.setFilterSearch(value!);
+                              _selectedFilterSearch = value;
+                            });
+                          },
+                          activeColor: AppColor.black,
+                        ),
                       ],
                     ),
                     _listOfTafseer(),
@@ -509,6 +510,7 @@ class _MainPageState extends State<MainPage> {
                             });
                             languageProvider.setCurrentLanguage('en');
                             AppDataPreferences.resetSearchPreferences();
+                            Phoenix.rebirth(context);
                           },
                         ),
                         Text(
@@ -526,6 +528,7 @@ class _MainPageState extends State<MainPage> {
                             });
                             languageProvider.setCurrentLanguage('ar');
                             AppDataPreferences.resetSearchPreferences();
+                            Phoenix.rebirth(context);
                           },
                         ),
                         Text(
@@ -576,138 +579,167 @@ class _MainPageState extends State<MainPage> {
   Widget _header(
       double width, double height, int notificationCount, bool isMobile) {
     String currentLanguage = Localizations.localeOf(context).languageCode;
-
-    return Stack(alignment: Alignment.center, children: [
-      ShaderMask(
-        shaderCallback: (bounds) {
-          return LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0)],
-          ).createShader(bounds);
-        },
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/islamic_pattern_2.png"),
-              fit: BoxFit.cover,
+    return Consumer<MainPageProvider>(builder: (context, mainProvider, _) {
+      return Stack(
+        children: [
+          // Background Image with Gradient Overlay
+          ShaderMask(
+            shaderCallback: (bounds) {
+              return LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.grey.withOpacity(0.1),
+                  Colors.grey.withOpacity(0)
+                ],
+              ).createShader(bounds);
+            },
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/islamic_pattern_2.png"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              width: width,
+              height: height / 3 - 40.h,
             ),
           ),
-          width: width,
-          height: height / 3 - 40.h,
-        ),
-      ),
-      Container(
-        width: width,
-        height: height / 3 - 40.h,
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.all(20.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _nameOfPage,
-                    style: TextStyle(
-                        fontFamily: Utility.getTextFamily(currentLanguage),
-                        fontSize: _nameOfPage.length > 10 ? 30.sp : 40.sp,
-                        color: AppColor.black,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    width: width / 2,
-                    child: Text(
-                      _subTitleHeader(_nameOfPage),
-                      style: TextStyle(
-                          fontSize: 15.sp,
-                          color: Colors.grey,
-                          fontFamily:
-                              currentLanguage == Languages.EN.languageCode
-                                  ? 'EnglishQuran'
-                                  : 'Hafs'),
+          // Conditional Banner Ad
+          if (mainProvider.currentPageName ==
+              AppLocalizations.of(context)!.home)
+            Positioned(
+              top: 0, // Set to top of the screen
+              left: 0,
+              right: 0,
+              child: _bannerAd == null
+                  ? const SizedBox.shrink()
+                  : SizedBox(
+                      width: width,
+                      height: _bannerAd!.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd!),
                     ),
-                  ),
-                ],
-              ),
-              _nameOfPage != AppLocalizations.of(context)!.home
-                  ? Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                              isMobile == true ? 15.w : 10.w),
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: AppColor.white,
-                              border: Border.all(
-                                color: AppColor.black, // Set the border color
-                                width: 1.w, // Set the border width
-                              ),
-                              borderRadius: BorderRadius.circular(isMobile ==
-                                      true
-                                  ? 15.w
-                                  : 10.w), // Match the ClipRRect border radius
-                            ),
-                            child: Container(
-                              child: IconButton(
-                                onPressed: () {
-                                  _actionOfHeaderButton();
-                                },
-                                icon: Icon(
-                                  _iconHeader(_nameOfPage),
-                                  size: 35.w,
-                                  color: AppColor.black,
-                                ),
-                              ),
-                            ),
+            ),
+          // Header Content
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.all(20.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        mainProvider.currentPageName,
+                        style: TextStyle(
+                          fontFamily: Utility.getTextFamily(currentLanguage),
+                          fontSize: mainProvider.currentPageName.length > 10
+                              ? 30.sp
+                              : 40.sp,
+                          color: AppColor.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        width: width / 2,
+                        child: Text(
+                          _subTitleHeader(mainProvider.currentPageName),
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            color: Colors.grey,
+                            fontFamily:
+                                currentLanguage == Languages.EN.languageCode
+                                    ? 'EnglishQuran'
+                                    : 'Hafs',
                           ),
                         ),
-                        if (notificationCount > 0 &&
-                            _nameOfPage == AppLocalizations.of(context)!.home)
-                          Positioned(
-                            right: 8.w,
-                            top: 8.w,
-                            child: Container(
-                              padding: EdgeInsets.all(4.w),
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: BoxConstraints(
-                                minWidth: 16.w,
-                                minHeight: 16.w,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  notificationCount.toString(),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10.sp,
+                      ),
+                    ],
+                  ),
+                  mainProvider.currentPageName !=
+                          AppLocalizations.of(context)!.home
+                      ? Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  isMobile == true ? 15.w : 10.w),
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: AppColor.white,
+                                  border: Border.all(
+                                    color: AppColor.black,
+                                    width: 1.w,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                      isMobile == true ? 15.w : 10.w),
+                                ),
+                                child: IconButton(
+                                  onPressed: () {
+                                    _actionOfHeaderButton();
+                                  },
+                                  icon: Icon(
+                                    _iconHeader(mainProvider.currentPageName),
+                                    size: 35.w,
+                                    color: AppColor.black,
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
-                    )
-                  : Container()
-            ],
+                            if (notificationCount > 0 &&
+                                mainProvider.currentPageName ==
+                                    AppLocalizations.of(context)!.home)
+                              Positioned(
+                                right: 8.w,
+                                top: 8.w,
+                                child: Container(
+                                  padding: EdgeInsets.all(4.w),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: BoxConstraints(
+                                    minWidth: 16.w,
+                                    minHeight: 16.w,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      notificationCount.toString(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        )
+                      : Container(),
+                ],
+              ),
+            ),
           ),
-        ),
-      )
-    ]);
+        ],
+      );
+    });
   }
 
   void _actionOfHeaderButton() {
     String currentLanguage = Localizations.localeOf(context).languageCode;
-    if (_nameOfPage == AppLocalizations.of(context)!.search) {
+    var mainProvider = Provider.of<MainPageProvider>(context, listen: false);
+
+    if (mainProvider.currentPageName == AppLocalizations.of(context)!.search) {
       _showFilterSearchDialog(currentLanguage);
-    } else if (_nameOfPage == AppLocalizations.of(context)!.favorites) {
+    } else if (mainProvider.currentPageName ==
+        AppLocalizations.of(context)!.favorites) {
       _showFilterFavoriteDialog(currentLanguage);
-    } else if (_nameOfPage == AppLocalizations.of(context)!.profile) {
+    } else if (mainProvider.currentPageName ==
+        AppLocalizations.of(context)!.profile) {
       _showSettingDialog(currentLanguage);
     }
   }
@@ -750,11 +782,6 @@ class _MainPageState extends State<MainPage> {
 
   IconData _iconHeader(String currentPage) {
     switch (currentPage) {
-      case "Home":
-        {
-          return Icons.notifications_outlined;
-          break;
-        }
       case "Search":
         {
           return Icons.filter_list_outlined;
@@ -768,11 +795,6 @@ class _MainPageState extends State<MainPage> {
       case "Profile":
         {
           return Icons.settings;
-          break;
-        }
-      case "الرئيسية":
-        {
-          return Icons.notifications_outlined;
           break;
         }
       case "البحث":
@@ -796,6 +818,7 @@ class _MainPageState extends State<MainPage> {
 
   Widget _bottomNavigation() {
     String currentLanguage = Localizations.localeOf(context).languageCode;
+    var mainProvider = Provider.of<MainPageProvider>(context, listen: false);
 
     return Container(
       color: AppColor.white,
@@ -824,9 +847,8 @@ class _MainPageState extends State<MainPage> {
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
-                setState(() {
-                  _nameOfPage = AppLocalizations.of(context)!.home;
-                });
+                mainProvider
+                    .setCurrentPageName(AppLocalizations.of(context)!.home);
               },
             ),
             GButton(
@@ -838,9 +860,8 @@ class _MainPageState extends State<MainPage> {
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
-                setState(() {
-                  _nameOfPage = AppLocalizations.of(context)!.search;
-                });
+                mainProvider
+                    .setCurrentPageName(AppLocalizations.of(context)!.search);
               },
             ),
             GButton(
@@ -852,9 +873,8 @@ class _MainPageState extends State<MainPage> {
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
-                setState(() {
-                  _nameOfPage = AppLocalizations.of(context)!.favorites;
-                });
+                mainProvider.setCurrentPageName(
+                    AppLocalizations.of(context)!.favorites);
               },
             ),
             GButton(
@@ -866,9 +886,8 @@ class _MainPageState extends State<MainPage> {
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
-                setState(() {
-                  _nameOfPage = AppLocalizations.of(context)!.profile;
-                });
+                mainProvider
+                    .setCurrentPageName(AppLocalizations.of(context)!.profile);
               },
             ),
           ],
@@ -880,5 +899,44 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
+  }
+
+  void _createBannerAd() {
+    _bannerAd = BannerAd(
+        size: AdSize.fullBanner,
+        adUnitId: AdmobService.bannerAdUnitId(true),
+        listener: AdmobService.bannerListener,
+        request: const AdRequest())
+      ..load();
+  }
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: AdmobService.interstitialAdUnitId(true),
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          print('interstitial loaded');
+          _showInterstitialAd();
+        }, onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+          print('interstitial failed');
+        }));
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+        },
+      );
+
+      _interstitialAd!.show();
+      _interstitialAd = null;
+    }
   }
 }

@@ -1,8 +1,6 @@
 import 'package:arabic_numbers/arabic_numbers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:freelancer/providers/favorite_provider.dart';
@@ -12,8 +10,6 @@ import 'package:share_plus/share_plus.dart';
 import '../config/app_colors.dart';
 import '../config/app_languages.dart';
 import '../models/favorite_model.dart';
-import '../services/app_data_pref.dart';
-import '../services/firestore_service.dart';
 import '../utilities/utility.dart';
 
 class FavoritesPage extends StatefulWidget {
@@ -51,8 +47,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   style: TextStyle(fontSize: 20.sp),
                 ),
               );
-            } else {
+            }
+            else {
               List<Favorite> favorites = snapshot.data ?? [];
+
               return SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: Padding(
@@ -68,7 +66,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       }
                     },
                     separatorBuilder: (context, index) {
-                      return _listViewSeparator(favorites[index],currentLanguage);
+                      return _listViewSeparator(
+                          favorites[index], currentLanguage);
                     },
                     itemCount: favorites.length + 1,
                   ),
@@ -97,8 +96,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
               Text(
                 tafseerContent[0],
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20.sp,fontFamily: currentLanguage == Languages.EN.languageCode
-                ? 'EnglishQuran' : 'Hafs'),
+                style: TextStyle(
+                    fontSize: 20.sp,
+                    fontFamily: currentLanguage == Languages.EN.languageCode
+                        ? 'EnglishQuran'
+                        : 'Hafs'),
               ),
               separateTafseerContent(),
               Text(
@@ -124,10 +126,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
             Text(
               favorite.content,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20.sp,fontFamily: currentLanguage ==
-              Languages.EN.languageCode ? favorite.type == 'Quran' ?
-              'EnglishQuran' : 'Custom' : favorite.type == 'Hafs' ?
-              'EnglishQuran' : 'ArabicFont'),
+              style: TextStyle(
+                  fontSize: 20.sp,
+                  fontFamily: currentLanguage == Languages.EN.languageCode
+                      ? favorite.type == 'Quran'
+                          ? 'EnglishQuran'
+                          : 'Custom'
+                      : favorite.type == 'Quran'
+                          ? 'Hafs'
+                          : 'ArabicFont'),
             ),
           ],
         ),

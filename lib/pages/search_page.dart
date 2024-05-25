@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
 import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +9,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/services/app_data.dart';
 import 'package:freelancer/utilities/utility.dart';
-import 'package:quran/surah_data.dart';
 import 'package:share_plus/share_plus.dart';
 import '../config/app_colors.dart';
 import '../models/tafseer_content.dart';
@@ -16,6 +17,8 @@ import '../models/hadith_model.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../services/search_hepler.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -28,18 +31,24 @@ class _SearchPageState extends State<SearchPage> {
   List<Hadith> _hadiths = [];
   List<dynamic> _searchResults = [];
   final TextEditingController _searchController = TextEditingController();
-  late bool _searchIsQuranChecked;
-  late bool _searchIsHadithChecked;
-  late bool _searchIsTafseerChecked;
+  late int _selectedFilterSearch;
   late int _indexOfHadith = 0;
   late int _mufseerId;
   bool _isLoading = false;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     _loadHadiths();
     _loadSearchDialogData();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadHadiths() async {
@@ -55,9 +64,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> _loadSearchDialogData() async {
-    _searchIsQuranChecked = await AppDataPreferences.getSearchPageQuranCheck();
-    _searchIsHadithChecked = await AppDataPreferences.getSearchPageHadithsCheck();
-    _searchIsTafseerChecked = await AppDataPreferences.getSearchPageTafseerCheck();
+    _selectedFilterSearch = (await AppDataPreferences.getFilterSearch())!;
     _indexOfHadith = await AppDataPreferences.getSearchPageHadithId();
     _mufseerId = await AppDataPreferences.getSearchPageMufseerId(Localizations.localeOf(context).languageCode);
     setState(() {});
@@ -69,8 +76,8 @@ class _SearchPageState extends State<SearchPage> {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5.w),
-            border: Border.all(color: Color(0xFFC7A102), width: 2),
-            color: Color(0x33FFCC00)),
+            border: Border.all(color: const Color(0xFFC7A102), width: 2),
+            color: const Color(0x33FFCC00)),
         child: ListTile(
           leading: Icon(
             Icons.warning_amber,
@@ -94,23 +101,30 @@ class _SearchPageState extends State<SearchPage> {
     double height = MediaQuery.of(context).size.height;
     String currentLanguage = Localizations.localeOf(context).languageCode;
 
-    return Material(
-      color: Colors.white.withOpacity(0.0),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: width / 20),
-        child: Container(
-          color: Colors.grey.withOpacity(0.0),
-          child: Column(
-            children: [
-              _searchBar(currentLanguage),
-              _isLoading
-                  ? CircularProgressIndicator(
-                color: AppColor.black,
-              )
-                  : _searchResults.isNotEmpty
-                  ? _buildSearchResults(currentLanguage)
-                  : _buildWarningSearch(currentLanguage),
-            ],
+    return SingleChildScrollView(
+      child: Material(
+        color: Colors.white.withOpacity(0.0),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: width / 20),
+          child: Container(
+            color: Colors.grey.withOpacity(0.0),
+            child: Column(
+              children: [
+                _searchBar(currentLanguage),
+                _isLoading
+                    ? SizedBox(
+                  height: 200.h,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                                        color: AppColor.black,
+                                      ),
+                      ),
+                    )
+                    : _searchResults.isNotEmpty
+                    ? _buildSearchResults(currentLanguage)
+                    : _buildWarningSearch(currentLanguage),
+              ],
+            ),
           ),
         ),
       ),
@@ -180,6 +194,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+
   void _search(String query) async {
     if (_searchController.text.trim().isEmpty) return;
 
@@ -194,129 +209,31 @@ class _SearchPageState extends State<SearchPage> {
     List<Map<String, String>> hadithResults = [];
     List<Map<String, String>> tafseerResults = [];
 
-    if (_searchIsQuranChecked || _searchIsTafseerChecked) {
-      var arabicSearchResults = await quran.searchWord(query);
-      var translationSearchResults = await quran.searchWordInTranslation(query);
+    final ReceivePort receivePort = ReceivePort();
+    await Isolate.spawn(
+      SearchHelper.searchIsolate,
+      {
+        'query': query,
+        'sendPort': receivePort.sendPort,
+        'searchFilterSearch': _selectedFilterSearch,
+        'hadiths': _hadiths,
+        'mufseerId': _mufseerId,
+      },
+    );
 
-      if (_searchIsQuranChecked) {
-        quranResults = await _getQuranSearchResult(arabicSearchResults, translationSearchResults);
-      }
-      if (_searchIsTafseerChecked) {
-        tafseerResults = await _getTafseerResult(arabicSearchResults, translationSearchResults);
-      }
-    }
-
-    if (_searchIsHadithChecked) {
-      await _loadHadiths();
-      hadithResults = await _getHadithSearchResult(query);
-    }
-
-    setState(() {
-      _searchResults = quranResults + hadithResults + tafseerResults;
-      _isLoading = false;
+    receivePort.listen((data) {
+      setState(() {
+        _searchResults = data;
+        _isLoading = false;
+      });
+      receivePort.close();
     });
-  }
-
-  Future<List<Map<String, String>>> _getQuranSearchResult(
-      Map arabicSearchResults, Map translationSearchResults) async {
-    List<Map<String, String>> quranResults = [];
-
-    if (arabicSearchResults['result'] != null) {
-      for (var result in arabicSearchResults['result']) {
-        quranResults.add({
-          'type': 'quran',
-          'surah': quran.getSurahNameArabic(result['surah']),
-          'verse': quran.getVerse(result['surah'], result['verse']),
-        });
-      }
-    }
-
-    if (translationSearchResults['result'] != null) {
-      for (var result in translationSearchResults['result']) {
-        quranResults.add({
-          'type': 'quran',
-          'surah': quran.getSurahName(result['surah']),
-          'verse': quran.getVerseTranslation(result['surah'], result['verse']),
-        });
-      }
-    }
-
-    return quranResults;
-  }
-
-  Future<List<Map<String, String>>> _getHadithSearchResult(String query) async {
-    List<Map<String, String>> hadithResults = [];
-
-    for (var hadith in _hadiths) {
-      if (hadithResults.length >= 200) {
-        break;
-      }
-
-      final cleanArabic = Utility.removeDiacritics(hadith.arabic!);
-      final cleanEnglish = hadith.english!.toLowerCase();
-      final cleanQuery = query.toLowerCase();
-
-      if (cleanArabic.contains(cleanQuery) || cleanEnglish.contains(cleanQuery)) {
-        hadithResults.add({
-          'type': 'hadith',
-          'arabic': hadith.arabic!,
-          'english': hadith.english!,
-        });
-      }
-    }
-
-    return hadithResults;
-  }
-
-
-  Future<List<Map<String, String>>> _getTafseerResult(
-      Map arabicSearchResults, Map translationSearchResults) async {
-    List<Map<String, String>> tafseerResult = [];
-
-    if (arabicSearchResults['result'] != null) {
-      for (var result in arabicSearchResults['result']) {
-        var tafseer = await _fetchTafseerData(result['surah'], result['verse']);
-        tafseerResult.add({
-          'type': 'tafseer',
-          'surah': quran.getSurahNameArabic(result['surah']),
-          'verse': quran.getVerse(result['surah'], result['verse']),
-          'tafseer': tafseer?.text ?? 'No Tafseer available',
-        });
-      }
-    }
-
-    if (translationSearchResults['result'] != null) {
-      for (var result in translationSearchResults['result']) {
-        var tafseer = await _fetchTafseerData(result['surah'], result['verse']);
-        tafseerResult.add({
-          'type': 'tafseer',
-          'surah': quran.getSurahName(result['surah']),
-          'verse': quran.getVerseTranslation(result['surah'], result['verse']),
-          'tafseer': tafseer?.text ?? 'No Tafseer available',
-        });
-      }
-    }
-
-    return tafseerResult;
-  }
-
-
-  Future<TafseerResponse?> _fetchTafseerData(
-      int surahId, int verseNumber) async {
-    final response = await http.get(Uri.parse(
-        'http://api.quran-tafseer.com/tafseer/$_mufseerId/$surahId/$verseNumber'));
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
-      return TafseerResponse.fromJson(data);
-    } else {
-      return null;
-    }
   }
 
   Widget _buildSearchResults(String currentLanguage) {
     return ListView.separated(
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: _searchResults.length + 1,
       itemBuilder: (context, index) {
         if (index != _searchResults.length) {
@@ -335,7 +252,7 @@ class _SearchPageState extends State<SearchPage> {
           case 'tafseer':
             return _buildTafseerResult(result, currentLanguage);
           default:
-            return SizedBox();
+            return const SizedBox();
         }
       },
     );

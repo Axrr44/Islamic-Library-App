@@ -1,11 +1,7 @@
-import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../models/reciter_model.dart';
-import '../services/app_data.dart';
-import '../utilities/utility.dart';
 
 import 'package:flutter/material.dart';
 
@@ -13,6 +9,7 @@ class QuranAyaPageProvider extends ChangeNotifier {
   double _currentSliderValue = 0.0;
   Reciter? _selectedReciter;
   int _highlightedAyah = -1;
+  int _ayahHighlightedInSurah = -1;
   bool _showExtraWidget = false;
 
   double get currentSliderValue => _currentSliderValue;
@@ -20,6 +17,7 @@ class QuranAyaPageProvider extends ChangeNotifier {
   Reciter? get selectedReciter => _selectedReciter;
 
   int get highlightedAyah => _highlightedAyah;
+  int get ayahHighlightedInSurah => _ayahHighlightedInSurah;
   bool get showExtraWidget => _showExtraWidget;
 
 
@@ -39,8 +37,9 @@ class QuranAyaPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateHighlightAyah(int ayahNumber) {
+  void updateHighlightAyah(int ayahNumber, int surahNumber) {
     _highlightedAyah = ayahNumber;
+    _ayahHighlightedInSurah = surahNumber;
     notifyListeners();
   }
 

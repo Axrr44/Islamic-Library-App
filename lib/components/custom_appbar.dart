@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -7,7 +6,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Color color;
   final Alignment alignment;
 
-  CustomAppBar({
+  const CustomAppBar({super.key, 
     required this.child,
     this.height = kToolbarHeight,
     this.color = Colors.grey,
