@@ -5,9 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:freelancer/models/favorite_model.dart';
+import 'package:freelancer/providers/sub_search_provider.dart';
 import 'package:freelancer/services/firestore_service.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 import '../components/custom_dialog.dart';
@@ -19,14 +21,12 @@ import '../services/app_data_pref.dart';
 import '../config/toast_message.dart';
 import '../models/hadith_model.dart';
 
-class ContentBooksPage extends StatelessWidget {
+class ContentBooksPage extends StatefulWidget {
   final int bookId;
   final String bookName;
   final int? indexOfScrollable;
   final bool? isScrollable;
-  final bool isChapter;
   final int chapterId;
-  final ItemScrollController _scrollController = ItemScrollController();
 
   ContentBooksPage({
     super.key,
@@ -34,9 +34,15 @@ class ContentBooksPage extends StatelessWidget {
     required this.bookName,
     this.indexOfScrollable = -1,
     this.isScrollable = false,
-    required this.isChapter,
     required this.chapterId,
   });
+
+  @override
+  State<ContentBooksPage> createState() => _ContentBooksPageState();
+}
+
+class _ContentBooksPageState extends State<ContentBooksPage> {
+  final ItemScrollController _scrollController = ItemScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +51,11 @@ class ContentBooksPage extends StatelessWidget {
     String currentLanguage = Localizations.localeOf(context).languageCode;
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     final bool isMobile = shortestSide < 600;
+    final subSearchProvider = Provider.of<SubSearchProvider>(context, listen: false);
 
     return Scaffold(
       body: FutureBuilder(
-        future: AppData.getCurrentBook(bookId),
+        future: AppData.getCurrentBook(widget.bookId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             context.loaderOverlay.show();
@@ -63,29 +70,48 @@ class ContentBooksPage extends StatelessWidget {
                 width: 5,
               ); // Return an empty widget
             } else {
-              if (isScrollable!) {
+              if (widget.isScrollable!) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   _scrollToIndexIfNeeded(context);
                 });
               }
               Map<String, dynamic> data = jsonDecode(snapshot.data!);
               Metadata metadata = Metadata.fromJson(data);
-              List<Hadith> hadiths = isChapter
-                  ? getHadithsByChapterId(
-                      parseHadiths(snapshot.data), chapterId)
-                  : parseHadiths(snapshot.data);
+              List<Hadith> hadiths = getHadithsByChapterId(parseHadiths(snapshot.data), widget.chapterId);
               List<Chapter> chapters = parseChapters(snapshot.data);
 
-              return Container(
-                child: NestedScrollView(
-                  headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                    SliverToBoxAdapter(
-                      child: _header(
+              return NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  SliverToBoxAdapter(
+                    child: Column(children: [
+                      _header(
                           currentLanguage, metadata, context, width, isMobile),
-                    ),
-                  ],
-                  body: _listOfHadiths(hadiths, chapters, currentLanguage),
-                ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 20.w,right: 20.w,top: 20.h),
+                        child: TextField(
+                          onChanged: (query) {
+                            subSearchProvider.updateSearchQuery(query);
+                          },
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.search,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.w),
+                              borderSide: const BorderSide(color: Colors.black), // Outline border color
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.w),
+                              borderSide: const BorderSide(color: Colors.black),
+                            ),
+                          ),
+                          style: const TextStyle(color: Colors.black),
+                          cursorColor: AppColor.black,// Text color
+                        ),
+                      ),
+                    ],),
+                  ),
+                ],
+                body: _listOfHadiths(hadiths, chapters, currentLanguage)
+                ,
               );
             }
           }
@@ -95,9 +121,9 @@ class ContentBooksPage extends StatelessWidget {
   }
 
   void _scrollToIndexIfNeeded(BuildContext context) {
-    if (indexOfScrollable != null) {
+    if (widget.indexOfScrollable != null) {
       _scrollController.scrollTo(
-        index: indexOfScrollable!,
+        index: widget.indexOfScrollable!,
         duration: const Duration(seconds: 1),
         curve: Curves.easeInOut,
       );
@@ -155,49 +181,58 @@ class ContentBooksPage extends StatelessWidget {
 
   Widget _listOfHadiths(
       List<Hadith> hadiths, List<Chapter> chapters, String currentLanguage) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: isScrollable!
-          ? ScrollablePositionedList.separated(
-              itemScrollController: _scrollController,
-              itemCount: hadiths.length + 1,
-              // Add one extra item for the last separator
-              itemBuilder: (context, index) {
-                if (index < hadiths.length) {
-                  return _listViewBuilder(
-                      chapters, hadiths, index, currentLanguage, context);
-                } else {
-                  return const SizedBox
-                      .shrink(); // The last item is just for the separator
-                }
-              },
-              separatorBuilder: (context, index) {
-                return _listViewSeparator(currentLanguage, hadiths, index + 1);
-              },
-            )
-          : ListView.separated(
-              itemCount: hadiths.length + 1,
-              // Add one extra item for the last separator
-              itemBuilder: (context, index) {
-                if (index < hadiths.length) {
-                  return _listViewBuilder(
-                    chapters,
-                    hadiths,
-                    index,
-                    currentLanguage,
-                    context,
-                  );
-                } else {
-                  return const SizedBox
-                      .shrink(); // The last item is just for the separator
-                }
-              },
-              separatorBuilder: (context, index) {
-                return _listViewSeparator(currentLanguage, hadiths, index + 1);
-              },
-            ),
+    return Consumer<SubSearchProvider>(
+      builder: (context, subSearchProvider, _) {
+        final filteredHadiths = subSearchProvider.filterHadiths(hadiths);
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: widget.isScrollable!
+              ? ScrollablePositionedList.separated(
+            itemScrollController: _scrollController,
+            itemCount: filteredHadiths.length + 1,
+            itemBuilder: (context, index) {
+              if (index < filteredHadiths.length) {
+                return _listViewBuilder(
+                  chapters,
+                  filteredHadiths,
+                  index,
+                  currentLanguage,
+                  context,
+                );
+              } else {
+                return const SizedBox.shrink(); // Separator
+              }
+            },
+            separatorBuilder: (context, index) {
+              return _listViewSeparator(
+                  currentLanguage, filteredHadiths, index);
+            },
+          )
+              : ListView.separated(
+            itemCount: filteredHadiths.length + 1,
+            itemBuilder: (context, index) {
+              if (index < filteredHadiths.length) {
+                return _listViewBuilder(
+                  chapters,
+                  filteredHadiths,
+                  index,
+                  currentLanguage,
+                  context,
+                );
+              } else {
+                return const SizedBox.shrink(); // Separator
+              }
+            },
+            separatorBuilder: (context, index) {
+              return _listViewSeparator(
+                  currentLanguage, filteredHadiths, index);
+            },
+          ),
+        );
+      },
     );
   }
+
 
   Card _listViewSeparator(
       String currentLanguage, List<Hadith> hadiths, int index) {
@@ -368,7 +403,7 @@ class ContentBooksPage extends StatelessWidget {
                       padding: EdgeInsets.all(3.w),
                       child: InkWell(
                         onTap: () async {
-                          await Share.share(hadith);
+                          await Share.share("$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}]");
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -397,7 +432,7 @@ class ContentBooksPage extends StatelessWidget {
                         onTap: () {
                           FireStoreService.addFavorite(Favorite(
                               type: "Hadith",
-                              title: bookName,
+                              title: widget.bookName,
                               content: hadith));
                           ToastMessage.showMessage(
                               AppLocalizations.of(context)!.favoriteIt);
@@ -426,7 +461,7 @@ class ContentBooksPage extends StatelessWidget {
                       child: InkWell(
                         onTap: () {
                           AppDataPreferences.setHadithLastRead(
-                              bookId, index, isChapter, chapterId, bookName);
+                              widget.bookId, index, widget.chapterId, widget.bookName);
                           ToastMessage.showMessage(
                               AppLocalizations.of(context)!.save);
                         },
@@ -485,11 +520,11 @@ class ContentBooksPage extends StatelessWidget {
                 width: 20.w,
               ),
               Text(
-                bookName.length <= 20
-                    ? bookName
-                    : "${bookName.substring(0, 17)}...",
+                widget.bookName.length <= 20
+                    ? widget.bookName
+                    : "${widget.bookName.substring(0, 17)}...",
                 style: TextStyle(
-                    fontSize: bookName.length < 20 ? 25.sp : 22.sp,
+                    fontSize: widget.bookName.length < 20 ? 25.sp : 22.sp,
                     fontWeight: FontWeight.bold,
                     fontFamily: Utility.getTextFamily(currentLanguage)),
               )

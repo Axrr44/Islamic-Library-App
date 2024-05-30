@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:isolate';
 import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +10,8 @@ import 'package:freelancer/services/app_data.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:share_plus/share_plus.dart';
 import '../config/app_colors.dart';
-import '../models/tafseer_content.dart';
 import '../services/app_data_pref.dart';
 import '../models/hadith_model.dart';
-import 'package:quran/quran.dart' as quran;
-import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../services/search_hepler.dart';
@@ -28,7 +24,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  List<Hadith> _hadiths = [];
+  final List<Hadith> _hadiths = [];
   List<dynamic> _searchResults = [];
   final TextEditingController _searchController = TextEditingController();
   late int _selectedFilterSearch;
@@ -40,7 +36,6 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    _loadHadiths();
     _loadSearchDialogData();
   }
 
@@ -51,18 +46,6 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
-  Future<void> _loadHadiths() async {
-    String jsonString = await AppData.getCurrentBook(_indexOfHadith);
-    setState(() {
-      _hadiths = parseHadiths(jsonString);
-    });
-  }
-
-  List<Hadith> parseHadiths(String? jsonString) {
-    final parsed = jsonDecode(jsonString!);
-    return List<Hadith>.from(parsed['hadiths'].map((x) => Hadith.fromJson(x)));
-  }
-
   Future<void> _loadSearchDialogData() async {
     _selectedFilterSearch = (await AppDataPreferences.getFilterSearch())!;
     _indexOfHadith = await AppDataPreferences.getSearchPageHadithId();
@@ -70,7 +53,7 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {});
   }
 
-  Widget _buildWarningSearch(String currentLanguage) {
+  Widget _buildWarningSearch(String currentLanguage,String content) {
     return Padding(
       padding: EdgeInsets.only(top: 20.h),
       child: Container(
@@ -85,7 +68,7 @@ class _SearchPageState extends State<SearchPage> {
             color: Colors.black,
           ),
           title: Text(
-            AppLocalizations.of(context)!.warningSearch,
+            content,
             style: TextStyle(
                 fontSize: 12.sp,
                 fontFamily: Utility.getTextFamily(currentLanguage)),
@@ -122,7 +105,12 @@ class _SearchPageState extends State<SearchPage> {
                     )
                     : _searchResults.isNotEmpty
                     ? _buildSearchResults(currentLanguage)
-                    : _buildWarningSearch(currentLanguage),
+                    : Column(
+                  children: [
+                    _buildWarningSearch(currentLanguage,AppLocalizations.of(context)!.warningSearch),
+                    _buildWarningSearch(currentLanguage,AppLocalizations.of(context)!.warningFilterSearch)
+                  ],
+                ),
               ],
             ),
           ),
@@ -174,7 +162,7 @@ class _SearchPageState extends State<SearchPage> {
         IconButton(
           onPressed: () async {
             await _loadSearchDialogData();
-            _search(_searchController.text);
+            _search(_searchController.text.trim());
           },
           icon: Icon(
             color: AppColor.white,

@@ -1,4 +1,5 @@
 import 'package:arabic_numbers/arabic_numbers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +10,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import '../config/app_colors.dart';
 import '../config/app_languages.dart';
+import '../config/app_routes.dart';
 import '../models/favorite_model.dart';
+import '../services/authentication.dart';
 import '../utilities/utility.dart';
 
 class FavoritesPage extends StatefulWidget {
@@ -23,6 +26,26 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     String currentLanguage = Localizations.localeOf(context).languageCode;
+
+    User? currentUser = AuthServices.getCurrentUser();
+
+
+    if (currentUser == null) {
+      return Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+          },
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(AppColor.primary1)
+          ),
+          child: Text(
+            AppLocalizations.of(context)!.signIn,
+            style: TextStyle(fontSize: 20.sp),
+          ),
+        ),
+      );
+    }
 
     return Consumer<FavoriteProvider>(
       builder: (context, favoriteProvider, child) {
@@ -42,7 +65,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             else if (snapshot.hasData && snapshot.data!.isEmpty) {
               return Center(
                 child: Text(
-                  'No favorites found.',
+                  AppLocalizations.of(context)!.noFavorite,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20.sp),
                 ),
@@ -323,4 +346,5 @@ class _FavoritesPageState extends State<FavoritesPage> {
       ),
     );
   }
+
 }

@@ -97,14 +97,13 @@ class AppDataPreferences {
   }
 
   // Hadiths last read
-  static Future<void> setHadithLastRead(int bookId, int index, bool isChapter,
+  static Future<void> setHadithLastRead(int bookId, int index,
       int chapterId, String chapterName) async {
     await _initPrefs();
     await _prefs?.setInt("Hadith-MufseerId", bookId);
     await _prefs?.setInt("Hadith-Index", index);
     await _prefs?.setInt("Hadith-ChapterId", chapterId);
     await _prefs?.setInt("Hadith-ChapterId", chapterId);
-    await _prefs?.setBool("Hadith-Chapter", isChapter);
     await _prefs?.setString("Hadith-ChapterName", chapterName);
   }
 
@@ -121,11 +120,6 @@ class AppDataPreferences {
   static Future<int> getHadithChapterId() async {
     await _initPrefs();
     return _prefs?.getInt("Hadith-ChapterId") ?? -1;
-  }
-
-  static Future<bool> getHadithIsChapter() async {
-    await _initPrefs();
-    return _prefs?.getBool("Hadith-Chapter") ?? false;
   }
 
   static Future<String> getHadithChapterName() async {
@@ -159,7 +153,7 @@ class AppDataPreferences {
 
   static Future<String> getCurrentLanguage() async {
     await _initPrefs();
-    return _prefs?.getString("current-language") ?? 'en';
+    return _prefs?.getString("current-language") ?? 'ar';
   }
 
   //Favorite
@@ -203,5 +197,16 @@ class AppDataPreferences {
     await _initPrefs();
     return _prefs!.getBool("SHOW-VIEW-PAGER") ?? true;
   }
+
+  // Show Tutorial
+  static Future<void> setShowTutorial(bool value) async {
+    await _initPrefs();
+    await _prefs!.setBool("SHOW-TUTORIAL", value);
+  }
+  static Future<bool> getShowTutorial() async {
+    await _initPrefs();
+    return _prefs!.getBool("SHOW-TUTORIAL") ?? true;
+  }
+
 }
 

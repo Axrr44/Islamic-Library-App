@@ -1,14 +1,20 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/utilities/utility.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final GlobalKey quranKeyTutorial;
+  final GlobalKey hadithKeyTutorial;
+  final GlobalKey tafseerKeyTutorial;
 
+  const HomePage({
+    super.key,
+    required this.quranKeyTutorial,
+    required this.hadithKeyTutorial,
+    required this.tafseerKeyTutorial,
+  });
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -35,6 +41,7 @@ class HomePage extends StatelessWidget {
                       width: width / 2,
                       height: height / 4 + 20.h,
                       child: ElevatedButton(
+                        key: index == 0 ? quranKeyTutorial : hadithKeyTutorial,
                         onPressed: () {
                           Navigator.of(context).pushNamed(index == 0
                               ? AppRoutes.QURAN_SURA_ROUTES
@@ -72,10 +79,10 @@ class HomePage extends StatelessWidget {
                               fit: BoxFit.cover,
                             ),
                           ),
-      
+
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 20.h,
-                            horizontal: 10.w),
+                            horizontal: 20.w),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -87,16 +94,16 @@ class HomePage extends StatelessWidget {
                                             width: 50.w,
                                             height: 50.w,
                                             child: Image.asset(
-                                              "assets/images/textbook.png",
+                                              "assets/images/quran.png",
                                               color: AppColor.white,
                                               fit: BoxFit.cover,
                                             ),
                                           )
-                                        : Icon(
-                                            Icons.menu_book_rounded,
-                                            color: AppColor.black,
-                                            size: 50.w,
-                                          ),
+                                        : Image.asset(
+                                      "assets/images/hadith.png",
+                                      color: AppColor.black,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ],
                                 ),
                                 Row(
@@ -107,12 +114,11 @@ class HomePage extends StatelessWidget {
                                           ? AppLocalizations.of(context)!.quran
                                           : AppLocalizations.of(context)!.hadiths,
                                       style: TextStyle(
-                                          fontFamily: Utility.getTextFamily(
-                                              currentLanguage),
+                                          fontFamily: 'AEFont',
                                           color: index == 0
                                               ? AppColor.white
                                               : AppColor.black,
-                                          fontSize: 20.sp,
+                                          fontSize: 30.sp,
                                           fontWeight: FontWeight.w700),
                                     ),
                                     Icon(
@@ -141,6 +147,7 @@ class HomePage extends StatelessWidget {
                 height: height / 4 + 20.h,
                 margin: EdgeInsets.only(bottom: height / 25),
                 child: ElevatedButton(
+                  key: tafseerKeyTutorial,
                   onPressed: () {
                     Navigator.of(context).pushNamed(AppRoutes.TAFSEER_ROUTES);
                   },
@@ -166,7 +173,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 10.w),
+                      padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 20.w),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -177,10 +184,10 @@ class HomePage extends StatelessWidget {
                                 AppLocalizations.of(context)!.tafseer,
                                 style: TextStyle(
                                     color: AppColor.black,
-                                    fontSize: 30.sp,
+                                    fontSize: 60.sp,
                                     fontWeight: FontWeight.w700,
                                     fontFamily:
-                                        Utility.getTextFamily(currentLanguage)),
+                                        'AEFont'),
                                 textAlign: TextAlign.center,
                               ),
                             ],

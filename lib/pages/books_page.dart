@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/utilities/utility.dart';
-import '../components/custom_dialog.dart';
+import 'package:freelancer/config/toast_message.dart';
+import 'package:freelancer/pages/chapter_of_books_page.dart';
 import '../config/app_languages.dart';
-import '../models/hadith_drop_down_item.dart';
+import '../models/drop_down_item.dart';
 import '../services/app_data.dart';
 import '../config/app_colors.dart';
-import '../models/hadith_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/app_data_pref.dart';
 import 'content_books_page.dart';
@@ -22,20 +21,12 @@ class _BooksPageState extends State<BooksPage> {
   late int _hadithBookId;
   late int _hadithIndex;
   late int _chapterId;
-  late bool _isChapter;
   late String _chapterName;
-  IndexDropdownItem? _selectedItem;
 
   @override
   void initState() {
     super.initState();
     _loadHadithData();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _selectedItem = IndexDropdownItem(AppData.getBookName(context, 0), 0);
   }
 
   @override
@@ -48,259 +39,12 @@ class _BooksPageState extends State<BooksPage> {
 
     return Scaffold(
       extendBody: true,
-      body: Container(
-        child: DefaultTabController(
-          length: 2,
-          child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverToBoxAdapter(
-                child:
-                    _header(width, height, context, isMobile, currentLanguage),
-              ),
-              SliverAppBar(
-                pinned: true,
-                automaticallyImplyLeading: false,
-                elevation: 0,
-                backgroundColor: innerBoxIsScrolled == false
-                    ? AppColor.black.withOpacity(0)
-                    : AppColor.primary1,
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(isMobile == true ? 0 : 20.h),
-                  child: TabBar(
-                      unselectedLabelColor: !innerBoxIsScrolled
-                          ? Colors.grey.withOpacity(0.7)
-                          : AppColor.white.withOpacity(0.6),
-                      overlayColor: MaterialStateProperty.all(
-                          innerBoxIsScrolled == false
-                              ? AppColor.black.withOpacity(0.1)
-                              : AppColor.white.withOpacity(0.1)),
-                      labelPadding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: isMobile == true ? 0 : 10.h),
-                      labelStyle: TextStyle(fontSize: 20.sp),
-                      labelColor:
-                          !innerBoxIsScrolled ? AppColor.black : AppColor.white,
-                      indicatorColor: !innerBoxIsScrolled
-                          ? AppColor.primary1
-                          : AppColor.white,
-                      tabs: [
-                        Tab(
-                          child: Text(
-                            AppLocalizations.of(context)!.all,
-                            style: TextStyle(
-                                fontFamily:
-                                    Utility.getTextFamily(currentLanguage)),
-                          ),
-                        ),
-                        Tab(
-                          child: Text(
-                            AppLocalizations.of(context)!.chapter,
-                            style: TextStyle(
-                                fontFamily:
-                                    Utility.getTextFamily(currentLanguage)),
-                          ),
-                        ),
-                      ]),
-                ),
-              )
-            ],
-            body: TabBarView(
-              children: [
-                _listOfHadiths(width, height, context, currentLanguage),
-                _listOfChapters(width, height, context, currentLanguage)
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _listOfChapters(double width, double height, BuildContext context,
-      String currentLanguage) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
-      child: Padding(
-        padding: EdgeInsets.only(top: 10.h),
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            _menuOfImam(),
-            Expanded(
-              child: FutureBuilder(
-                future: AppData.getCurrentBook(_selectedItem!.index),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox(
-                      width: 5,
-                    );
-                  } else {
-                    if (snapshot.hasError) {
-                      customDialog(context, snapshot.error.toString());
-                      return const SizedBox(
-                        width: 5,
-                      );
-                    } else {
-                      List<Chapter> chapters = parseChapters(snapshot.data);
-
-                      return GridView.builder(
-                        itemCount: chapters.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10.w,
-                          mainAxisSpacing: 10.h,
-                        ),
-                        itemBuilder: (context, index) {
-                          bool isDarimi =
-                              chapters[index].english.toString().trim().isEmpty;
-                          return Card(
-                            color: isDarimi ? Colors.grey.withOpacity(0.5):AppColor.white,
-                            child: InkWell(
-                              onTap: isDarimi ? null : () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ContentBooksPage(
-                                    chapterId: index + 1,
-                                    isChapter: true,
-                                    bookId: _selectedItem!.index,
-                                    bookName: currentLanguage == Languages.EN.languageCode
-                                        ? chapters[index].english.toString()
-                                        : chapters[index].arabic.toString(),
-                                  ),
-                                ));
-                              },
-                              child: Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(10.w),
-                                  child: Text(
-                                    textAlign: TextAlign.center,
-                                    currentLanguage == Languages.EN.languageCode
-                                        ? isDarimi
-                                            ? "Only Arabic"
-                                            : chapters[index].english.toString()
-                                        : chapters[index].arabic.toString(),
-                                    style: TextStyle(
-                                        fontFamily: Utility.getTextFamily(
-                                            currentLanguage),
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    }
-                  }
-                },
-              ),
-            ),
+            _header(width, height, context, isMobile, currentLanguage),
+            _listOfHadiths(width, height, context, currentLanguage),
           ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _loadHadithData() async {
-    _hadithBookId = await AppDataPreferences.getHadithBookId();
-    _hadithIndex = await AppDataPreferences.getHadithIndex();
-    _isChapter = await AppDataPreferences.getHadithIsChapter();
-    _chapterId = await AppDataPreferences.getHadithChapterId();
-    _chapterName = await AppDataPreferences.getHadithChapterName();
-  }
-
-  Widget _listOfHadiths(double width, double height, BuildContext context,
-      String currentLanguage) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
-      child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: width / 2,
-              mainAxisExtent: height / 5,
-              childAspectRatio: 1,
-              crossAxisSpacing: 5.w,
-              mainAxisSpacing: 5.h),
-          itemCount: 13,
-          itemBuilder: (_, index) {
-            bool isDarimi =
-                "Sunan ad-Darimi" == AppData.getBookName(context, index);
-            return Card(
-              color: isDarimi ? Colors.grey.withOpacity(0.5):AppColor.white,
-              child: InkWell(
-                onTap: isDarimi
-                    ? null
-                    : () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ContentBooksPage(
-                            chapterId: 0,
-                            isChapter: false,
-                            bookId: index,
-                            bookName: AppData.getBookName(context, index),
-                          ),
-                        ));
-                      },
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        isDarimi
-                            ? "Only arabic"
-                            : AppData.getBookName(context, index),
-                        style: TextStyle(fontSize: 14.sp),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 15.w,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
-    );
-  }
-
-  Widget _menuOfImam() {
-    return Container(
-      height: 50.h,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColor.black, width: 1.w),
-        borderRadius: BorderRadius.circular(5.w),
-      ),
-      child: SizedBox(
-        height: double.infinity,
-        child: DropdownButton<IndexDropdownItem>(
-          value: _selectedItem,
-          iconSize: 0,
-          underline: Container(),
-          itemHeight: 50.h,
-          isExpanded: true,
-          onChanged: (IndexDropdownItem? newValue) {
-            setState(() {
-              _selectedItem = newValue;
-            });
-          },
-          items: List.generate(12, (index) {
-            return DropdownMenuItem<IndexDropdownItem>(
-              value:
-                  IndexDropdownItem(AppData.getBookName(context, index), index),
-              child: Center(
-                child: Text(
-                  AppData.getBookName(context, index),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            );
-          }),
         ),
       ),
     );
@@ -334,7 +78,7 @@ class _BooksPageState extends State<BooksPage> {
         alignment: Alignment.bottomCenter,
         child: Padding(
           padding:
-              EdgeInsets.only(top: 50.h, bottom: 10.h, right: 20.w, left: 20.w),
+              EdgeInsets.only(top: 50.h, right: 20.w, left: 20.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -368,8 +112,8 @@ class _BooksPageState extends State<BooksPage> {
                       Text(
                         AppLocalizations.of(context)!.hadiths,
                         style: TextStyle(
-                            fontFamily: Utility.getTextFamily(currentLanguage),
-                            fontSize: 40.sp,
+                            fontFamily: 'AEFont',
+                            fontSize: 60.sp,
                             color: AppColor.black,
                             fontWeight: FontWeight.bold),
                       ),
@@ -418,13 +162,15 @@ class _BooksPageState extends State<BooksPage> {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => ContentBooksPage(
                                   chapterId: _chapterId,
-                                  isChapter: _isChapter,
                                   bookId: _hadithBookId,
                                   bookName: _chapterName,
                                   isScrollable: true,
                                   indexOfScrollable: _hadithIndex,
                                 ),
                               ));
+                            } else {
+                              ToastMessage.showMessage(
+                                  AppLocalizations.of(context)!.noLastRead);
                             }
                           },
                           icon: Icon(
@@ -451,4 +197,64 @@ class _BooksPageState extends State<BooksPage> {
       ),
     ]);
   }
+
+  Future<void> _loadHadithData() async {
+    _hadithBookId = await AppDataPreferences.getHadithBookId();
+    _hadithIndex = await AppDataPreferences.getHadithIndex();
+    _chapterId = await AppDataPreferences.getHadithChapterId();
+    _chapterName = await AppDataPreferences.getHadithChapterName();
+  }
+
+  Widget _listOfHadiths(double width, double height, BuildContext context, String currentLanguage) {
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: width / 2,
+            mainAxisExtent: height / 5,
+            childAspectRatio: 1,
+            crossAxisSpacing: 5.w,
+            mainAxisSpacing: 5.h,
+          ),
+          itemCount: 13,
+          itemBuilder: (_, index) {
+            bool isDarimi = "Sunan ad-Darimi" == AppData.getBookName(context, index);
+            return Card(
+              color: isDarimi ? Colors.grey.withOpacity(0.5) : AppColor.white,
+              child: InkWell(
+                onTap: isDarimi
+                    ? null
+                    : () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ChapterOfBooksPage(selectedHadith: index),
+                  ));
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        isDarimi ? "Only arabic" : AppData.getBookName(context, index),
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 15.w,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
 }

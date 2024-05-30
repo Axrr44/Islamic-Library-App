@@ -11,6 +11,7 @@ import 'package:arabic_numbers/arabic_numbers.dart';
 import '../config/app_colors.dart';
 import '../config/app_languages.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../config/toast_message.dart';
 import '../services/app_data.dart';
 
 class QuranSuraPage extends StatefulWidget {
@@ -154,7 +155,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                               ? convertToString(index)
                               : ArabicNumbers.convert(convertToString(index)),
                           style: TextStyle(
-                              fontSize: 35.sp, fontWeight: FontWeight.w700),
+                              fontSize: 35.sp, fontWeight: FontWeight.w700,color: AppColor.primary1),
                         ),
                       ),
                     ],
@@ -225,7 +226,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                               convertToString(index)),
                                       style: TextStyle(
                                           fontSize: 10.sp,
-                                          fontWeight: FontWeight.w700),
+                                          fontWeight: FontWeight.w700,color: AppColor.primary1),
                                     ),
                                   ),
                                 ),
@@ -356,10 +357,9 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                       Text(
                         AppLocalizations.of(context)!.quran,
                         style: TextStyle(
-                            fontSize: 40.sp,
+                            fontSize: 60.sp,
                             color: AppColor.black,
-                            fontFamily:
-                                Utility.getTextFamily(currentLanguage),
+                            fontFamily: 'AEFont',
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
@@ -402,6 +402,8 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                                 verseIdLastRead) -
                                             1,
                                       )));
+                            }else {
+                              ToastMessage.showMessage(AppLocalizations.of(context)!.noLastRead);
                             }
                           },
                           icon: Icon(

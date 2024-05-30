@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:freelancer/config/app_languages.dart';
@@ -15,12 +17,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import '../config/app_colors.dart';
-import '../models/hadith_drop_down_item.dart';
+import '../models/drop_down_item.dart';
 import '../models/tafseer_books.dart';
 import '../providers/language_provider.dart';
 import '../services/app_data.dart';
 import '../services/app_data_pref.dart';
 import 'home_page.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainPage extends StatefulWidget {
@@ -43,19 +46,42 @@ class _MainPageState extends State<MainPage> {
   late bool _favoriteIsQuranChecked;
   late bool _favoriteIsHadithChecked;
   late bool _favoriteIsTafseerChecked;
+  late TutorialCoachMark tutorialCoachMark;
 
-  final pages = [
-    const HomePage(),
-    const SearchPage(),
-    const FavoritesPage(),
-    const ProfilePage(),
-  ];
+  final quranKeyTutorial = GlobalKey();
+  final hadithKeyTutorial = GlobalKey();
+  final tafseerKeyTutorial = GlobalKey();
+  final searchKeyTutorial = GlobalKey();
+  final favoriteKeyTutorial = GlobalKey();
+  final profileKeyTutorial = GlobalKey();
+  late List<Widget> pages;
 
   @override
   void initState() {
     super.initState();
-    _createBannerAd();
-    _createInterstitialAd();
+    pages = [
+      HomePage(
+        quranKeyTutorial: quranKeyTutorial,
+        hadithKeyTutorial: hadithKeyTutorial,
+        tafseerKeyTutorial: tafseerKeyTutorial,
+      ),
+      const SearchPage(),
+      const FavoritesPage(),
+      const ProfilePage(),
+    ];
+    _checkAndShowTutorial();
+    // _createBannerAd();
+
+  }
+
+  Future<void> _checkAndShowTutorial() async {
+    bool show = await AppDataPreferences.getShowTutorial();
+    if (show) {
+      createTutorial();
+      Future.delayed(Duration.zero, showTutorial);
+    }else{
+      // _createInterstitialAd();
+    }
   }
 
   @override
@@ -66,9 +92,11 @@ class _MainPageState extends State<MainPage> {
     Future.delayed(Duration.zero, () {
       String currentLanguage = Localizations.localeOf(context).languageCode;
       var mainProvider = Provider.of<MainPageProvider>(context, listen: false);
-      if (mainProvider.currentPageName == "Home" || mainProvider.currentPageName == "الرئيسية") {
+      if (mainProvider.currentPageName == "Home" ||
+          mainProvider.currentPageName == "الرئيسية") {
         mainProvider.setCurrentPageName(AppLocalizations.of(context)!.home);
-      } else if (mainProvider.currentPageName == AppLocalizations.of(context)!.search) {
+      } else if (mainProvider.currentPageName ==
+          AppLocalizations.of(context)!.search) {
         mainProvider.setCurrentPageName(AppLocalizations.of(context)!.search);
       }
       _tafseerListFuture = AppData.fetchTafseerData(currentLanguage);
@@ -77,7 +105,6 @@ class _MainPageState extends State<MainPage> {
       _loaSettingDialogData();
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +125,198 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: _bottomNavigation(),
     );
+  }
 
+  void showTutorial() {
+    tutorialCoachMark.show(context: context);
+  }
+
+  void createTutorial() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: _createTargets(),
+      colorShadow: AppColor.black,
+      onFinish: (){AppDataPreferences.setShowTutorial(false);},
+      onSkip: (){AppDataPreferences.setShowTutorial(false);
+        return true;},
+      textSkip: "تخطي",
+      paddingFocus: 2.w,
+      opacityShadow: 0.5,
+      imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+    );
+  }
+
+  List<TargetFocus> _createTargets() {
+    List<TargetFocus> targets = [];
+    targets.add(
+      TargetFocus(
+        identify: "quran",
+        keyTarget: quranKeyTutorial,
+        alignSkip: Alignment.topRight,
+        enableOverlayTab: true,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context)!.quranTutorial,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    targets.add(
+      TargetFocus(
+        identify: "hadith",
+        keyTarget: hadithKeyTutorial,
+        alignSkip: Alignment.topRight,
+        enableOverlayTab: true,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return  Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context)!.hadithTutorial,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    targets.add(
+      TargetFocus(
+        identify: "tafseer",
+        keyTarget: tafseerKeyTutorial,
+        alignSkip: Alignment.topRight,
+        enableOverlayTab: true,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context)!.tafseerTutorial,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height : 100.h)
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    targets.add(
+      TargetFocus(
+        identify: "search",
+        keyTarget: searchKeyTutorial,
+        alignSkip: Alignment.topRight,
+        enableOverlayTab: true,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context)!.searchTutorial,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    targets.add(
+      TargetFocus(
+        identify: "favorite",
+        keyTarget: favoriteKeyTutorial,
+        alignSkip: Alignment.topRight,
+        enableOverlayTab: true,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context)!.favoriteTutorial,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    targets.add(
+      TargetFocus(
+        identify: "profile",
+        keyTarget: profileKeyTutorial,
+        alignSkip: Alignment.topRight,
+        enableOverlayTab: true,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context)!.profileTutorial,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    return targets;
   }
 
   FutureBuilder<List<Tafseer>> _listOfTafseer() {
@@ -226,15 +444,14 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily:
-                              Utility.getTextFamily(currentLanguage)),
+                                  Utility.getTextFamily(currentLanguage)),
                         ),
                         Radio(
                           value: 0,
                           groupValue: _selectedFilterSearch,
                           onChanged: (value) {
                             setState(() {
-                              AppDataPreferences.setFilterSearch(value!);
-                              _selectedFilterSearch = value;
+                              _selectedFilterSearch = value!;
                             });
                           },
                           activeColor: AppColor.black,
@@ -249,15 +466,14 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily:
-                              Utility.getTextFamily(currentLanguage)),
+                                  Utility.getTextFamily(currentLanguage)),
                         ),
                         Radio(
                           value: 1,
                           groupValue: _selectedFilterSearch,
                           onChanged: (value) {
                             setState(() {
-                              AppDataPreferences.setFilterSearch(value!);
-                              _selectedFilterSearch = value;
+                              _selectedFilterSearch = value!;
                             });
                           },
                           activeColor: AppColor.black,
@@ -281,27 +497,27 @@ class _MainPageState extends State<MainPage> {
                           onChanged: _selectedFilterSearch != 1
                               ? null
                               : (IndexDropdownItem? newValue) {
-                            setState(() {
-                              _selectedHadith = newValue!;
-                              AppDataPreferences.setSearchPageHadithId(
-                                  newValue.index);
-                            });
-                          },
+                                  setState(() {
+                                    _selectedHadith = newValue!;
+                                    AppDataPreferences.setSearchPageHadithId(
+                                        newValue.index);
+                                  });
+                                },
                           items: List.generate(13, (index) {
                             return DropdownMenuItem<IndexDropdownItem>(
                               value: IndexDropdownItem(
                                   AppData.getBookName(context, index), index),
                               child: Center(
                                   child: Text(
-                                    textAlign: TextAlign.center,
-                                    AppData.getBookName(context, index),
-                                    style: TextStyle(
-                                        fontSize: 15.sp,
-                                        color: _selectedFilterSearch == 1
-                                            ? Colors.black
-                                            : Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  )),
+                                textAlign: TextAlign.center,
+                                AppData.getBookName(context, index),
+                                style: TextStyle(
+                                    fontSize: 15.sp,
+                                    color: _selectedFilterSearch == 1
+                                        ? Colors.black
+                                        : Colors.grey,
+                                    fontWeight: FontWeight.bold),
+                              )),
                             );
                           }),
                         ),
@@ -315,15 +531,14 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily:
-                              Utility.getTextFamily(currentLanguage)),
+                                  Utility.getTextFamily(currentLanguage)),
                         ),
                         Radio(
                           value: 2, // Unique value for Tafseer Radio
                           groupValue: _selectedFilterSearch,
                           onChanged: (value) {
                             setState(() {
-                              AppDataPreferences.setFilterSearch(value!);
-                              _selectedFilterSearch = value;
+                              _selectedFilterSearch = value!;
                             });
                           },
                           activeColor: AppColor.black,
@@ -331,6 +546,28 @@ class _MainPageState extends State<MainPage> {
                       ],
                     ),
                     _listOfTafseer(),
+                    SizedBox(
+                      width: 200.w,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          AppDataPreferences.setFilterSearch(_selectedFilterSearch);
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.w),
+                          ),
+                          backgroundColor: Colors.black
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          child: Text(
+                            AppLocalizations.of(context)!.set,
+                            style: TextStyle(fontSize: 20.sp,color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -338,7 +575,9 @@ class _MainPageState extends State<MainPage> {
           );
         });
       },
-    );
+    ).then((_) => {
+      _loadSearchDialogData()
+    });
   }
 
   void _showFilterFavoriteDialog(String currentLanguage) {
@@ -606,20 +845,20 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
           // Conditional Banner Ad
-          if (mainProvider.currentPageName ==
-              AppLocalizations.of(context)!.home)
-            Positioned(
-              top: 0, // Set to top of the screen
-              left: 0,
-              right: 0,
-              child: _bannerAd == null
-                  ? const SizedBox.shrink()
-                  : SizedBox(
-                      width: width,
-                      height: _bannerAd!.size.height.toDouble(),
-                      child: AdWidget(ad: _bannerAd!),
-                    ),
-            ),
+          // if (mainProvider.currentPageName ==
+          //     AppLocalizations.of(context)!.home)
+          //   Positioned(
+          //     top: 0, // Set to top of the screen
+          //     left: 0,
+          //     right: 0,
+          //     child: _bannerAd == null
+          //         ? const SizedBox.shrink()
+          //         : SizedBox(
+          //             width: width,
+          //             height: _bannerAd!.size.height.toDouble(),
+          //             child: AdWidget(ad: _bannerAd!),
+          //           ),
+          //   ),
           // Header Content
           Positioned(
             bottom: 0,
@@ -682,11 +921,13 @@ class _MainPageState extends State<MainPage> {
                                   onPressed: () {
                                     _actionOfHeaderButton();
                                   },
-                                  icon: Icon(
+                                  icon: mainProvider.currentPageName != AppLocalizations.of(context)!.search ?
+                                  Icon(
                                     _iconHeader(mainProvider.currentPageName),
                                     size: 35.w,
                                     color: AppColor.black,
-                                  ),
+                                  ) : SizedBox(width: 35.w,height: 35.w,child:
+                                  Image.asset("assets/images/filter.png"),),
                                 ),
                               ),
                             ),
@@ -852,6 +1093,7 @@ class _MainPageState extends State<MainPage> {
               },
             ),
             GButton(
+              key: searchKeyTutorial,
               icon: Icons.search,
               text: AppLocalizations.of(context)!.search,
               textStyle: TextStyle(
@@ -865,6 +1107,7 @@ class _MainPageState extends State<MainPage> {
               },
             ),
             GButton(
+              key: favoriteKeyTutorial,
               icon: Icons.favorite_border_outlined,
               text: AppLocalizations.of(context)!.favorites,
               textStyle: TextStyle(
@@ -878,6 +1121,7 @@ class _MainPageState extends State<MainPage> {
               },
             ),
             GButton(
+              key: profileKeyTutorial,
               icon: Icons.person_outline,
               text: AppLocalizations.of(context)!.profile,
               textStyle: TextStyle(

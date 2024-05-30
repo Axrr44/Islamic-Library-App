@@ -62,7 +62,7 @@ class AuthServices {
       GoogleSignIn googleSignIn = GoogleSignIn();
       await auth.signOut();
       await googleSignIn.disconnect();
-      Navigator.of(context).pushReplacementNamed(AppRoutes.SGIN_IN_ROUTES);
+      Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
     } catch (e) {
       ///Catch error
     }
@@ -133,5 +133,20 @@ class AuthServices {
       };
     }
     return null;
+  }
+
+  static Future<void> deleteAccount(BuildContext context) async {
+    final user = auth.currentUser;
+    if (user != null) {
+      try {
+        context.loaderOverlay.show();
+        await user.delete();
+        context.loaderOverlay.hide();
+        Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+      } catch (e) {
+        context.loaderOverlay.hide();
+        showMessage(context, "An unexpected error occurred while deleting the account");
+      }
+    }
   }
 }

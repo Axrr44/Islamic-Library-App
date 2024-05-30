@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancer/config/app_colors.dart';
+import 'package:freelancer/config/app_routes.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -19,18 +22,40 @@ class _ProfilePageState extends State<ProfilePage> {
     double height = MediaQuery.of(context).size.height;
     String currentLanguage = Localizations.localeOf(context).languageCode;
 
+    User? currentUser = AuthServices.getCurrentUser();
+
+    if (currentUser == null) {
+      return Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+          },
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(AppColor.primary1)
+          ),
+          child: Text(
+            AppLocalizations.of(context)!.signIn,
+            style: TextStyle(fontSize: 20.sp),
+          ),
+        ),
+      );
+    }
+
     return FutureBuilder<Map<String, dynamic>?>(
       future: AuthServices.fetchUserInfo(),
       builder: (BuildContext context,
           AsyncSnapshot<Map<String, dynamic>?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color : Colors.black));
+          return const Center(
+              child: CircularProgressIndicator(color: Colors.black));
         }
         else if (snapshot.hasError) {
           return const Center(child: Text('Error fetching user information'));
-        } else if (!snapshot.hasData || snapshot.data == null) {
+        }
+        else if (!snapshot.hasData || snapshot.data == null) {
           return const Center(child: Text('No user information available'));
-        } else {
+        }
+        else {
           final userInfo = snapshot.data!;
           return Material(
             color: Colors.white.withOpacity(0.0),
@@ -86,6 +111,62 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 15.h,
                     child: const Divider(color: Colors.grey),
                   ),
+                  SizedBox(
+                    width: width,
+                    child: Padding(
+                      padding: EdgeInsets.all(5.w),
+                      child: ListTile(
+                        leading: const Icon(Icons.lock_reset_outlined),
+                        title: TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.PASSWORD_RESET_ROUTES);
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.changePassword,
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontFamily:
+                              Utility.getTextFamily(currentLanguage),
+                              fontSize: 30.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15.h,
+                    child: const Divider(color: Colors.grey),
+                  ),
+                  SizedBox(
+                    width: width,
+                    child: Padding(
+                      padding: EdgeInsets.all(5.w),
+                      child: ListTile(
+                        leading: const Icon(Icons.delete),
+                        title: TextButton(
+                          onPressed: () {
+                            _showDeleteConfirmationDialog(context);
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.deleteAccount,
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontFamily:
+                              Utility.getTextFamily(currentLanguage),
+                              fontSize: 30.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15.h,
+                    child: const Divider(color: Colors.grey),
+                  ),
                 ],
               ),
             ),
@@ -94,6 +175,43 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
+
+  Future<void> _showDeleteConfirmationDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(AppLocalizations.of(context)!.confirmDeletionMessage),
+          actions: <Widget>[
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(AppColor.primary1)
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.cancel,style: TextStyle(
+                fontSize: 15.sp,color: Colors.white
+              ),),
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.grey)
+              ),
+              onPressed: () {
+                AuthServices.deleteAccount(context);
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.delete,style: TextStyle(
+                fontSize: 15.sp,color: Colors.white
+              ),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
 // Future<void> _onProfilePressed() async {
 //   try {

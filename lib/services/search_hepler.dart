@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'package:http/http.dart' as http;
 import '../models/hadith_model.dart';
-import '../models/tafseer_books.dart';
-import '../models/tafseer_content.dart';
+import '../models/tafseer_response.dart';
 import '../utilities/utility.dart';
 import 'package:quran/quran.dart' as quran;
 
@@ -129,7 +128,7 @@ class SearchHelper {
   static Future<TafseerResponse?> _fetchTafseerData(
       int surah, int verse, int mufseerId) async {
     final response = await http.get(Uri.parse(
-        'http://api.quran-tafseer.com/tafseer/${mufseerId}/$surah/$verse'));
+        'http://api.quran-tafseer.com/tafseer/$mufseerId/$surah/$verse'));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));

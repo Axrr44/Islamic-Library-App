@@ -26,7 +26,7 @@ import '../config/app_languages.dart';
 import '../models/quran_model.dart';
 import '../models/reciter_model.dart';
 import '../models/tafseer_books.dart';
-import '../models/tafseer_content.dart';
+import '../models/tafseer_response.dart';
 import '../providers/quran_aya_page_provider.dart';
 import '../services/app_data.dart';
 
@@ -89,6 +89,14 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
           Provider.of<QuranAyaPageProvider>(context, listen: false);
       sliderValueProvider.updateSelectedReciter(_reciters.first);
     }
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.stop();
+    audioPlayer.dispose();
+    _pageController.dispose();
+    super.dispose();
   }
 
   void scrollToPage(int pageIndex) {
@@ -344,7 +352,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                       )),
                   IconButton(
                       onPressed: () async {
-                        await Share.share(getDataByPage());
+                        await Share.share("${getDataByPage()}[${currentLanguage == Languages.EN.languageCode
+                        ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)}]");
                       },
                       icon: Icon(
                         Icons.share,
@@ -707,7 +716,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                     ),
                     InkWell(
                       onTap: () async {
-                        await Share.share(ayahText);
+                        await Share.share("$ayahText[${currentLanguage == Languages.EN.languageCode
+                            ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)}]");
                         Navigator.of(context).pop();
                       },
                       child: ListTile(
@@ -918,54 +928,63 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
           return const CircularProgressIndicator(
             color: AppColor.primary1,
           );
-        }
-        else if (snapshot.hasError) {
+        } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
-        }
-        else {
+        } else {
           List<Tafseer>? tafseerList = snapshot.data;
           if (tafseerList != null && tafseerList.isNotEmpty) {
-            return Container(
-              height: 50.h,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColor.black, width: 1.w),
-                borderRadius: BorderRadius.circular(5.w),
-              ),
-              child: SizedBox(
-                height: double.infinity,
-                child: DropdownButton<Tafseer>(
-                  hint: Text(
-                    "Select tafseer",
-                    style: TextStyle(fontSize: 15.sp),
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.arrow_drop_down_circle_outlined,size: 30.w,),
+                SizedBox(width: 20.w,),
+                Container(
+                  height: 50.h,
+                  width: 230.w,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColor.black, width: 1.w),
+                    borderRadius: BorderRadius.circular(5.w),
                   ),
-                  iconSize: 0,
-                  underline: Container(),
-                  isExpanded: true,
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  value: provider.mufseer = tafseerList[provider.indexOfTafseer],
-                  onChanged: (Tafseer? newValue) {
-                    if (newValue != null) {
-                      provider.mufseer = newValue;
-                      provider.setIndexOfMufseer(tafseerList.indexOf(newValue));
-                    }
-                  },
-                  itemHeight: 50.h,
-                  items: tafseerList
-                      .map<DropdownMenuItem<Tafseer>>((Tafseer value) {
-                    return DropdownMenuItem<Tafseer>(
-                      value: value,
-                      child: Center(
-                        child: Text(
-                          value.name,
-                          style:
-                              TextStyle(fontSize: 15.sp, color: AppColor.black),
-                        ),
+                  child: SizedBox(
+                    height: double.infinity,
+                    width: 200.w,
+                    child: DropdownButton<Tafseer>(
+                      hint: Text(
+                        "Select tafseer",
+                        style: TextStyle(fontSize: 15.sp),
                       ),
-                    );
-                  }).toList(),
-                ),
-              ),
+                      iconSize: 0,
+                      underline: Container(),
+                      isExpanded: true,
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      value: provider.mufseer =
+                          tafseerList[provider.indexOfTafseer],
+                      onChanged: (Tafseer? newValue) {
+                        if (newValue != null) {
+                          provider.mufseer = newValue;
+                          provider
+                              .setIndexOfMufseer(tafseerList.indexOf(newValue));
+                        }
+                      },
+                      itemHeight: 50.h,
+                      items: tafseerList
+                          .map<DropdownMenuItem<Tafseer>>((Tafseer value) {
+                        return DropdownMenuItem<Tafseer>(
+                          value: value,
+                          child: Center(
+                            child: Text(
+                              value.name,
+                              style: TextStyle(
+                                  fontSize: 15.sp, color: AppColor.black),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                )
+              ],
             );
           } else {
             return Center(

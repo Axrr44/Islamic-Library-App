@@ -31,6 +31,12 @@ class SignIn extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
+                  height: height / 8,
+                ),
+                Text(AppLocalizations.of(context)!.signInDescription,
+                    textAlign: TextAlign.center,style:
+                  TextStyle(fontSize: 15.sp,color: Colors.black),),
+                SizedBox(
                   height: height / 5,
                 ),
                 CustomTextField(
@@ -91,43 +97,6 @@ class SignIn extends StatelessWidget {
                 SizedBox(
                   height: height / 20,
                 ),
-                Text(
-                  AppLocalizations.of(context)!.signInFG,
-                  style:
-                      TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: height / 20,
-                ),
-                SizedBox(
-                  width: width / 2 + 40 ,
-                  height: width / 7,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      AuthServices.signInWithGoogle(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                      SvgPicture.asset(
-                        'assets/images/google-icon.svg',
-                        height: 24.0.w,
-                        width: 24.0.w,
-                      ),
-                      Text.rich(TextSpan(children: [
-                        TextSpan(text: AppLocalizations.of(context)!.signInWith,style: TextStyle(fontSize: 15.sp,fontFamily: Utility.getTextFamily(currentLanguage),
-                        color: Colors.black)),
-                        TextSpan(text: AppLocalizations.of(context)!.google,style: TextStyle(fontSize: 15.sp,fontFamily: Utility.getTextFamily(currentLanguage),
-                        fontWeight: FontWeight.bold,color: Colors.black))
-                      ]))
-                    ],),
-                  ),
-                ),
                 SizedBox(
                   width: width / 10,
                 ),
@@ -146,7 +115,7 @@ class SignIn extends StatelessWidget {
                   TextButton(
                       onPressed: () {
                         Navigator.of(context)
-                            .pushNamed(AppRoutes.SGIN_UP_ROUTES);
+                            .pushNamed(AppRoutes.SIGN_UP_ROUTES);
                       },
                       child: Text(
                         AppLocalizations.of(context)!.signUp,
@@ -156,7 +125,22 @@ class SignIn extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: AppColor.primary2),
                       ))
-                ])
+                ]),
+                SizedBox(
+                  height: 10.h,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.guest,
+                      style: TextStyle(
+                          fontFamily: Utility.getTextFamily(currentLanguage),
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.primary2),
+                    ))
               ]),
         ),
       ),

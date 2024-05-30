@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancer/config/app_languages.dart';
+import 'package:freelancer/pages/list_of_mufseer_page.dart';
 import 'package:freelancer/pages/tafseer_conent_page.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../config/app_colors.dart';
+import '../config/toast_message.dart';
 import '../models/tafseer_books.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/app_data.dart';
 import '../services/app_data_pref.dart';
+import 'package:quran/quran.dart' as quran;
+
 
 class TafseerPage extends StatefulWidget {
   const TafseerPage({super.key});
@@ -20,27 +24,17 @@ class TafseerPage extends StatefulWidget {
 class _TafseerPageState extends State<TafseerPage> {
   late Future<List<Tafseer>> _tafseerListFuture;
   late Tafseer _mufseerLastRead;
-  int _indexOfTafseer = 0;
-  late Future<List<String>> _surahListSurah;
-  Tafseer _mufseer = Tafseer.empty();
 
   int _indexOfSurah = 0;
   late int _surahId;
   late int _indexOfScrolling;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _loadTafseerData();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    String currentLanguage = Localizations.localeOf(context).languageCode;
-    _tafseerListFuture = AppData.fetchTafseerData(currentLanguage);
-    _surahListSurah = AppData.fetchSurahData(currentLanguage);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,56 +45,12 @@ class _TafseerPageState extends State<TafseerPage> {
     final bool isMobile = shortestSide < 600;
 
     return Scaffold(
-      body: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _header(width, height, context, isMobile, currentLanguage),
-              Container(
-                height: 400.h,
-                padding: EdgeInsets.symmetric(horizontal: 40.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 50.h),
-                    _listOfTafseer(),
-                    SizedBox(height: 20.h),
-                    _listOfSurah(),
-                    SizedBox(height: 20.h),
-                    SizedBox(
-                      width: width / 2,
-                      height: isMobile ? 50.h : 60.h,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(AppColor.black),
-                          foregroundColor:
-                              MaterialStateProperty.all(AppColor.white),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.w),
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => TafseerContentPage(
-                                    surahId: _indexOfSurah + 1,
-                                    mufseer: _mufseer,
-                                  )));
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.fseer,
-                          style: TextStyle(fontSize: 20.sp),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _header(width, height, context, isMobile, currentLanguage),
+            _listOfSurah(width,height,context,currentLanguage),
+          ],
         ),
       ),
     );
@@ -112,151 +62,53 @@ class _TafseerPageState extends State<TafseerPage> {
     _indexOfScrolling = await AppDataPreferences.getTafseerIndex();
   }
 
-  FutureBuilder<List<Tafseer>> _listOfTafseer() {
-    return FutureBuilder<List<Tafseer>>(
-      future: _tafseerListFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          context.loaderOverlay.show();
-          return Container();
-        }
-        else if (snapshot.hasError) {
-          context.loaderOverlay.hide();
-          return Text('Error: ${snapshot.error}');
-        }
-        else {
-          context.loaderOverlay.hide();
-          List<Tafseer>? tafseerList = snapshot.data;
-          if (tafseerList != null && tafseerList.isNotEmpty) {
-            return Container(
-              height: 100.h,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  border: Border.all(color: AppColor.black, width: 1.w),
-                  borderRadius: BorderRadius.circular(5.w)),
-              child: SizedBox(
-                height: double.infinity,
-                child: DropdownButton<Tafseer>(
-                  hint: Text(
-                    "Select tafseer",
-                    style: TextStyle(fontSize: 15.sp),
+  Widget _listOfSurah(double width, double height, BuildContext context, String currentLanguage) {
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: width / 2,
+            mainAxisExtent: height / 5,
+            childAspectRatio: 1,
+            crossAxisSpacing: 5.w,
+            mainAxisSpacing: 5.h,
+          ),
+          itemCount: 114,
+          itemBuilder: (_, index) {
+            return Card(
+              color: AppColor.white,
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ListOfMufseerPage(surahId: index + 1),
+                  ));
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        currentLanguage == Languages.EN.languageCode
+                        ? quran.getSurahName(index + 1) : quran.getSurahNameArabic(index + 1),
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 15.w,
+                      )
+                    ],
                   ),
-                  iconSize: 0,
-                  underline: Container(),
-                  isExpanded: true,
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  value: _mufseer = tafseerList[_indexOfTafseer],
-                  onChanged: (Tafseer? newValue) {
-                    setState(() {
-                      for (var tafseer in tafseerList) {
-                        if (tafseer.name == newValue!.name) {
-                          _indexOfTafseer = tafseerList.indexOf(tafseer);
-                          _mufseer = tafseerList[_indexOfTafseer];
-                        }
-                      }
-                    });
-                  },
-                  itemHeight: 100.h,
-                  items: tafseerList.map<DropdownMenuItem<Tafseer>>(
-                    (Tafseer value) {
-                      return DropdownMenuItem<Tafseer>(
-                        value: value,
-                        child: Center(
-                          child: Text(
-                            value.name.toString(),
-                            style: TextStyle(
-                                fontSize: 25.sp, color: AppColor.black),
-                          ),
-                        ),
-                      );
-                    },
-                  ).toList(),
                 ),
               ),
             );
-          } else {
-            return Center(
-              child: Text(
-                'No Tafseer data available',
-                style: TextStyle(fontSize: 30.sp),
-              ),
-            );
-          }
-        }
-      },
-    );
-  }
-
-  FutureBuilder<List<String>> _listOfSurah() {
-    return FutureBuilder<List<String>>(
-      future: _surahListSurah,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          context.loaderOverlay.show();
-          return Container();
-        } else if (snapshot.hasError) {
-          context.loaderOverlay.hide();
-          return Text('Error: ${snapshot.error}');
-        } else {
-          context.loaderOverlay.hide();
-          List<String>? surahList = snapshot.data;
-          if (surahList != null && surahList.isNotEmpty) {
-            return Container(
-              height: 100.h,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  border: Border.all(color: AppColor.black, width: 1.w),
-                  borderRadius: BorderRadius.circular(5.w)),
-              child: SizedBox(
-                height: double.infinity,
-                child: DropdownButton<String>(
-                  hint: Text(
-                    "Select surah",
-                    style: TextStyle(fontSize: 15.sp),
-                  ),
-                  iconSize: 0,
-                  underline: Container(),
-                  isExpanded: true,
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  value: surahList[_indexOfSurah],
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      for (var surah in surahList) {
-                        if (surah == newValue!) {
-                          _indexOfSurah = surahList.indexOf(surah);
-                        }
-                      }
-                    });
-                  },
-                  itemHeight: 100.h,
-                  items: surahList.map<DropdownMenuItem<String>>(
-                    (String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Center(
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            value,
-                            style: TextStyle(
-                                fontSize: 25.sp, color: AppColor.black),
-                          ),
-                        ),
-                      );
-                    },
-                  ).toList(),
-                ),
-              ),
-            );
-          } else {
-            return Center(
-              child: Text(
-                'No Surah data available',
-                style: TextStyle(fontSize: 30.sp),
-              ),
-            );
-          }
-        }
-      },
+          },
+        ),
+      ),
     );
   }
 
@@ -322,9 +174,8 @@ class _TafseerPageState extends State<TafseerPage> {
                       Text(
                         AppLocalizations.of(context)!.tafseer,
                         style: TextStyle(
-                            fontFamily:
-                                Utility.getTextFamily(currentLanguage),
-                            fontSize: 40.sp,
+                            fontFamily: 'AEFont',
+                            fontSize: 60.sp,
                             color: AppColor.black,
                             fontWeight: FontWeight.bold),
                       ),
@@ -359,7 +210,7 @@ class _TafseerPageState extends State<TafseerPage> {
                       child: IconButton(
                         onPressed: () async {
                           await _loadTafseerData();
-                          if (_indexOfTafseer != -1) {
+                          if (_indexOfScrolling != -1) {
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => TafseerContentPage(
                                 mufseer: _mufseerLastRead,
@@ -368,6 +219,8 @@ class _TafseerPageState extends State<TafseerPage> {
                                 indexOfScrollable: _indexOfScrolling,
                               ),
                             ));
+                          }else {
+                            ToastMessage.showMessage(AppLocalizations.of(context)!.noLastRead);
                           }
                         },
                         icon: Icon(

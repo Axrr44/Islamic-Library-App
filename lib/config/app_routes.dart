@@ -14,8 +14,8 @@ class AppRoutes{
 
 
   static const MAIN_ROUTES = "/main-page";
-  static const SGIN_IN_ROUTES = "/sign-in-page";
-  static const SGIN_UP_ROUTES = "/sign-up-page";
+  static const SIGN_IN_ROUTES = "/sign-in-page";
+  static const SIGN_UP_ROUTES = "/sign-up-page";
   static const PASSWORD_RESET_ROUTES = "/password-rest-page";
   static const QURAN_SURA_ROUTES = "/quran-sura-page";
   static const QURAN_AYA_ROUTES = "/quran-aya-page";
@@ -24,8 +24,8 @@ class AppRoutes{
   static const VIEW_PAGER_ROUTES = "/view-pager";
   static const SPLASH_SCREEN_REOUTS = "/splash-screen";
 
-  static final ROUTES = {SGIN_IN_ROUTES: (context) => SignIn(),
-    SGIN_UP_ROUTES: (context) => SignUp(),
+  static final ROUTES = {SIGN_IN_ROUTES: (context) => SignIn(),
+    SIGN_UP_ROUTES: (context) => SignUp(),
     MAIN_ROUTES: (context) => const MainPage(),
     PASSWORD_RESET_ROUTES: (context) => RestPasswordPage(),
     QURAN_SURA_ROUTES: (context) => const QuranSuraPage(),

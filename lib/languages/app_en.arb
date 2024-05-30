@@ -65,7 +65,30 @@
   "warningSearch" : "If you are searching for a frequently repeated word, such as the word “Allah” this may take some time",
   "reciter" : "Choose the reciter",
   "favoriteIt" : "Favorite",
-  "save" : "Save"
+  "save" : "Save",
+  "skip" : "Skip",
+  "quranTutorial" : "The entire Holy Qur’an is divided into surahs and Juz in Hafs fonts. You can long click on any verse to tafseer it, share it, etc., and the advantage of listening to the Holy Qur’an is for many reciters.",
+  "hadithTutorial" : "An Islamic library containing the most famous Islamic books. Each book is divided into sections and the ability to search in each book ",
+  "tafseerTutorial" : "Tafseer menu: You can choose the surah you want to interpret, then choose the misfir you want",
+  "searchTutorial" : "The search page enables you to search in hadiths, the Qur’an, or interpretation with the filtering feature",
+  "favoriteTutorial" : "You can favorite many things in the application and save them on this page to return to later with the filter feature",
+  "profileTutorial" : "This page contains your personal information, settings, and the ability to change your password",
+  "noLastRead" : "“No last read, please add desired Surah",
+  "warningFilterSearch" : "The default search is set to \"Quraan\". Please change it to \"Tafaseer\" or \"ahadeeth” if you want to search those fields.",
+  "signInDescription" : "Welcome to Islamic Library, sign up today and stay connected with the latest updates and features!",
+  "set" : "Set",
+  "changePassword" : "Change password",
+  "deleteAccount" : "Delete account",
+  "noFavorite" : "No favorites found.",
+  "guest" : "Login as a guest",
+  "privacyPolicy" : "By signing up you agree to",
+  "privacyPolicy2" : "the terms &",
+  "privacyPolicy3" : "conditions and our privacy policy",
+  "confirmDeletionMessage" : "Are you sure to delete the account ?",
+  "cancel" : "Cancel",
+  "delete" : "Delete"
+
+
 
 
 

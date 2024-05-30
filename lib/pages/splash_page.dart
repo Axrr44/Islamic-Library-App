@@ -18,7 +18,7 @@ class SplashScreenPage extends StatelessWidget {
     if (await AppDataPreferences.getShowViewPager()) {
       Navigator.of(context).pushReplacementNamed(AppRoutes.VIEW_PAGER_ROUTES);
     } else if (user == null) {
-      Navigator.of(context).pushReplacementNamed(AppRoutes.SGIN_IN_ROUTES);
+      Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
     } else {
       Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
     }
@@ -29,11 +29,11 @@ class SplashScreenPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedSplashScreen(
       splash: SvgPicture.asset('assets/images/Islamic_library.svg',
-      colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcATop),),
+      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcATop),),
       splashIconSize: 300.w,
       duration: 3000,
       splashTransition: SplashTransition.fadeTransition,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.primary1,
       nextScreen: FutureBuilder(
         future: _checkAuthentication(context),
         builder: (context, snapshot) {

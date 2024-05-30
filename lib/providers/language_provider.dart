@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freelancer/services/app_data_pref.dart';
 
 class LanguageProvider with ChangeNotifier {
-  String _currentLanguage = 'en';
+  String _currentLanguage = 'ar';
 
   String get currentLanguage => _currentLanguage;
 

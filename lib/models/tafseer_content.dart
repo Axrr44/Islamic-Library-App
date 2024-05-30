@@ -1,25 +1,17 @@
-class TafseerResponse {
-  final int tafseerId;
-  final String tafseerName;
-  final String ayahUrl;
-  final int ayahNumber;
-  final String text;
+class TafseerContent {
+  final String tafseerText;
+  final String verseText;
+  final String surahText;
+  final int verseId;
+  final int surahId;
 
-  TafseerResponse({
-    required this.tafseerId,
-    required this.tafseerName,
-    required this.ayahUrl,
-    required this.ayahNumber,
-    required this.text,
+  TafseerContent({
+    required this.tafseerText,
+    required this.verseText,
+    required this.surahText,
+    required this.verseId,
+    required this.surahId,
   });
 
-  factory TafseerResponse.fromJson(Map<String, dynamic> json) {
-    return TafseerResponse(
-      tafseerId: json['tafseer_id'],
-      tafseerName: json['tafseer_name'],
-      ayahUrl: json['ayah_url'],
-      ayahNumber: json['ayah_number'],
-      text: json['text'],
-    );
-  }
+
 }
