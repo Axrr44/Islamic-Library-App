@@ -70,7 +70,7 @@ class _MainPageState extends State<MainPage> {
       const ProfilePage(),
     ];
     _checkAndShowTutorial();
-    // _createBannerAd();
+    _createBannerAd();
 
   }
 
@@ -80,7 +80,7 @@ class _MainPageState extends State<MainPage> {
       createTutorial();
       Future.delayed(Duration.zero, showTutorial);
     }else{
-      // _createInterstitialAd();
+      _createInterstitialAd();
     }
   }
 
@@ -844,22 +844,20 @@ class _MainPageState extends State<MainPage> {
               height: height / 3 - 40.h,
             ),
           ),
-          // Conditional Banner Ad
-          // if (mainProvider.currentPageName ==
-          //     AppLocalizations.of(context)!.home)
-          //   Positioned(
-          //     top: 0, // Set to top of the screen
-          //     left: 0,
-          //     right: 0,
-          //     child: _bannerAd == null
-          //         ? const SizedBox.shrink()
-          //         : SizedBox(
-          //             width: width,
-          //             height: _bannerAd!.size.height.toDouble(),
-          //             child: AdWidget(ad: _bannerAd!),
-          //           ),
-          //   ),
-          // Header Content
+          if (mainProvider.currentPageName ==
+              AppLocalizations.of(context)!.home)
+            Positioned(
+              top: 0, // Set to top of the screen
+              left: 0,
+              right: 0,
+              child: _bannerAd == null
+                  ? const SizedBox.shrink()
+                  : SizedBox(
+                      width: width,
+                      height: _bannerAd!.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd!),
+                    ),
+            ),
           Positioned(
             bottom: 0,
             left: 0,

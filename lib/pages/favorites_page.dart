@@ -37,11 +37,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
             Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
           },
           style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(AppColor.primary1)
+            backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.w),
+              ),
+            ),
           ),
           child: Text(
             AppLocalizations.of(context)!.signIn,
-            style: TextStyle(fontSize: 20.sp),
+            style: TextStyle(fontSize: 20.sp,color: Colors.white),
           ),
         ),
       );

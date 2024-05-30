@@ -7,7 +7,6 @@ import 'package:freelancer/models/favorite_model.dart';
 import 'package:freelancer/services/firestore_service.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:provider/provider.dart';
-import 'package:quran/quran.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -43,7 +42,7 @@ class TafseerContentPage extends StatefulWidget {
 
 class _TafseerContentPageState extends State<TafseerContentPage> {
   final ItemScrollController _scrollController = ItemScrollController();
-  List<TafseerContent> _tafseerContents = [];
+  final List<TafseerContent> _tafseerContents = [];
   int _currentVerseCount = 0;
   bool _isLoadingMore = false;
   late Future<void> _initialLoadFuture;
@@ -182,7 +181,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
 
     for (int verseNumber = start; verseNumber <= end && verseNumber <= totalVerses; verseNumber++) {
       final verseText = currentLanguage == Languages.EN.languageCode
-          ? quran.getVerse(widget.surahId, verseNumber)
+          ? quran.getVerseTranslation(widget.surahId, verseNumber)
           : quran.getVerse(widget.surahId, verseNumber);
       final surahText = currentLanguage == Languages.EN.languageCode
           ? quran.getSurahName(widget.surahId)

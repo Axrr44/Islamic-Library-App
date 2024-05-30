@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/pages/tafseer_conent_page.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:quran/quran_text.dart';
 import 'package:quran/quran.dart' as quran;
 import '../config/app_colors.dart';
 import '../models/tafseer_books.dart';

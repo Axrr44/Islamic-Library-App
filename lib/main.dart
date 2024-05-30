@@ -1,7 +1,9 @@
 
 
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancer/providers/favorite_provider.dart';
@@ -11,26 +13,28 @@ import 'package:freelancer/providers/quran_aya_page_provider.dart';
 import 'package:freelancer/providers/sub_search_provider.dart';
 import 'package:freelancer/providers/tafseer_dialog_provider.dart';
 import 'package:freelancer/services/app_data_pref.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'components/custom_progress.dart';
 import 'config/app_routes.dart';
+import 'firebase_options.dart';
 
 
 Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  //
-  // MobileAds.instance.initialize();
-  // SystemChrome.setEnabledSystemUIMode(
-  //     SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
-  //
-  // await SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.portraitUp,
-  // ]);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  MobileAds.instance.initialize();
+  SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
 
   runApp(Phoenix(
     child: MultiProvider(
@@ -67,7 +71,7 @@ class MyApp extends StatelessWidget {
             },
             child: MaterialApp(
                 theme: ThemeData(fontFamily: 'Custom'),
-                initialRoute: AppRoutes.VIEW_PAGER_ROUTES,
+                initialRoute: AppRoutes.SPLASH_SCREEN_REOUTS,
                 routes: AppRoutes.ROUTES,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,

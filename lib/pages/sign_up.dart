@@ -10,7 +10,7 @@ import '../services/authentication.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUp extends StatefulWidget {
-  SignUp({super.key});
+  const SignUp({super.key});
 
   @override
   State<SignUp> createState() => _SignUpState();

@@ -85,7 +85,11 @@
   "privacyPolicy3" : "وسياسة الخصوصية الخاصة بنا",
   "confirmDeletionMessage" : "هل انت متأكد من حذف الحساب ؟",
   "cancel" : "الغاء",
-  "delete" : "حذف"
+  "delete" : "حذف",
+  "confirm" : "يتأكد",
+  "reEnterPassword" : "أعد إدخال كلمة المرور"
+
+
 
 
 

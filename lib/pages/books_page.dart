@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancer/config/toast_message.dart';
 import 'package:freelancer/pages/chapter_of_books_page.dart';
 import '../config/app_languages.dart';
-import '../models/drop_down_item.dart';
 import '../services/app_data.dart';
 import '../config/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

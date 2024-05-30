@@ -5,10 +5,15 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../components/custom_dialog.dart';
+import '../config/app_colors.dart';
 import '../config/app_routes.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class AuthServices {
   static final auth = FirebaseAuth.instance;
+  static final GoogleSignIn googleSignIn = GoogleSignIn();
+
 
   static signUp(
       BuildContext context, String name, String email, String password) async {
@@ -135,18 +140,141 @@ class AuthServices {
     return null;
   }
 
-  static Future<void> deleteAccount(BuildContext context) async {
+  static Future<bool> deleteAccount(BuildContext context) async {
     final user = auth.currentUser;
     if (user != null) {
       try {
         context.loaderOverlay.show();
+
+        final userInfo = user.providerData[0];
+        if (userInfo.providerId == 'google.com') {
+          final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+          if (googleUser != null) {
+            final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+            final AuthCredential credential = GoogleAuthProvider.credential(
+              idToken: googleAuth.idToken,
+              accessToken: googleAuth.accessToken,
+            );
+
+            await user.reauthenticateWithCredential(credential);
+          } else {
+            context.loaderOverlay.hide();
+            showMessage(context, "Re-authentication failed. Please try again.");
+            return false;
+          }
+        } else if (userInfo.providerId == 'password') {
+          final password = await _getPasswordFromUser(context);
+          if (password == null) {
+            context.loaderOverlay.hide();
+            showMessage(context, "Re-authentication failed. Please try again.");
+            return false;
+          }
+
+          final AuthCredential credential = EmailAuthProvider.credential(
+            email: user.email!,
+            password: password,
+          );
+
+          await user.reauthenticateWithCredential(credential);
+        }
+
         await user.delete();
         context.loaderOverlay.hide();
-        Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+
+        if (userInfo.providerId == 'google.com') {
+          googleSignIn.disconnect();
+        }
+
+        return true;
+
       } catch (e) {
         context.loaderOverlay.hide();
         showMessage(context, "An unexpected error occurred while deleting the account");
+        print("Error: $e");
+        return false;
       }
     }
+    return false;
   }
+
+  static Future<String?> _getPasswordFromUser(BuildContext context) async {
+    String? password;
+    await showDialog<String?>(
+      context: context,
+      builder: (context) {
+        final TextEditingController passwordController = TextEditingController();
+        return AlertDialog(
+          title: Text(
+            AppLocalizations.of(context)!.reEnterPassword,
+            style: TextStyle(fontSize: 20.sp),
+          ),
+          content: Padding(
+            padding: EdgeInsets.only(top: 10.h),
+            child: TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.password,
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            Center( // Center the Row
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.grey),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.w),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.cancel,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.w),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      password = passwordController.text;
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.confirm,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    return password;
+  }
+
+
 }
+

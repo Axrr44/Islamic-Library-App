@@ -28,7 +28,7 @@ class ContentBooksPage extends StatefulWidget {
   final bool? isScrollable;
   final int chapterId;
 
-  ContentBooksPage({
+  const ContentBooksPage({
     super.key,
     required this.bookId,
     required this.bookName,

@@ -25,7 +25,7 @@ class AppRoutes{
   static const SPLASH_SCREEN_REOUTS = "/splash-screen";
 
   static final ROUTES = {SIGN_IN_ROUTES: (context) => SignIn(),
-    SIGN_UP_ROUTES: (context) => SignUp(),
+    SIGN_UP_ROUTES: (context) => const SignUp(),
     MAIN_ROUTES: (context) => const MainPage(),
     PASSWORD_RESET_ROUTES: (context) => RestPasswordPage(),
     QURAN_SURA_ROUTES: (context) => const QuranSuraPage(),

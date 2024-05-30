@@ -4,12 +4,10 @@ import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/pages/list_of_mufseer_page.dart';
 import 'package:freelancer/pages/tafseer_conent_page.dart';
 import 'package:freelancer/utilities/utility.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 import '../config/app_colors.dart';
 import '../config/toast_message.dart';
 import '../models/tafseer_books.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../services/app_data.dart';
 import '../services/app_data_pref.dart';
 import 'package:quran/quran.dart' as quran;
 
@@ -25,7 +23,7 @@ class _TafseerPageState extends State<TafseerPage> {
   late Future<List<Tafseer>> _tafseerListFuture;
   late Tafseer _mufseerLastRead;
 
-  int _indexOfSurah = 0;
+  final int _indexOfSurah = 0;
   late int _surahId;
   late int _indexOfScrolling;
 

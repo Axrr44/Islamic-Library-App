@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freelancer/utilities/utility.dart';
 import '../components/custom_textfield.dart';
@@ -37,7 +36,7 @@ class SignIn extends StatelessWidget {
                     textAlign: TextAlign.center,style:
                   TextStyle(fontSize: 15.sp,color: Colors.black),),
                 SizedBox(
-                  height: height / 5,
+                  height: height / 6 - 20.h,
                 ),
                 CustomTextField(
                     controller: _emailController,

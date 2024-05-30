@@ -5,7 +5,6 @@ import 'package:freelancer/config/app_colors.dart';
 import 'package:freelancer/config/app_routes.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../services/authentication.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -31,15 +30,21 @@ class _ProfilePageState extends State<ProfilePage> {
             Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
           },
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(AppColor.primary1)
+            backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+            shape: MaterialStateProperty.all(
+               RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.w),
+              ),
+            ),
           ),
           child: Text(
             AppLocalizations.of(context)!.signIn,
-            style: TextStyle(fontSize: 20.sp),
+            style: TextStyle(fontSize: 20.sp,color: Colors.white),
           ),
         ),
       );
     }
+
 
     return FutureBuilder<Map<String, dynamic>?>(
       future: AuthServices.fetchUserInfo(),
@@ -75,6 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         leading: const Icon(Icons.person_rounded),
                         title: Text(
                           "${AppLocalizations.of(context)!.fullName} : ${userInfo['name']}",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black,
                             fontFamily: Utility.getTextFamily(currentLanguage),
@@ -97,6 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         leading: const Icon(Icons.email),
                         title: Text(
                           "${AppLocalizations.of(context)!.email} : ${userInfo['email']}",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black,
                             fontFamily: Utility.getTextFamily(currentLanguage),
@@ -127,7 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               color: Colors.blue,
                               fontFamily:
                               Utility.getTextFamily(currentLanguage),
-                              fontSize: 30.sp,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -155,7 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               color: Colors.blue,
                               fontFamily:
                               Utility.getTextFamily(currentLanguage),
-                              fontSize: 30.sp,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -181,30 +188,67 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: Text(AppLocalizations.of(context)!.confirmDeletionMessage),
-          actions: <Widget>[
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(AppColor.primary1)
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.cancel,style: TextStyle(
-                fontSize: 15.sp,color: Colors.white
-              ),),
+          backgroundColor: Colors.white,
+          content: Padding(
+            padding: EdgeInsets.only(top: 10.h),
+            child: Text(
+              AppLocalizations.of(context)!.confirmDeletionMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15.sp),
             ),
-            ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey)
+          ),
+          actions: <Widget>[
+            Center( // Center the Row
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.grey),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.w),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.cancel,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.w),
+                        ),
+                      ),
+                    ),
+                    onPressed: () async{
+                      bool isDeleted = await AuthServices.deleteAccount(context);
+                      if(isDeleted)
+                        {
+                          Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+                        }
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.delete,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              onPressed: () {
-                AuthServices.deleteAccount(context);
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.delete,style: TextStyle(
-                fontSize: 15.sp,color: Colors.white
-              ),),
             ),
           ],
         );

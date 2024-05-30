@@ -86,7 +86,9 @@
   "privacyPolicy3" : "conditions and our privacy policy",
   "confirmDeletionMessage" : "Are you sure to delete the account ?",
   "cancel" : "Cancel",
-  "delete" : "Delete"
+  "delete" : "Delete",
+  "confirm" : "Confirm",
+  "reEnterPassword" : "Re-enter your password"
 
 
 
