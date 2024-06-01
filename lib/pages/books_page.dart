@@ -219,7 +219,7 @@ class _BooksPageState extends State<BooksPage> {
             crossAxisSpacing: 5.w,
             mainAxisSpacing: 5.h,
           ),
-          itemCount: 13,
+          itemCount: 14,
           itemBuilder: (_, index) {
             bool isDarimi = "Sunan ad-Darimi" == AppData.getBookName(context, index);
             return Card(

@@ -745,7 +745,17 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                             title: isEnglish
                                 ? quran.getSurahNameEnglish(ayah.surah.number)
                                 : quran.getSurahNameArabic(ayah.surah.number),
-                            content: ayahText));
+                            content: ayahText,
+                          surahId: ayah.surah.number,
+                          verseId: ayah.numberInSurah,
+                          author: '',
+                          bookName: '',
+                          hadithBookId: 0,
+                          hadithChapterId: 0,
+                          hadithIdInBook: 0,
+                          tafseerId: 0,
+                          tafseerName: ''
+                        ));
                         ToastMessage.showMessage(
                             AppLocalizations.of(context)!.favoriteIt);
                       },

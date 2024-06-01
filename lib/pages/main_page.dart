@@ -503,7 +503,7 @@ class _MainPageState extends State<MainPage> {
                                         newValue.index);
                                   });
                                 },
-                          items: List.generate(13, (index) {
+                          items: List.generate(14, (index) {
                             return DropdownMenuItem<IndexDropdownItem>(
                               value: IndexDropdownItem(
                                   AppData.getBookName(context, index), index),
@@ -716,7 +716,7 @@ class _MainPageState extends State<MainPage> {
             builder: (BuildContext context, StateSetter setState) {
               return SizedBox(
                 width: 200.w,
-                height: 250.w,
+                height: AuthServices.getCurrentUser() != null ? 250.w : 100.w,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -754,8 +754,7 @@ class _MainPageState extends State<MainPage> {
                         ),
                         Text(
                           "English",
-                          style:
-                              TextStyle(fontSize: 15.sp, color: Colors.black),
+                          style: TextStyle(fontSize: 15.sp, color: Colors.black),
                         ),
                         Radio<String>(
                           value: "ar",
@@ -772,42 +771,41 @@ class _MainPageState extends State<MainPage> {
                         ),
                         Text(
                           "العربية",
-                          style:
-                              TextStyle(fontSize: 15.sp, color: Colors.black),
+                          style: TextStyle(fontSize: 15.sp, color: Colors.black),
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.h),
-                      child: Divider(
-                        height: 2.h,
-                        color: Colors.black,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        AuthServices.signOut(context);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(AppColor.black),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.w),
-                          ),
+                    if (AuthServices.getCurrentUser() != null) ...[
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        child: Divider(
+                          height: 2.h,
+                          color: Colors.black,
                         ),
-                        minimumSize:
-                            MaterialStateProperty.all(Size(200.w, 50.h)),
                       ),
-                      child: Text(
-                        "Sign out",
-                        style:
-                            TextStyle(fontSize: 20.sp, color: AppColor.white),
+                      ElevatedButton(
+                        onPressed: () {
+                          AuthServices.signOut(context);
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(AppColor.black),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.w),
+                            ),
+                          ),
+                          minimumSize: MaterialStateProperty.all(Size(200.w, 50.h)),
+                        ),
+                        child: Text(
+                          "Sign out",
+                          style: TextStyle(fontSize: 20.sp, color: AppColor.white),
+                        ),
                       ),
-                    ),
+                    ]
                   ],
                 ),
               );
+
             },
           ),
         );

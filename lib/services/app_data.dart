@@ -8,58 +8,14 @@ import 'package:http/http.dart' as http;
 import '../models/reciter_model.dart';
 import '../models/tafseer_books.dart';
 import '../config/app_languages.dart';
+import '../models/tafseer_response.dart';
 
-
-class AppData{
-
+class AppData {
   // Books(hadiths)
   static Future<String> _loadJsonData(String filePath) async {
     return await rootBundle.loadString(filePath);
   }
-  static String getBookName(BuildContext context ,int index) {
-    switch (index) {
-      case 0 : {
-        return AppLocalizations.of(context)!.bukhari;
-      }
-      case 1 : {
-        return AppLocalizations.of(context)!.muslim;
-      }
-      case 2 : {
-        return AppLocalizations.of(context)!.dawud;
-      }
-      case 3 : {
-        return AppLocalizations.of(context)!.tirmidhi;
-      }
-      case 4 : {
-        return AppLocalizations.of(context)!.nasai;
-      }
-      case 5 : {
-        return AppLocalizations.of(context)!.majah;
-      }
-      case 6 : {
-        return AppLocalizations.of(context)!.malik;
-      }
-      case 7 : {
-        return AppLocalizations.of(context)!.ahmad;
-      }
-      case 8 : {
-        return AppLocalizations.of(context)!.darimi;
-      }
-      case 9 : {
-        return AppLocalizations.of(context)!.riyad;
-      }
-      case 10 : {
-        return AppLocalizations.of(context)!.bulugh;
-      }
-      case 11 : {
-        return AppLocalizations.of(context)!.adab;
-      }
-      case 12 : {
-        return AppLocalizations.of(context)!.forty_hadith_n;
-      }
-    }
-    return "";
-  }
+
   static Future<String> getCurrentBook(int bookId) {
     switch (bookId) {
       case 0:
@@ -114,8 +70,109 @@ class AppData{
         {
           return _loadJsonData("assets/json/nawawi40.json");
         }
+      case 13:
+        {
+          return _loadJsonData("assets/json/shamail_muhammadiyah.json");
+        }
     }
     return Future(() => "");
+  }
+
+  static String getBookName(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        {
+          return AppLocalizations.of(context)!.bukhari;
+        }
+      case 1:
+        {
+          return AppLocalizations.of(context)!.muslim;
+        }
+      case 2:
+        {
+          return AppLocalizations.of(context)!.dawud;
+        }
+      case 3:
+        {
+          return AppLocalizations.of(context)!.tirmidhi;
+        }
+      case 4:
+        {
+          return AppLocalizations.of(context)!.nasai;
+        }
+      case 5:
+        {
+          return AppLocalizations.of(context)!.majah;
+        }
+      case 6:
+        {
+          return AppLocalizations.of(context)!.malik;
+        }
+      case 7:
+        {
+          return AppLocalizations.of(context)!.ahmad;
+        }
+      case 8:
+        {
+          return AppLocalizations.of(context)!.darimi;
+        }
+      case 9:
+        {
+          return AppLocalizations.of(context)!.riyad;
+        }
+      case 10:
+        {
+          return AppLocalizations.of(context)!.bulugh;
+        }
+      case 11:
+        {
+          return AppLocalizations.of(context)!.adab;
+        }
+      case 12:
+        {
+          return AppLocalizations.of(context)!.forty_hadith_n;
+        }
+      case 13:
+        {
+          return AppLocalizations.of(context)!.shamailMuhammadiyah;
+        }
+    }
+    return "";
+  }
+
+  static int convertBookIdTo012(int value) {
+    switch (value) {
+      case 13:
+        return 9;
+      case 16:
+        return 13;
+      case 10:
+        return 12;
+      case 5:
+        return 3;
+      case 2:
+        return 1;
+      case 7:
+        return 6;
+      case 6:
+        return 5;
+      case 9:
+        return 8;
+      case 17:
+        return 10;
+      case 1:
+        return 0;
+      case 15:
+        return 11;
+      case 8:
+        return 7;
+      case 4:
+        return 2;
+      case 3:
+        return 4;
+      default:
+        throw ArgumentError('Invalid book ID: $value');
+    }
   }
 
   // Quran
@@ -129,6 +186,7 @@ class AppData{
     }
     return surahNames;
   }
+
   static String getJuz(int number) {
     switch (number) {
       case 1:
@@ -195,6 +253,7 @@ class AppData{
         return 'غير معروف';
     }
   }
+
   static int getNumberPageByJuz(int numberJuz) {
     switch (numberJuz) {
       case 0:
@@ -258,9 +317,11 @@ class AppData{
       case 29:
         return 582;
       default:
-        throw ArgumentError("Number out of range. Please enter a number between 0 and 29.");
+        throw ArgumentError(
+            "Number out of range. Please enter a number between 0 and 29.");
     }
   }
+
   static int getNumberSurahByJuz(int numberJuz) {
     switch (numberJuz) {
       case 0:
@@ -324,19 +385,24 @@ class AppData{
       case 29:
         return 78;
       default:
-        throw ArgumentError("Number out of range. Please enter a number between 0 and 29.");
+        throw ArgumentError(
+            "Number out of range. Please enter a number between 0 and 29.");
     }
   }
+
   static Future<List<Reciter>> fetchAndFilterReciters(String language) async {
-    final response = await http.get(Uri.parse('https://www.mp3quran.net/api/v3/reciters?language=$language'));
+    final response = await http.get(Uri.parse(
+        'https://www.mp3quran.net/api/v3/reciters?language=$language'));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['reciters'];
-      List<Reciter> reciters = jsonResponse.map((reciter) => Reciter.fromJson(reciter)).toList();
+      List<Reciter> reciters =
+          jsonResponse.map((reciter) => Reciter.fromJson(reciter)).toList();
 
       // Filter reciters
       List<Reciter> filteredReciters = reciters.where((reciter) {
-        return reciter.moshaf.any((m) => Utility.surahId.every((n) => m.surahList.contains(n)));
+        return reciter.moshaf
+            .any((m) => Utility.surahId.every((n) => m.surahList.contains(n)));
       }).toList();
 
       return filteredReciters;
@@ -345,14 +411,10 @@ class AppData{
     }
   }
 
-
-
-
-
   // Tafseer
   static Future<List<Tafseer>> fetchTafseerData(String language) async {
     final response =
-    await http.get(Uri.parse('http://api.quran-tafseer.com/tafseer'));
+        await http.get(Uri.parse('http://api.quran-tafseer.com/tafseer'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -366,5 +428,26 @@ class AppData{
       throw Exception('Failed to load Tafseer data');
     }
   }
+
+  static Future<Tafseer> getSpecificMufseer(int tafseerId) async {
+    final response =
+    await http.get(Uri.parse('http://api.quran-tafseer.com/tafseer'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      Map<String, dynamic>? tafseerJson = data.firstWhere(
+            (json) => json['id'] == tafseerId,
+        orElse: () => null,
+      );
+      if (tafseerJson != null) {
+        return Tafseer.fromJson(tafseerJson);
+      } else {
+        throw Exception('Tafseer with ID $tafseerId not found');
+      }
+    } else {
+      throw Exception('Failed to load Tafseer data');
+    }
+  }
+
 
 }

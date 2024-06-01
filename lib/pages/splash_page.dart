@@ -14,12 +14,18 @@ class SplashScreenPage extends StatelessWidget {
   Future<void> _checkAuthentication(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 3));
     User? user = AuthServices.getCurrentUser();
+    bool isGuest= await AppDataPreferences.getIsGuest();
 
     if (await AppDataPreferences.getShowViewPager()) {
       Navigator.of(context).pushReplacementNamed(AppRoutes.VIEW_PAGER_ROUTES);
     } else if (user == null) {
-      Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
-    } else {
+      if(isGuest)
+        {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
+        }else {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+      }
+    } else{
       Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
     }
   }
@@ -28,22 +34,30 @@ class SplashScreenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSplashScreen(
-      splash: SvgPicture.asset('assets/images/Islamic_library.svg',
-      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcATop),),
+      splash: SvgPicture.asset(
+        'assets/images/Islamic_library.svg',
+        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcATop),
+      ),
       splashIconSize: 300.w,
       duration: 3000,
       splashTransition: SplashTransition.fadeTransition,
       backgroundColor: AppColor.primary1,
-      nextScreen: FutureBuilder(
+      nextScreen: FutureBuilder<void>(
         future: _checkAuthentication(context),
         builder: (context, snapshot) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(color: AppColor.primary1,),
-            ),
-          );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(color: AppColor.primary1),
+              ),
+            );
+          } else {
+            return Container();
+          }
         },
       ),
     );
   }
+
+
 }

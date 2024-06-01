@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:freelancer/services/app_data_pref.dart';
 import 'package:freelancer/utilities/utility.dart';
 import '../components/custom_textfield.dart';
 import '../config/app_colors.dart';
@@ -129,7 +130,7 @@ class _SignUpState extends State<SignUp> {
                               ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  print("Privacy Policy 2 clicked");
+                                  Navigator.of(context).pushNamed(AppRoutes.TERMS_PAGE);
                                 },
                             ),
                             const TextSpan(
@@ -146,7 +147,7 @@ class _SignUpState extends State<SignUp> {
                               ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  print("Privacy Policy 3 clicked");
+                                  Navigator.of(context).pushNamed(AppRoutes.PRIVACY_POLICY_PAGE);
                                 },
                             ),
                           ],
@@ -286,6 +287,7 @@ class _SignUpState extends State<SignUp> {
                 ),
                 TextButton(
                     onPressed: () {
+                      AppDataPreferences.setIsGuest(true);
                       Navigator.of(context)
                           .pushReplacementNamed(AppRoutes.MAIN_ROUTES);
                     },

@@ -46,7 +46,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => MainPageProvider()),
         ChangeNotifierProvider(create: (_) => SubSearchProvider()),
       ],
-      child: DevicePreview(builder: (context) => const MyApp()),
+      child: const MyApp(),
     ),
   ));
 }

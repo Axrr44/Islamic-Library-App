@@ -5,6 +5,7 @@ import 'package:freelancer/utilities/utility.dart';
 import '../components/custom_textfield.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
+import '../services/app_data_pref.dart';
 import '../services/authentication.dart';
 
 class SignIn extends StatelessWidget {
@@ -130,6 +131,7 @@ class SignIn extends StatelessWidget {
                 ),
                 TextButton(
                     onPressed: () {
+                      AppDataPreferences.setIsGuest(true);
                       Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
                     },
                     child: Text(

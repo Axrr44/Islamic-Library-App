@@ -275,6 +275,17 @@ class AuthServices {
     return password;
   }
 
+  static Future<bool> isSignedInWithGoogle() async {
+    User? user = auth.currentUser;
+    if (user != null) {
+      for (var userInfo in user.providerData) {
+        if (userInfo.providerId == 'google.com') {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
 }
 

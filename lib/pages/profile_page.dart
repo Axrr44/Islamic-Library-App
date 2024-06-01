@@ -1,10 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancer/config/app_colors.dart';
 import 'package:freelancer/config/app_routes.dart';
+import 'package:freelancer/pages/main_page.dart';
+import 'package:freelancer/providers/main_page_provider.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import '../services/authentication.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -21,26 +25,37 @@ class _ProfilePageState extends State<ProfilePage> {
     double height = MediaQuery.of(context).size.height;
     String currentLanguage = Localizations.localeOf(context).languageCode;
 
-    User? currentUser = AuthServices.getCurrentUser();
 
-    if (currentUser == null) {
-      return Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
-          },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(AppColor.primary1),
-            shape: MaterialStateProperty.all(
-               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.w),
+
+    if (AuthServices.getCurrentUser() == null) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(AppLocalizations.of(context)!.guestMessage,textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15.sp,color: Colors.grey),),
+            SizedBox(height: 10.h,),
+            ElevatedButton(
+              onPressed: () {
+                var mainPageProvider = Provider.of<MainPageProvider>(context, listen: false);
+                mainPageProvider.setCurrentPageName(AppLocalizations.of(context)!.home);
+                Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.w),
+                  ),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.signIn,
+                style: TextStyle(fontSize: 20.sp,color: Colors.white),
               ),
             ),
-          ),
-          child: Text(
-            AppLocalizations.of(context)!.signIn,
-            style: TextStyle(fontSize: 20.sp,color: Colors.white),
-          ),
+          ],
         ),
       );
     }
@@ -118,33 +133,47 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 15.h,
                     child: const Divider(color: Colors.grey),
                   ),
-                  SizedBox(
-                    width: width,
-                    child: Padding(
-                      padding: EdgeInsets.all(5.w),
-                      child: ListTile(
-                        leading: const Icon(Icons.lock_reset_outlined),
-                        title: TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, AppRoutes.PASSWORD_RESET_ROUTES);
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)!.changePassword,
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontFamily:
-                              Utility.getTextFamily(currentLanguage),
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.bold,
+                  FutureBuilder<bool>(
+                    future: AuthServices.isSignedInWithGoogle(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+                      if (snapshot.hasData && !snapshot.data!) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              width: width,
+                              child: Padding(
+                                padding: EdgeInsets.all(5.w),
+                                child: ListTile(
+                                  leading: const Icon(Icons.lock_reset_outlined),
+                                  title: TextButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, AppRoutes.PASSWORD_RESET_ROUTES);
+                                    },
+                                    child: Text(
+                                      AppLocalizations.of(context)!.changePassword,
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        fontFamily: Utility.getTextFamily(currentLanguage),
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                    child: const Divider(color: Colors.grey),
+                            SizedBox(
+                              height: 15.h,
+                              child: const Divider(color: Colors.grey),
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
                   ),
                   SizedBox(
                     width: width,
@@ -181,6 +210,7 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       },
     );
+
   }
 
   Future<void> _showDeleteConfirmationDialog(BuildContext context) async {
@@ -236,7 +266,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       bool isDeleted = await AuthServices.deleteAccount(context);
                       if(isDeleted)
                         {
-                          Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+                          Phoenix.rebirth(context);
                         }
                     },
                     child: Text(

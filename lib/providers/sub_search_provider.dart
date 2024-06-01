@@ -15,15 +15,17 @@ class SubSearchProvider extends ChangeNotifier{
   }
 
   List<Hadith> filterHadiths(List<Hadith> hadiths) {
-    if (_searchQuery.isEmpty) {
+    if (_searchQuery.trim().isEmpty) {
       return hadiths;
     }
+
+    print("is not empty $_searchQuery");
+
 
     final normalizedQuery = Utility.removeDiacritics(_searchQuery.toLowerCase());
     return hadiths.where((hadith) {
       final hadithTextArabic = Utility.removeDiacritics(hadith.arabic ?? '');
       final hadithTextEnglish = hadith.english?.toLowerCase() ?? '';
-      _searchQuery = '';
       return hadithTextArabic.toLowerCase().contains(normalizedQuery) ||
           hadithTextEnglish.contains(normalizedQuery);
     }).toList();
@@ -50,7 +52,6 @@ class SubSearchProvider extends ChangeNotifier{
     final normalizedQuery = Utility.removeDiacritics(_searchQuery.toLowerCase());
     return tafseerContents.where((tafseerContent) {
       final verseText = Utility.removeDiacritics(tafseerContent.verseText);
-      _searchQuery = '';
       return verseText.toLowerCase().contains(normalizedQuery);
     }).toList();
   }
@@ -61,7 +62,6 @@ class SubSearchProvider extends ChangeNotifier{
     final normalizedQuery = Utility.removeDiacritics2(_searchQuery.toLowerCase());
     return tafseerContents.where((tafseerContent) {
       final verseText = Utility.removeDiacritics2(tafseerContent.verseText);
-      _searchQuery = '';
       return verseText.toLowerCase().contains(normalizedQuery);
     }).toList();
   }

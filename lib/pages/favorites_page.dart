@@ -4,16 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:freelancer/pages/quran_aya_page.dart';
+import 'package:freelancer/pages/tafseer_conent_page.dart';
 import 'package:freelancer/providers/favorite_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:quran/surah_data.dart';
+import 'package:quran/quran.dart' as quran;
 import 'package:share_plus/share_plus.dart';
 import '../config/app_colors.dart';
 import '../config/app_languages.dart';
 import '../config/app_routes.dart';
 import '../models/favorite_model.dart';
+import '../models/tafseer_books.dart';
+import '../providers/main_page_provider.dart';
 import '../services/authentication.dart';
 import '../utilities/utility.dart';
+import 'content_books_page.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -27,27 +34,43 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     String currentLanguage = Localizations.localeOf(context).languageCode;
 
-    User? currentUser = AuthServices.getCurrentUser();
-
-
-    if (currentUser == null) {
-      return Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
-          },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(AppColor.primary1),
-            shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.w),
+    if (AuthServices.getCurrentUser() == null) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.guestMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15.sp, color: Colors.grey),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                var mainPageProvider =
+                    Provider.of<MainPageProvider>(context, listen: false);
+                mainPageProvider
+                    .setCurrentPageName(AppLocalizations.of(context)!.home);
+                Navigator.of(context)
+                    .pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.w),
+                  ),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.signIn,
+                style: TextStyle(fontSize: 20.sp, color: Colors.white),
               ),
             ),
-          ),
-          child: Text(
-            AppLocalizations.of(context)!.signIn,
-            style: TextStyle(fontSize: 20.sp,color: Colors.white),
-          ),
+          ],
         ),
       );
     }
@@ -63,11 +86,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   color: Colors.black,
                 ),
               );
-            }
-            else if (snapshot.hasError) {
+            } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
-            }
-            else if (snapshot.hasData && snapshot.data!.isEmpty) {
+            } else if (snapshot.hasData && snapshot.data!.isEmpty) {
               return Center(
                 child: Text(
                   AppLocalizations.of(context)!.noFavorite,
@@ -75,8 +96,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   style: TextStyle(fontSize: 20.sp),
                 ),
               );
-            }
-            else {
+            } else {
               List<Favorite> favorites = snapshot.data ?? [];
 
               return SizedBox(
@@ -112,7 +132,80 @@ class _FavoritesPageState extends State<FavoritesPage> {
     List<String> tafseerContent = [];
     if (favorite.type == 'Tafseer') {
       tafseerContent = favorite.content.split('Split');
-      return Card(
+      return InkWell(
+        onTap: (){
+          if (favorite.type.toLowerCase() == 'Tafseer'.toLowerCase()) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => TafseerContentPage(
+                mufseer: Tafseer(
+                    id: favorite.tafseerId,
+                    name: favorite.tafseerName,
+                    language: '',
+                    author: favorite.author,
+                    bookName: favorite.bookName),
+                surahId: favorite.surahId,
+                isScrollable: true,
+                indexOfScrollable: favorite.verseId - 1,
+              ),
+            ));
+          }
+        },
+        child: Card(
+          color: AppColor.white,
+          child: Padding(
+            padding: EdgeInsets.all(10.w),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 5.h,
+                ),
+                Text(
+                  tafseerContent[0],
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20.sp,
+                      fontFamily: currentLanguage == Languages.EN.languageCode
+                          ? 'EnglishQuran'
+                          : 'Hafs'),
+                ),
+                separateTafseerContent(),
+                Text(
+                  tafseerContent[1],
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15.sp),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return InkWell(
+      onTap: () {
+        if (favorite.type.toLowerCase() == 'quran'.toLowerCase())
+        {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => QuranAyaPage(
+                    surahId: favorite.surahId,
+                    initialPage: quran.getPageNumber(
+                            favorite.surahId, favorite.verseId) -
+                        1,
+                  )));
+        } else {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ContentBooksPage(
+              chapterId: favorite.hadithChapterId,
+              bookId: favorite.hadithBookId,
+              bookName: favorite.bookName,
+              isScrollable: true,
+              indexOfScrollable: favorite.hadithIdInBook,
+              isFromFavorite: true,
+            ),
+          ));
+        }
+      },
+      child: Card(
         color: AppColor.white,
         child: Padding(
           padding: EdgeInsets.all(10.w),
@@ -122,49 +215,20 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 height: 5.h,
               ),
               Text(
-                tafseerContent[0],
+                favorite.content,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 20.sp,
                     fontFamily: currentLanguage == Languages.EN.languageCode
-                        ? 'EnglishQuran'
-                        : 'Hafs'),
-              ),
-              separateTafseerContent(),
-              Text(
-                tafseerContent[1],
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15.sp),
+                        ? favorite.type == 'Quran'
+                            ? 'EnglishQuran'
+                            : 'Custom'
+                        : favorite.type == 'Quran'
+                            ? 'Hafs'
+                            : 'ArabicFont'),
               ),
             ],
           ),
-        ),
-      );
-    }
-
-    return Card(
-      color: AppColor.white,
-      child: Padding(
-        padding: EdgeInsets.all(10.w),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 5.h,
-            ),
-            Text(
-              favorite.content,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20.sp,
-                  fontFamily: currentLanguage == Languages.EN.languageCode
-                      ? favorite.type == 'Quran'
-                          ? 'EnglishQuran'
-                          : 'Custom'
-                      : favorite.type == 'Quran'
-                          ? 'Hafs'
-                          : 'ArabicFont'),
-            ),
-          ],
         ),
       ),
     );
@@ -351,5 +415,4 @@ class _FavoritesPageState extends State<FavoritesPage> {
       ),
     );
   }
-
 }

@@ -60,7 +60,7 @@ class _ViewPagerState extends State<ViewPager> {
             currentLanguage,
             isMobile ? 300.w : 200.w,
             20.h,
-            100.h,
+            10.h,
           ),
         ),
         Center(
@@ -73,7 +73,7 @@ class _ViewPagerState extends State<ViewPager> {
             currentLanguage,
             isMobile ? 300.w : 200.w,
             30.h,
-            100.h,
+            10.h,
           ),
         ),
         Center(
@@ -86,7 +86,7 @@ class _ViewPagerState extends State<ViewPager> {
             currentLanguage,
             isMobile ? 300.w : 200.w,
             30.h,
-            40.h,
+            10.h,
           ),
         ),
         Center(
@@ -99,7 +99,7 @@ class _ViewPagerState extends State<ViewPager> {
             currentLanguage,
             isMobile ? 200.w : 150.w,
             50.h,
-            60.h,
+            82.h,
           ),
         ),
         Center(

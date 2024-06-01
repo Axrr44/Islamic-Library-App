@@ -208,5 +208,15 @@ class AppDataPreferences {
     return _prefs!.getBool("SHOW-TUTORIAL") ?? true;
   }
 
+  // isGuest
+  static Future<void> setIsGuest(bool value) async {
+    await _initPrefs();
+    await _prefs!.setBool("GUEST-USER", value);
+  }
+  static Future<bool> getIsGuest() async {
+    await _initPrefs();
+    return _prefs!.getBool("GUEST-USER") ?? false;
+  }
+
 }
 

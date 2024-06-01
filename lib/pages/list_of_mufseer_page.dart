@@ -52,10 +52,12 @@ class _ListOfMufseerPageState extends State<ListOfMufseerPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           context.loaderOverlay.show();
           return Container();
-        } else if (snapshot.hasError) {
+        }
+        else if (snapshot.hasError) {
           context.loaderOverlay.hide();
           return Text('Error: ${snapshot.error}');
-        } else {
+        }
+        else {
           context.loaderOverlay.hide();
           List<Tafseer>? tafseerList = snapshot.data;
           if (tafseerList != null && tafseerList.isNotEmpty) {

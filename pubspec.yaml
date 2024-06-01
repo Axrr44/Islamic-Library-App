@@ -104,6 +104,9 @@ dependencies:
   #App tutorial :
   tutorial_coach_mark: ^1.2.11
 
+  #SQLITE :
+  sqflite: ^2.0.0+4
+
   #Provider
   provider:
 
@@ -177,6 +180,7 @@ flutter:
     - assets/json/aladab_almufrad.json
     - assets/json/bulugh_almaram.json
     - assets/json/riyad_assalihin.json
+    - assets/json/shamail_muhammadiyah.json
 
   uses-material-design: true
 

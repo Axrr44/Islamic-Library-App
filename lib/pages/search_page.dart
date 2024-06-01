@@ -10,10 +10,13 @@ import 'package:freelancer/services/app_data.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:share_plus/share_plus.dart';
 import '../config/app_colors.dart';
+import '../config/toast_message.dart';
+import '../models/favorite_model.dart';
 import '../services/app_data_pref.dart';
 import '../models/hadith_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../services/firestore_service.dart';
 import '../services/search_hepler.dart';
 
 class SearchPage extends StatefulWidget {
@@ -24,7 +27,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final List<Hadith> _hadiths = [];
+  List<Hadith> _hadiths = [];
   List<dynamic> _searchResults = [];
   final TextEditingController _searchController = TextEditingController();
   late int _selectedFilterSearch;
@@ -37,6 +40,7 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     _loadSearchDialogData();
+    _loadHadiths();
   }
 
   @override
@@ -46,14 +50,22 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
+  Future<void> _loadHadiths() async {
+    String jsonString = await AppData.getCurrentBook(_indexOfHadith);
+    setState(() {
+      _hadiths = parseHadiths(jsonString);
+    });
+  }
+
   Future<void> _loadSearchDialogData() async {
     _selectedFilterSearch = (await AppDataPreferences.getFilterSearch())!;
     _indexOfHadith = await AppDataPreferences.getSearchPageHadithId();
-    _mufseerId = await AppDataPreferences.getSearchPageMufseerId(Localizations.localeOf(context).languageCode);
+    _mufseerId = await AppDataPreferences.getSearchPageMufseerId(
+        Localizations.localeOf(context).languageCode);
     setState(() {});
   }
 
-  Widget _buildWarningSearch(String currentLanguage,String content) {
+  Widget _buildWarningSearch(String currentLanguage, String content) {
     return Padding(
       padding: EdgeInsets.only(top: 20.h),
       child: Container(
@@ -96,21 +108,25 @@ class _SearchPageState extends State<SearchPage> {
                 _searchBar(currentLanguage),
                 _isLoading
                     ? SizedBox(
-                  height: 200.h,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                                        color: AppColor.black,
-                                      ),
-                      ),
-                    )
+                        height: 200.h,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColor.black,
+                          ),
+                        ),
+                      )
                     : _searchResults.isNotEmpty
-                    ? _buildSearchResults(currentLanguage)
-                    : Column(
-                  children: [
-                    _buildWarningSearch(currentLanguage,AppLocalizations.of(context)!.warningSearch),
-                    _buildWarningSearch(currentLanguage,AppLocalizations.of(context)!.warningFilterSearch)
-                  ],
-                ),
+                        ? _buildSearchResults(currentLanguage)
+                        : Column(
+                            children: [
+                              _buildWarningSearch(currentLanguage,
+                                  AppLocalizations.of(context)!.warningSearch),
+                              _buildWarningSearch(
+                                  currentLanguage,
+                                  AppLocalizations.of(context)!
+                                      .warningFilterSearch)
+                            ],
+                          ),
               ],
             ),
           ),
@@ -138,7 +154,7 @@ class _SearchPageState extends State<SearchPage> {
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   contentPadding:
-                  EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
+                      EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
                   hintText: "${AppLocalizations.of(context)!.search}....",
                   hintStyle: TextStyle(
                       fontFamily: Utility.getTextFamily(currentLanguage)),
@@ -148,7 +164,7 @@ class _SearchPageState extends State<SearchPage> {
                   border: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.black),
                     borderRadius:
-                    BorderRadius.circular(5.w), // Adjust border radius
+                        BorderRadius.circular(5.w), // Adjust border radius
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.black),
@@ -182,7 +198,6 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-
   void _search(String query) async {
     if (_searchController.text.trim().isEmpty) return;
 
@@ -192,10 +207,6 @@ class _SearchPageState extends State<SearchPage> {
     });
 
     await _loadSearchDialogData();
-
-    List<Map<String, String>> quranResults = [];
-    List<Map<String, String>> hadithResults = [];
-    List<Map<String, String>> tafseerResults = [];
 
     final ReceivePort receivePort = ReceivePort();
     await Isolate.spawn(
@@ -490,7 +501,9 @@ class _SearchPageState extends State<SearchPage> {
                     child: Padding(
                       padding: EdgeInsets.all(3.w),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          _favorite(index, currentLanguage, context);
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -513,4 +526,56 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
+
+  void _favorite(int index, String currentLanguage, BuildContext context) {
+       if (_searchResults[index]['type'] == 'quran') {
+      FireStoreService.addFavorite(Favorite(
+          type: 'quran',
+          title: _searchResults[index]['surah'],
+          content: _searchResults[index]['verse'],
+          surahId: _searchResults[index]['verseNumber'],
+          verseId: _searchResults[index]['surahNumber'],
+          author: '',
+          bookName: '',
+          hadithBookId: 0,
+          hadithChapterId: 0,
+          hadithIdInBook: 0,
+          tafseerId: 0,
+          tafseerName: ''));
+    } else if (_searchResults[index]['type'] ==
+        'tafseer') {
+      FireStoreService.addFavorite(Favorite(
+          type: 'tafseer',
+          title: _searchResults[index]['surah'],
+          content: _searchResults[index]['verse'],
+          surahId: _searchResults[index]['verseNumber'],
+          verseId: _searchResults[index]['surahNumber'],
+          author: _searchResults[index]['author'],
+          bookName: _searchResults[index]['bookName'],
+          hadithBookId: 0,
+          hadithChapterId: 0,
+          hadithIdInBook: 0,
+          tafseerId: _searchResults[index]['tafseerId'],
+          tafseerName: _searchResults[index]['name']));
+    } else {
+
+      FireStoreService.addFavorite(Favorite(
+          type: 'hadith',
+          title: _searchResults[index]['surah'],
+          content: currentLanguage == Languages.EN.languageCode ?
+          _searchResults[index]['english'] : _searchResults[index]['arabic'],
+          surahId: 0,
+          verseId: 0,
+          author: AppData.getBookName(context, AppData.convertBookIdTo012(_searchResults[index]['bookId'])),
+          bookName: AppData.getBookName(context, AppData.convertBookIdTo012(_searchResults[index]['bookId'])),
+          hadithBookId: _searchResults[index]['bookId'],
+          hadithChapterId: _searchResults[index]['chapterId'],
+          hadithIdInBook: _searchResults[index]['idInBook'],
+          tafseerId: 0,
+          tafseerName: ''));
+    }
+    ToastMessage.showMessage(
+        AppLocalizations.of(context)!.favoriteIt);
+  }
+
 }

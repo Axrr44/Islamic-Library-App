@@ -1,5 +1,7 @@
 import 'package:freelancer/components/view_pager.dart';
+import 'package:freelancer/pages/privacy_policy_page.dart';
 import 'package:freelancer/pages/splash_page.dart';
+import 'package:freelancer/pages/terms_and_conditions_page.dart';
 
 import '../pages/books_page.dart';
 import '../pages/main_page.dart';
@@ -23,6 +25,8 @@ class AppRoutes{
   static const TAFSEER_ROUTES = "/tafseer-page";
   static const VIEW_PAGER_ROUTES = "/view-pager";
   static const SPLASH_SCREEN_REOUTS = "/splash-screen";
+  static const PRIVACY_POLICY_PAGE = "/privacy-policy-page";
+  static const TERMS_PAGE = "/terms-page";
 
   static final ROUTES = {SIGN_IN_ROUTES: (context) => SignIn(),
     SIGN_UP_ROUTES: (context) => const SignUp(),
@@ -33,6 +37,8 @@ class AppRoutes{
     TAFSEER_ROUTES: (context) => const TafseerPage(),
     VIEW_PAGER_ROUTES: (context) => const ViewPager(),
     SPLASH_SCREEN_REOUTS: (context) => const SplashScreenPage(),
+    PRIVACY_POLICY_PAGE: (context) => const PrivacyPolicyPage(),
+    TERMS_PAGE: (context) => const TermsAndConditionsPage(),
   };
 
 
