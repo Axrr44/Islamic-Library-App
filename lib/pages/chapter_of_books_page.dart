@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../components/custom_dialog.dart';
 import '../config/app_colors.dart';
 import '../config/app_languages.dart';
@@ -26,7 +26,10 @@ class ChapterOfBooksPage extends StatelessWidget {
         centerTitle: true,
         title: Text(
           AppData.getBookName(context, selectedHadith),
-          style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 25.sp,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'ATF'),
         ),
       ),
       body: _listOfChapters(width, height, context, currentLanguage),
@@ -41,6 +44,39 @@ class ChapterOfBooksPage extends StatelessWidget {
         padding: EdgeInsets.only(top: 10.h),
         child: Column(
           children: [
+            Padding(
+              padding:  EdgeInsets.symmetric(vertical: 15.h),
+              child: SizedBox(
+                width: width,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(
+                      builder: (context) => ContentBooksPage(
+                        chapterId: 0,
+                        bookId: selectedHadith,
+                        bookName: AppData.getBookName(context, selectedHadith),
+                        isChapter: false,
+                      ),
+                    ));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.w),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15.h), // Add padding
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.wholeBook,
+                    style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.bold),
+                  ),
+                )
+                ,
+              ),
+            )
+            ,
             Expanded(
               child: FutureBuilder(
                 future: AppData.getCurrentBook(selectedHadith),
@@ -66,8 +102,12 @@ class ChapterOfBooksPage extends StatelessWidget {
                         ),
                         itemBuilder: (context, index) {
                           bool isDarimi = false;
-                          if(currentLanguage == Languages.EN.languageCode) {
-                            isDarimi = chapters[index].english.toString().trim().isEmpty;
+                          if (currentLanguage == Languages.EN.languageCode) {
+                            isDarimi = chapters[index]
+                                .english
+                                .toString()
+                                .trim()
+                                .isEmpty;
                           }
                           return Card(
                             color: isDarimi

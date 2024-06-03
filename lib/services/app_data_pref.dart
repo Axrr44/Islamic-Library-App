@@ -1,7 +1,6 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'dart:io' show Platform;
 import '../config/app_languages.dart';
 import '../models/tafseer_books.dart';
 
@@ -153,7 +152,7 @@ class AppDataPreferences {
 
   static Future<String> getCurrentLanguage() async {
     await _initPrefs();
-    return _prefs?.getString("current-language") ?? 'ar';
+    return _prefs?.getString("current-language") ?? Platform.localeName.split('_')[0];
   }
 
   //Favorite

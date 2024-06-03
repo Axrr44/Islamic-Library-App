@@ -21,6 +21,7 @@ import '../models/tafseer_books.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:http/http.dart' as http;
 import '../models/tafseer_response.dart';
+import '../services/authentication.dart';
 
 class TafseerContentPage extends StatefulWidget {
   final Tafseer? mufseer;
@@ -48,8 +49,6 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
   bool _isDataFromDb = true;
   late SubSearchProvider _subSearchProvider;
 
-
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -58,7 +57,6 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
           Localizations.localeOf(context).languageCode);
     }
     _subSearchProvider = Provider.of<SubSearchProvider>(context, listen: false);
-
   }
 
   @override
@@ -101,9 +99,22 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
         children: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: LinearProgressIndicator(
-              value: _downloadProgress / 100,
-              color: AppColor.primary1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: LinearProgressIndicator(
+                    value: _downloadProgress / 100,
+                    color: AppColor.primary1,
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                Icon(
+                  Icons.download, // Download icon
+                  color: AppColor.primary1,
+                  size: 20.w,
+                ),
+              ],
             ),
           ),
           SizedBox(height: 20.h),
@@ -124,45 +135,81 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
 
   Widget _buildContent(String currentLanguage) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    String currentLanguage = Localizations.localeOf(context).languageCode;
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     final bool isMobile = shortestSide < 600;
 
     if (widget.isScrollable!) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToIndexIfNeeded(context);
+        _scrollToIndexIfNeeded();
       });
     }
 
-    return NestedScrollView(
-      headerSliverBuilder: (context, innerBoxIsScrolled) => [
-        SliverToBoxAdapter(
-          child: Column(
+    return Column(
+      children: [
+        _header(currentLanguage, context, width, isMobile),
+        _buildSearchField(context),
+        Expanded(
+          child: Row(
             children: [
-              _header(currentLanguage, context, width, isMobile),
-              _buildSearchField(context),
+              Expanded(
+                child: Consumer<SubSearchProvider>(
+                  builder: (context, provider, _) {
+                    List<TafseerContent> filteredTafseerContents =
+                        provider.filterTafseerContents(_tafseerContents);
+                    return _buildScrollableList(
+                        filteredTafseerContents, currentLanguage);
+                  },
+                ),
+              ),
+              if(quran.getVerseCount(widget.surahId) >= 10)
+              _buildScrollbar(_tafseerContents.length, currentLanguage),
             ],
           ),
         ),
       ],
-      body: Consumer<SubSearchProvider>(
-        builder: (context, provider, _) {
-          List<TafseerContent> filteredTafseerContents =
-              provider.filterTafseerContents(_tafseerContents);
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: widget.isScrollable!
-                ? _buildScrollableList(filteredTafseerContents, currentLanguage)
-                : _buildList(filteredTafseerContents, currentLanguage),
-          );
-        },
+    );
+  }
+
+  Widget _buildScrollbar(int itemCount, String currentLanguage) {
+    List<int> scrollIndexes = List<int>.generate(
+        (itemCount / 10).ceil(), (index) => index == 0 ? 1 : index * 10);
+
+    return SizedBox(
+      width: 40.w,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 20.h),
+        child: ListView.builder(
+          itemCount: scrollIndexes.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                int scrollIndex =
+                    (scrollIndexes[index] - 1).clamp(0, itemCount - 1);
+                _scrollController.scrollTo(
+                  index: scrollIndex,
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                child: Text(
+                  '${currentLanguage == Languages.EN.languageCode ? scrollIndexes[index] : ArabicNumbers.convert(scrollIndexes[index])}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
   Widget _buildSearchField(BuildContext context) {
-
     return Padding(
       padding:
           EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w, bottom: 20.h),
@@ -171,10 +218,15 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
           Expanded(
             child: TextField(
               onChanged: (query) {
-                  _subSearchProvider.updateSearchQuery(query);
+                _subSearchProvider.updateSearchQuery(query);
               },
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context)!.search,
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.black,
+                  size: 20.w,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.w),
                   borderSide: const BorderSide(color: Colors.black),
@@ -195,37 +247,27 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
 
   Widget _buildScrollableList(
       List<TafseerContent> contents, String currentLanguage) {
-    return ScrollablePositionedList.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      itemScrollController: _scrollController,
-      itemCount: contents.length + 1,
-      itemBuilder: (context, index) {
-        if (index < contents.length) {
-          return _listViewBuilder(context, currentLanguage, contents[index]);
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-      separatorBuilder: (context, index) {
-        return _separatorTafseerItem(currentLanguage, contents[index]);
-      },
-    );
-  }
-
-  Widget _buildList(List<TafseerContent> contents, String currentLanguage) {
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: contents.length + 1,
-      itemBuilder: (context, index) {
-        if (index < contents.length) {
-          return _listViewBuilder(context, currentLanguage, contents[index]);
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-      separatorBuilder: (context, index) {
-        return _separatorTafseerItem(currentLanguage, contents[index]);
-      },
+    bool isBiggerT10 = quran.getVerseCount(widget.surahId) >= 10;
+    bool isEnglish = currentLanguage == Languages.EN.languageCode;
+    return Padding(
+      padding: EdgeInsets.only(
+          right: isEnglish ? isBiggerT10 ? 0 : 20.w  : 20.w,
+          left: isEnglish? 20.w :
+          isBiggerT10 ? 0 : 20.w ),
+      child: ScrollablePositionedList.separated(
+        itemScrollController: _scrollController,
+        itemCount: contents.length + 1,
+        itemBuilder: (context, index) {
+          if (index < contents.length) {
+            return _listViewBuilder(context, currentLanguage, contents[index]);
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+        separatorBuilder: (context, index) {
+          return _separatorTafseerItem(currentLanguage, contents[index]);
+        },
+      ),
     );
   }
 
@@ -353,7 +395,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
     );
   }
 
-  void _scrollToIndexIfNeeded(BuildContext context) {
+  void _scrollToIndexIfNeeded() {
     if (widget.indexOfScrollable != null) {
       _scrollController.scrollTo(
         index: widget.indexOfScrollable!,
@@ -505,22 +547,26 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                 padding: EdgeInsets.all(3.w),
                 child: InkWell(
                   onTap: () {
-                    FireStoreService.addFavorite(Favorite(
-                        type: "Tafseer",
-                        title: widget.mufseer!.name,
-                        content:
-                            "${tafseerContent.verseText}Split${tafseerContent.tafseerText}",
-                        surahId: tafseerContent.surahId,
-                        verseId: tafseerContent.verseId,
-                        author: widget.mufseer!.author,
-                        bookName: widget.mufseer!.bookName,
-                        hadithBookId: 0,
-                        hadithChapterId: 0,
-                        hadithIdInBook: 0,
-                        tafseerId: widget.mufseer!.id,
-                        tafseerName: widget.mufseer!.name
-                    ),
-
+                    if (AuthServices.getCurrentUser() == null) {
+                      ToastMessage.showMessage(
+                          AppLocalizations.of(context)!.favoriteToastMessage);
+                      return;
+                    }
+                    FireStoreService.addFavorite(
+                      Favorite(
+                          type: "Tafseer",
+                          title: widget.mufseer!.name,
+                          content:
+                              "${tafseerContent.verseText}Split${tafseerContent.tafseerText}",
+                          surahId: tafseerContent.surahId,
+                          verseId: tafseerContent.verseId,
+                          author: widget.mufseer!.author,
+                          bookName: widget.mufseer!.bookName,
+                          hadithBookId: 0,
+                          hadithChapterId: 0,
+                          hadithIdInBook: 0,
+                          tafseerId: widget.mufseer!.id,
+                          tafseerName: widget.mufseer!.name),
                     );
                     ToastMessage.showMessage(
                         AppLocalizations.of(context)!.favoriteIt);
@@ -580,45 +626,13 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
   Widget _authorWidget(double width) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Container(
-        height: 200.h,
-        width: width,
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5.w,
-                  blurRadius: 7.w,
-                  offset: const Offset(1.5, 3))
-            ],
-            image: const DecorationImage(
-                image: AssetImage("assets/images/islamic_book.jpg"),
-                fit: BoxFit.fill),
-            borderRadius: BorderRadius.circular(15.w)),
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    AppColor.black.withOpacity(0.85),
-                    Colors.grey.withOpacity(0.85)
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: const [0.2, 3]),
-              borderRadius: BorderRadius.circular(15.w)),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: Text(
-              widget.mufseer!.author,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20.sp,
-                  color: AppColor.white,
-                  fontWeight: FontWeight.w700),
-            ),
-          ),
-        ),
+      child: Text(
+        widget.mufseer!.author,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontSize: 20.sp,
+            color: AppColor.black,
+            fontWeight: FontWeight.w700),
       ),
     );
   }
@@ -661,9 +675,9 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                       ? quran.getSurahNameEnglish(widget.surahId)
                       : quran.getSurahNameArabic(widget.surahId),
                   style: TextStyle(
-                      fontSize: 25.sp,
+                      fontSize: 45.sp,
                       fontWeight: FontWeight.bold,
-                      fontFamily: Utility.getTextFamily(currentLanguage)),
+                      fontFamily: 'ATF'),
                 ),
               )
             ],

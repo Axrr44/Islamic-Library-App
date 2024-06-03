@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:freelancer/utilities/utility.dart';
 import '../components/custom_textfield.dart';
 import '../config/app_colors.dart';
@@ -37,7 +38,7 @@ class SignIn extends StatelessWidget {
                     textAlign: TextAlign.center,style:
                   TextStyle(fontSize: 15.sp,color: Colors.black),),
                 SizedBox(
-                  height: height / 6 - 20.h,
+                  height: height / 10 - 20.h,
                 ),
                 CustomTextField(
                     controller: _emailController,
@@ -95,13 +96,68 @@ class SignIn extends StatelessWidget {
                             TextStyle(fontSize: 15.sp, color: AppColor.black,
                             fontFamily: Utility.getTextFamily(currentLanguage)))),
                 SizedBox(
-                  height: height / 20,
+                  height: 20.h,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.signInFG,
+                  style:
+                  TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
-                  width: width / 10,
+                  height: 20.h,
                 ),
                 SizedBox(
-                  height: height / 10,
+                    width: width / 2 + 40,
+                    height: width / 7,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        AuthServices.signInWithGoogle(context);
+                      }
+                          ,
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/images/google-icon.svg',
+                            height: 24.0.w,
+                            width: 24.0.w,
+                          ),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text:
+                                  AppLocalizations.of(context)!.signInWith,
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontFamily:
+                                    Utility.getTextFamily(currentLanguage),
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: AppLocalizations.of(context)!.google,
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontFamily:
+                                    Utility.getTextFamily(currentLanguage),
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                SizedBox(
+                  height: height / 15
                 ),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text(

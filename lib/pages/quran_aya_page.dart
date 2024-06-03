@@ -14,6 +14,7 @@ import 'package:freelancer/config/toast_message.dart';
 import 'package:freelancer/models/favorite_model.dart';
 import 'package:freelancer/providers/tafseer_dialog_provider.dart';
 import 'package:freelancer/services/app_data_pref.dart';
+import 'package:freelancer/services/authentication.dart';
 import 'package:freelancer/services/firestore_service.dart';
 import 'package:freelancer/utilities/utility.dart';
 import 'package:provider/provider.dart';
@@ -167,8 +168,9 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                 return const Center(
                   child: CircularProgressIndicator(color: Colors.black),
                 );
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              else if (snapshot.hasError) {
+                return const Center(child: Text('Error: No internet connection'));
               } else if (!snapshot.hasData) {
                 return const SizedBox();
               } else {
@@ -218,11 +220,9 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                                       ? "Juz : ${lastAyah.juz}"
                                       : AppData.getJuz(lastAyah.juz),
                                   style: TextStyle(
-                                    fontSize: 15.sp,
-                                    fontFamily: currentLanguage ==
-                                            Languages.EN.languageCode
-                                        ? 'EnglishQuran'
-                                        : 'ArabicFont',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 25.sp,
+                                    fontFamily: 'ATF',
                                   ),
                                 ),
                                 Text(
@@ -231,11 +231,9 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                                       : quran.getSurahNameArabic(
                                           lastAyah.surah.number),
                                   style: TextStyle(
-                                    fontSize: 15.sp,
-                                    fontFamily: currentLanguage ==
-                                            Languages.EN.languageCode
-                                        ? 'EnglishQuran'
-                                        : 'ArabicFont',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 25.sp,
+                                    fontFamily: 'ATF',
                                   ),
                                 ),
                               ],
@@ -295,14 +293,14 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
   PreferredSizeWidget _appBar(
       bool isMobile, String currentLanguage, double width) {
     String getDataByPage() {
-      List<String> versesList = [];
+      List<String> versesText = [];
       quran
           .getVersesTextByPage(
-              quran.getPageNumber(surahIdLastRead, verseIdLastRead))
+              quran.getPageNumber(surahIdLastRead, verseIdLastRead),verseEndSymbol: true)
           .forEach((element) {
-        versesList.add(element);
+        versesText.add(element);
       });
-      return versesList.join(" ");
+      return versesText.join("");
     }
 
     copy() {
@@ -739,7 +737,12 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                       color: Colors.grey,
                     ),
                     InkWell(
-                      onTap: () {
+                      onTap: (){
+                        if(AuthServices.getCurrentUser() == null)
+                          {
+                            ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteToastMessage);
+                            return ;
+                          }
                         FireStoreService.addFavorite(Favorite(
                             type: "Quran",
                             title: isEnglish

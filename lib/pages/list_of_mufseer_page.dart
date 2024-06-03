@@ -37,7 +37,7 @@ class _ListOfMufseerPageState extends State<ListOfMufseerPage> {
           currentLanguage == Languages.EN.languageCode
               ? quran.getSurahName(widget.surahId)
               : quran.getSurahNameArabic(widget.surahId),
-          style: TextStyle(fontSize: 15.sp),
+          style: TextStyle(fontSize: 25.sp,fontFamily: 'ATF',fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -55,7 +55,7 @@ class _ListOfMufseerPageState extends State<ListOfMufseerPage> {
         }
         else if (snapshot.hasError) {
           context.loaderOverlay.hide();
-          return Text('Error: ${snapshot.error}');
+          return const Center(child: Text('Error: No internet connection'));
         }
         else {
           context.loaderOverlay.hide();
@@ -126,4 +126,5 @@ class _ListOfMufseerPageState extends State<ListOfMufseerPage> {
       },
     );
   }
+
 }

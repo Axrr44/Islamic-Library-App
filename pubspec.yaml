@@ -210,6 +210,10 @@ flutter:
       fonts:
         - asset: assets/fonts/AldhabiAE.ttf
 
+    - family: ATF
+      fonts:
+        - asset: assets/fonts/ATF.ttf
+
 
 
 

@@ -85,7 +85,7 @@ class _SignUpState extends State<SignUp> {
                     name: AppLocalizations.of(context)!.confirmPassword,
                     prefixIcon: Icons.lock_outline,
                     width: width,
-                    height: height / 13,
+                    height: height / 18,
                     obscureText: true,
                     passowrd: _passwordController.text,
                     inputType: TextInputType.text),
@@ -209,11 +209,10 @@ class _SignUpState extends State<SignUp> {
                     width: width / 2 + 40,
                     height: width / 7,
                     child: ElevatedButton(
-                      onPressed: isPrivacyCheck
-                          ? () {
+                      onPressed: () {
                               AuthServices.signInWithGoogle(context);
                             }
-                          : null,
+                          ,
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),

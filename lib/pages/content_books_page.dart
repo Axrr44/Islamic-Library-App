@@ -20,6 +20,7 @@ import '../config/app_colors.dart';
 import '../services/app_data_pref.dart';
 import '../config/toast_message.dart';
 import '../models/hadith_model.dart';
+import '../services/authentication.dart';
 
 class ContentBooksPage extends StatefulWidget {
   final int bookId;
@@ -28,6 +29,7 @@ class ContentBooksPage extends StatefulWidget {
   final bool? isScrollable;
   final int chapterId;
   final bool? isFromFavorite;
+  final bool? isChapter;
 
   const ContentBooksPage({
     super.key,
@@ -37,6 +39,7 @@ class ContentBooksPage extends StatefulWidget {
     this.isScrollable = false,
     required this.chapterId,
     this.isFromFavorite = false,
+    this.isChapter = true,
   });
 
   @override
@@ -79,31 +82,27 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
         future: _bookDataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            context.loaderOverlay.show();
-            return const SizedBox(
-              width: 5,
-            );
+            return const Center(
+                child: CircularProgressIndicator(color: AppColor.primary1));
           } else {
-            context.loaderOverlay.hide();
             if (snapshot.hasError) {
               customDialog(context, snapshot.error.toString());
-              return const SizedBox(
-                width: 5,
-              ); // Return an empty widget
+              return const SizedBox(width: 5); // Return an empty widget
             } else {
               Map<String, dynamic> data = jsonDecode(snapshot.data!);
               Metadata metadata = Metadata.fromJson(data);
-              List<Hadith> hadiths = getHadithsByChapterId(
-                  parseHadiths(snapshot.data), widget.chapterId);
+              List<Hadith> hadiths = widget.isChapter!
+                  ? getHadithsByChapterId(
+                      parseHadiths(snapshot.data), widget.chapterId)
+                  : parseHadiths(snapshot.data);
               List<Chapter> chapters = parseChapters(snapshot.data);
 
               if (widget.isScrollable!) {
                 int index = hadiths.indexWhere(
                     (element) => element.idInBook == widget.indexOfScrollable);
                 if (index == -1) {
-                  index = widget.indexOfScrollable! ;
+                  index = widget.indexOfScrollable!;
                 }
-                print("this is index " + index.toString());
                 if (widget.isFromFavorite!) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     _scrollToIndexIfNeeded(context, index);
@@ -115,43 +114,95 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                 }
               }
 
-              return NestedScrollView(
-                headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                  SliverToBoxAdapter(
-                    child: Column(children: [
-                      _header(
-                          currentLanguage, metadata, context, width, isMobile),
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h),
-                        child: TextField(
-                          onChanged: (query) {
-                            _subSearchProvider.updateSearchQuery(query);
-                          },
-                          decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context)!.search,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.w),
-                              borderSide: const BorderSide(
-                                  color: Colors.black), // Outline border color
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.w),
-                              borderSide: const BorderSide(color: Colors.black),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.black),
-                          cursorColor: AppColor.black, // Text color
+              return Column(
+                children: [
+                  _header(currentLanguage, metadata, context, width, isMobile),
+                  Padding(
+                    padding:
+                        EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h),
+                    child: TextField(
+                      onChanged: (query) {
+                        _subSearchProvider.updateSearchQuery(query);
+                      },
+                      decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)!.search,
+                        prefixIcon:
+                            Icon(Icons.search, color: Colors.black, size: 20.w),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.w),
+                          borderSide: const BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.w),
+                          borderSide: const BorderSide(color: Colors.black),
                         ),
                       ),
-                    ]),
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: AppColor.black,
+                    ),
+                  ),
+                  Expanded(
+                    child: Consumer<SubSearchProvider>(
+                      builder: (context, subSearchProvider, _) {
+                        final filteredHadiths =
+                            subSearchProvider.filterHadiths(hadiths);
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: _listOfHadiths(
+                                  filteredHadiths, chapters, currentLanguage),
+                            ),
+                            if(filteredHadiths.length >= 10)
+                            _buildScrollbar(filteredHadiths.length,
+                                filteredHadiths, currentLanguage),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ],
-                body: _listOfHadiths(hadiths, chapters, currentLanguage),
               );
             }
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildScrollbar(
+      int itemCount, List<Hadith> filteredHadiths, String currentLanguage) {
+    List<int> scrollIndexes = List<int>.generate(
+        (itemCount / 10).ceil(), (index) => index == 0 ? 1 : index * 10);
+
+    return SizedBox(
+      width: 40.w,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 20.h),
+        child: ListView.builder(
+          itemCount: scrollIndexes.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                _scrollController.scrollTo(
+                  index: scrollIndexes[index] - 1,
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                child: Text(
+                  '${currentLanguage == Languages.EN.languageCode ? (filteredHadiths[scrollIndexes[index]].idInBook)! - 1 : ArabicNumbers.convert((filteredHadiths[scrollIndexes[index]].idInBook)! - 1)} ',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -169,103 +220,48 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
   Widget _authorWidget(
       String currentLanguage, Metadata metadata, double width) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Container(
-        height: 200.h,
-        width: width,
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5.w,
-                  blurRadius: 7.w,
-                  offset: const Offset(1.5, 3))
-            ],
-            image: const DecorationImage(
-                image: AssetImage("assets/images/islamic_book.jpg"),
-                fit: BoxFit.fill),
-            borderRadius: BorderRadius.circular(15.w)),
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    AppColor.black.withOpacity(0.85),
-                    Colors.grey.withOpacity(0.85)
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: const [0.2, 3]),
-              borderRadius: BorderRadius.circular(15.w)),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: Text(
-              currentLanguage == Languages.EN.languageCode
-                  ? metadata.english!["author"]
-                  : metadata.arabic!["author"],
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20.sp,
-                  color: AppColor.white,
-                  fontWeight: FontWeight.w700),
-            ),
-          ),
-        ),
-      ),
-    );
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Text(
+          currentLanguage == Languages.EN.languageCode
+              ? metadata.english!["author"]
+              : metadata.arabic!["author"],
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 20.sp,
+              color: AppColor.black,
+              fontWeight: FontWeight.w700),
+        ));
   }
 
   Widget _listOfHadiths(
       List<Hadith> hadiths, List<Chapter> chapters, String currentLanguage) {
-    return Consumer<SubSearchProvider>(
-      builder: (context, subSearchProvider, _) {
-        final filteredHadiths = subSearchProvider.filterHadiths(hadiths);
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: widget.isScrollable!
-              ? ScrollablePositionedList.separated(
-                  itemScrollController: _scrollController,
-                  itemCount: filteredHadiths.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index < filteredHadiths.length) {
-                      return _listViewBuilder(
-                        chapters,
-                        filteredHadiths,
-                        index,
-                        currentLanguage,
-                        context,
-                      );
-                    } else {
-                      return const SizedBox.shrink(); // Separator
-                    }
-                  },
-                  separatorBuilder: (context, index) {
-                    return _listViewSeparator(
-                        currentLanguage, filteredHadiths, index);
-                  },
-                )
-              : ListView.separated(
-                  itemCount: filteredHadiths.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index < filteredHadiths.length) {
-                      return _listViewBuilder(
-                        chapters,
-                        filteredHadiths,
-                        index,
-                        currentLanguage,
-                        context,
-                      );
-                    } else {
-                      return const SizedBox.shrink(); // Separator
-                    }
-                  },
-                  separatorBuilder: (context, index) {
-                    return _listViewSeparator(
-                        currentLanguage, filteredHadiths, index);
-                  },
-                ),
-        );
-      },
+    bool isEnglish = currentLanguage == Languages.EN.languageCode;
+    bool isBiggerT10 = hadiths.length >= 10;
+    return Padding(
+      padding: EdgeInsets.only(
+          right: isEnglish ? isBiggerT10 ? 0 : 20.w  : 20.w,
+          left: isEnglish? 20.w :
+          isBiggerT10 ? 0 : 20.w ),
+      child: ScrollablePositionedList.separated(
+        itemScrollController: _scrollController,
+        itemCount: hadiths.length + 1,
+        itemBuilder: (context, index) {
+          if (index < hadiths.length) {
+            return _listViewBuilder(
+              chapters,
+              hadiths,
+              index,
+              currentLanguage,
+              context,
+            );
+          } else {
+            return const SizedBox.shrink(); // Separator
+          }
+        },
+        separatorBuilder: (context, index) {
+          return _listViewSeparator(currentLanguage, hadiths, index);
+        },
+      ),
     );
   }
 
@@ -325,8 +321,8 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                 children: [
                   Text(
                     currentLanguage == Languages.EN.languageCode
-                        ? (index + 1).toString()
-                        : ArabicNumbers.convert(index + 1),
+                        ? (hadiths[index].idInBook).toString()
+                        : ArabicNumbers.convert(hadiths[index].idInBook),
                     style: TextStyle(
                         fontFamily: Utility.getTextFamily(currentLanguage),
                         fontSize: 15.sp,
@@ -373,7 +369,8 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                   currentLanguage == Languages.EN.languageCode
                       ? hadiths[index].english!
                       : hadiths[index].arabic!,
-                  index)
+                  index,
+                  hadiths[index].idInBook)
             ],
           ),
         ),
@@ -381,7 +378,8 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
     );
   }
 
-  Widget _popUpMenu(BuildContext context, String hadith, int index) {
+  Widget _popUpMenu(
+      BuildContext context, String hadith, int index, int? idInBook) {
     copy() {
       final value = ClipboardData(
         text: hadith,
@@ -439,7 +437,7 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                       child: InkWell(
                         onTap: () async {
                           await Share.share(
-                              "$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}]");
+                              "$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}/$idInBook]");
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -466,6 +464,12 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                       padding: EdgeInsets.all(3.w),
                       child: InkWell(
                         onTap: () {
+                          if (AuthServices.getCurrentUser() == null) {
+                            ToastMessage.showMessage(
+                                AppLocalizations.of(context)!
+                                    .favoriteToastMessage);
+                            return;
+                          }
                           FireStoreService.addFavorite(Favorite(
                               type: "Hadith",
                               title: widget.bookName,
@@ -569,15 +573,15 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                     ? widget.bookName
                     : "${widget.bookName.substring(0, 17)}...",
                 style: TextStyle(
-                    fontSize: widget.bookName.length < 20 ? 25.sp : 22.sp,
+                    fontSize: widget.bookName.length < 20 ? 35.sp : 32.sp,
                     fontWeight: FontWeight.bold,
-                    fontFamily: Utility.getTextFamily(currentLanguage)),
+                    fontFamily: 'ATF'),
               )
             ],
           ),
         ),
         SizedBox(
-          height: 50.h,
+          height: 40.h,
         ),
         _authorWidget(currentLanguage, metadata, width)
       ],

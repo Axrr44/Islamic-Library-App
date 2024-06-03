@@ -16,6 +16,7 @@ import '../services/app_data_pref.dart';
 import '../models/hadith_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../services/authentication.dart';
 import '../services/firestore_service.dart';
 import '../services/search_hepler.dart';
 
@@ -528,6 +529,11 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _favorite(int index, String currentLanguage, BuildContext context) {
+    if(AuthServices.getCurrentUser() == null)
+    {
+      ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteToastMessage);
+      return ;
+    }
        if (_searchResults[index]['type'] == 'quran') {
       FireStoreService.addFavorite(Favorite(
           type: 'quran',

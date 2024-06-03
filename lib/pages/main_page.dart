@@ -328,7 +328,7 @@ class _MainPageState extends State<MainPage> {
           return Container();
         } else if (snapshot.hasError) {
           context.loaderOverlay.hide();
-          return Text('Error: ${snapshot.error}');
+          return const Center(child: Text('Error: No internet connection'));
         } else {
           context.loaderOverlay.hide();
           List<Tafseer>? tafseerList = snapshot.data;
@@ -872,10 +872,10 @@ class _MainPageState extends State<MainPage> {
                       Text(
                         mainProvider.currentPageName,
                         style: TextStyle(
-                          fontFamily: Utility.getTextFamily(currentLanguage),
+                          fontFamily: 'ATF',
                           fontSize: mainProvider.currentPageName.length > 10
-                              ? 30.sp
-                              : 40.sp,
+                              ? 40.sp
+                              : 50.sp,
                           color: AppColor.black,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1079,8 +1079,9 @@ class _MainPageState extends State<MainPage> {
               icon: Icons.home_outlined,
               text: AppLocalizations.of(context)!.home,
               textStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
                   fontSize: 15.sp,
-                  fontFamily: Utility.getTextFamily(currentLanguage)),
+                  fontFamily: 'ATF'),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -1093,8 +1094,9 @@ class _MainPageState extends State<MainPage> {
               icon: Icons.search,
               text: AppLocalizations.of(context)!.search,
               textStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
                   fontSize: 15.sp,
-                  fontFamily: Utility.getTextFamily(currentLanguage)),
+                  fontFamily: 'ATF'),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -1107,8 +1109,9 @@ class _MainPageState extends State<MainPage> {
               icon: Icons.favorite_border_outlined,
               text: AppLocalizations.of(context)!.favorites,
               textStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
                   fontSize: 15.sp,
-                  fontFamily: Utility.getTextFamily(currentLanguage)),
+                  fontFamily: 'ATF'),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -1122,7 +1125,7 @@ class _MainPageState extends State<MainPage> {
               text: AppLocalizations.of(context)!.profile,
               textStyle: TextStyle(
                   fontSize: 15.sp,
-                  fontFamily: Utility.getTextFamily(currentLanguage)),
+                  fontFamily: 'ATF',fontWeight: FontWeight.bold),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
