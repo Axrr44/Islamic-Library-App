@@ -48,22 +48,22 @@ class SubSearchProvider extends ChangeNotifier{
   }
 
   List<TafseerContent> _filterWithDiacritics(List<TafseerContent> tafseerContents) {
-
     final normalizedQuery = Utility.removeDiacritics(_searchQuery.toLowerCase());
     return tafseerContents.where((tafseerContent) {
-      final verseText = Utility.removeDiacritics(tafseerContent.verseText);
-      return verseText.toLowerCase().contains(normalizedQuery);
+      final normalizedVerseText = Utility.removeDiacritics(tafseerContent.verseText).toLowerCase();
+      final normalizedTafseerText = Utility.removeDiacritics(tafseerContent.tafseerText).toLowerCase();
+      return normalizedVerseText.contains(normalizedQuery) || normalizedTafseerText.contains(normalizedQuery);
     }).toList();
   }
 
   List<TafseerContent> _filterWithDiacritics2(List<TafseerContent> tafseerContents) {
-
-
     final normalizedQuery = Utility.removeDiacritics2(_searchQuery.toLowerCase());
     return tafseerContents.where((tafseerContent) {
-      final verseText = Utility.removeDiacritics2(tafseerContent.verseText);
-      return verseText.toLowerCase().contains(normalizedQuery);
+      final normalizedVerseText = Utility.removeDiacritics2(tafseerContent.verseText).toLowerCase();
+      final normalizedTafseerText = Utility.removeDiacritics2(tafseerContent.tafseerText).toLowerCase();
+      return normalizedVerseText.contains(normalizedQuery) || normalizedTafseerText.contains(normalizedQuery);
     }).toList();
   }
+
 
 }

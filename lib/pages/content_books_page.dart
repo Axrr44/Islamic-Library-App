@@ -382,7 +382,7 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
       BuildContext context, String hadith, int index, int? idInBook) {
     copy() {
       final value = ClipboardData(
-        text: hadith,
+        text: "$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}/$idInBook]",
       );
       Clipboard.setData(value);
       Fluttertoast.showToast(
