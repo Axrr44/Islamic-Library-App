@@ -97,6 +97,8 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Icon(Icons.sim_card_download_rounded,size: 150.w,),
+          SizedBox(height: 20.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Row(

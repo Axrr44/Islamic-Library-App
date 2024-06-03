@@ -71,7 +71,6 @@ class _MainPageState extends State<MainPage> {
     ];
     _checkAndShowTutorial();
     _createBannerAd();
-
   }
 
   Future<void> _checkAndShowTutorial() async {
@@ -138,7 +137,7 @@ class _MainPageState extends State<MainPage> {
       onFinish: (){AppDataPreferences.setShowTutorial(false);},
       onSkip: (){AppDataPreferences.setShowTutorial(false);
         return true;},
-      textSkip: "تخطي",
+      textSkip: AppLocalizations.of(context)!.skip,
       paddingFocus: 2.w,
       opacityShadow: 0.5,
       imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
@@ -842,20 +841,20 @@ class _MainPageState extends State<MainPage> {
               height: height / 3 - 40.h,
             ),
           ),
-          if (mainProvider.currentPageName ==
-              AppLocalizations.of(context)!.home)
-            Positioned(
-              top: 0, // Set to top of the screen
-              left: 0,
-              right: 0,
-              child: _bannerAd == null
-                  ? const SizedBox.shrink()
-                  : SizedBox(
-                      width: width,
-                      height: _bannerAd!.size.height.toDouble(),
-                      child: AdWidget(ad: _bannerAd!),
-                    ),
-            ),
+          // if (mainProvider.currentPageName ==
+          //     AppLocalizations.of(context)!.home)
+          //   Positioned(
+          //     top: 0, // Set to top of the screen
+          //     left: 0,
+          //     right: 0,
+          //     child: _bannerAd == null
+          //         ? const SizedBox.shrink()
+          //         : SizedBox(
+          //             width: width,
+          //             height: _bannerAd!.size.height.toDouble(),
+          //             child: AdWidget(ad: _bannerAd!),
+          //           ),
+          //   ),
           Positioned(
             bottom: 0,
             left: 0,
