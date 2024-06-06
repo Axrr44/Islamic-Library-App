@@ -63,10 +63,10 @@ class SignIn extends StatelessWidget {
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          WidgetStateProperty.all(AppColor.primary1),
+                      MaterialStateProperty.all(AppColor.primary1),
                       foregroundColor:
-                          WidgetStateProperty.all(AppColor.white),
-                      shape: WidgetStateProperty.all(
+                      MaterialStateProperty.all(AppColor.white),
+                      shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
                         ),

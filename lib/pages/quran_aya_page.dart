@@ -592,7 +592,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                   height: 50.h,
                   child: TextButton(
                     style: ButtonStyle(
-                      overlayColor: WidgetStateProperty.all(
+                      overlayColor: MaterialStateProperty.all(
                           AppColor.primary1.withOpacity(0.1)),
                     ),
                     onPressed: () {

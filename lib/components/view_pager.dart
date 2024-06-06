@@ -143,9 +143,9 @@ class _ViewPagerState extends State<ViewPager> {
             }
           },
           style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all<Color>(AppColor.primary1),
-            foregroundColor: WidgetStateProperty.all<Color>(AppColor.white),
-            shape: WidgetStateProperty.all(
+            backgroundColor: MaterialStateProperty.all<Color>(AppColor.primary1),
+            foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
+            shape: MaterialStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),

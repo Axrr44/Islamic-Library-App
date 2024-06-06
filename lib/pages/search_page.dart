@@ -187,8 +187,8 @@ class _SearchPageState extends State<SearchPage> {
             size: 43.w,
           ),
           style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(Colors.black),
-            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            backgroundColor: MaterialStateProperty.all(Colors.black),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.w),
               ),

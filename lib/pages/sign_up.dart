@@ -167,10 +167,10 @@ class _SignUpState extends State<SignUp> {
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          WidgetStateProperty.all(isPrivacyCheck ? AppColor.primary1 : Colors.grey[350]),
+                      MaterialStateProperty.all(isPrivacyCheck ? AppColor.primary1 : Colors.grey[350]),
                       foregroundColor:
-                          WidgetStateProperty.all(AppColor.white),
-                      shape: WidgetStateProperty.all(
+                      MaterialStateProperty.all(AppColor.white),
+                      shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
                         ),

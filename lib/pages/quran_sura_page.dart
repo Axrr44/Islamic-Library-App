@@ -68,7 +68,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                     unselectedLabelColor: innerBoxIsScrolled
                         ? AppColor.white.withOpacity(0.7)
                         : Colors.grey.withOpacity(0.7),
-                    overlayColor: WidgetStateProperty.all(!innerBoxIsScrolled
+                    overlayColor: MaterialStateProperty.all(!innerBoxIsScrolled
                         ? AppColor.black.withOpacity(0.1)
                         : AppColor.white.withOpacity(0.1)),
                     labelPadding: EdgeInsets.symmetric(
