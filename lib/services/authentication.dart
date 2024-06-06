@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../components/custom_dialog.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
@@ -108,6 +109,34 @@ class AuthServices {
       return userCredential;
     } catch (e) {
       print('Error signing in with Google: $e');
+      return null;
+    }
+  }
+
+  static Future<UserCredential?> signInWithApple(BuildContext context) async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final oAuthProvider = OAuthProvider('apple.com');
+      final appleCredential = oAuthProvider.credential(
+        idToken: credential.identityToken,
+        accessToken: credential.authorizationCode,
+      );
+
+      UserCredential userCredential = await auth.signInWithCredential(appleCredential);
+
+      if (userCredential.user != null) {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
+      }
+
+      return userCredential;
+    } catch (e) {
+      print('Error signing in with Apple: $e');
       return null;
     }
   }

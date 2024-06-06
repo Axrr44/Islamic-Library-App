@@ -64,6 +64,9 @@ dependencies:
   #Google sign-in:
   google_sign_in: ^6.2.1
 
+  #Apple sign-in :
+  sign_in_with_apple: ^6.1.0
+
   #Quran :
   quran: ^1.2.8
 
@@ -162,6 +165,7 @@ flutter:
     - assets/images/wave_lines_6.png
     - assets/images/text_patter_2.png
     - assets/images/arabic.png
+    - assets/images/apple.png
     - assets/images/islamic_book.jpg
     - assets/images/google-icon.svg
     - assets/images/nomor-surah.svg

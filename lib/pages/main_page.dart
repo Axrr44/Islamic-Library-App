@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/pages/favorites_page.dart';
@@ -113,16 +114,26 @@ class _MainPageState extends State<MainPage> {
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     final bool isMobile = shortestSide < 600;
 
-    return Scaffold(
-      body: Column(
-        children: [
-          _header(width, height, notificationCount, isMobile),
-          Expanded(
-            child: pages[_currentPage],
-          ),
-        ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        final result = await _closeAppDialog(context);
+        if (result == true) {
+          SystemNavigator.pop();
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        body: Column(
+          children: [
+            _header(width, height, notificationCount, isMobile),
+            Expanded(
+              child: pages[_currentPage],
+            ),
+          ],
+        ),
+        bottomNavigationBar: _bottomNavigation(),
       ),
-      bottomNavigationBar: _bottomNavigation(),
     );
   }
 
@@ -841,20 +852,20 @@ class _MainPageState extends State<MainPage> {
               height: height / 3 - 40.h,
             ),
           ),
-          // if (mainProvider.currentPageName ==
-          //     AppLocalizations.of(context)!.home)
-          //   Positioned(
-          //     top: 0, // Set to top of the screen
-          //     left: 0,
-          //     right: 0,
-          //     child: _bannerAd == null
-          //         ? const SizedBox.shrink()
-          //         : SizedBox(
-          //             width: width,
-          //             height: _bannerAd!.size.height.toDouble(),
-          //             child: AdWidget(ad: _bannerAd!),
-          //           ),
-          //   ),
+          if (mainProvider.currentPageName ==
+              AppLocalizations.of(context)!.home)
+            Positioned(
+              top: 0, // Set to top of the screen
+              left: 0,
+              right: 0,
+              child: _bannerAd == null
+                  ? const SizedBox.shrink()
+                  : SizedBox(
+                      width: width,
+                      height: _bannerAd!.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd!),
+                    ),
+            ),
           Positioned(
             bottom: 0,
             left: 0,
@@ -1181,4 +1192,74 @@ class _MainPageState extends State<MainPage> {
       _interstitialAd = null;
     }
   }
+
+  Future<bool?> _closeAppDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          content: Padding(
+            padding: EdgeInsets.only(top: 10.h),
+            child: Text(
+              AppLocalizations.of(context)!.exitDialog,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15.sp),
+            ),
+          ),
+          actions: <Widget>[
+            Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.grey),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.w),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.no,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.w),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.yes,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

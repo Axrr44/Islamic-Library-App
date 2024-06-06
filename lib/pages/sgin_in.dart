@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -106,7 +108,8 @@ class SignIn extends StatelessWidget {
                 SizedBox(
                   height: 20.h,
                 ),
-                SizedBox(
+                if(Platform.isAndroid)
+                  SizedBox(
                     width: width / 2 + 40,
                     height: width / 7,
                     child: ElevatedButton(
@@ -156,6 +159,57 @@ class SignIn extends StatelessWidget {
                         ],
                       ),
                     )),
+                if(Platform.isIOS)
+                  SizedBox(
+                      width: width / 2 + 40,
+                      height: width / 7,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          AuthServices.signInWithApple(context);
+                        }
+                        ,
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/apple.png',
+                              height: 24.0.w,
+                              width: 24.0.w,
+                            ),
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text:
+                                    AppLocalizations.of(context)!.signInWith,
+                                    style: TextStyle(
+                                      fontSize: 15.sp,
+                                      fontFamily:
+                                      Utility.getTextFamily(currentLanguage),
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: AppLocalizations.of(context)!.apple,
+                                    style: TextStyle(
+                                      fontSize: 15.sp,
+                                      fontFamily:
+                                      Utility.getTextFamily(currentLanguage),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
                 SizedBox(
                   height: height / 15
                 ),
