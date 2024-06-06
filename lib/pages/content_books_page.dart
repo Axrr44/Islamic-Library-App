@@ -8,7 +8,6 @@ import 'package:freelancer/models/favorite_model.dart';
 import 'package:freelancer/providers/sub_search_provider.dart';
 import 'package:freelancer/services/firestore_service.dart';
 import 'package:freelancer/utilities/utility.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';

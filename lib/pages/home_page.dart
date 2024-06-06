@@ -48,20 +48,20 @@ class HomePage extends StatelessWidget {
                               : AppRoutes.BOOKS_ROUTES);
                         },
                         style: ButtonStyle(
-                          overlayColor: MaterialStateProperty.all(index == 0
+                          overlayColor: WidgetStateProperty.all(index == 0
                               ? AppColor.white.withOpacity(0.1)
                               : AppColor.black.withOpacity(0.1)),
-                          backgroundColor: MaterialStateProperty.all(index == 0
+                          backgroundColor: WidgetStateProperty.all(index == 0
                               ? AppColor.primary1
                               : AppColor.white),
                           foregroundColor:
-                              MaterialStateProperty.all(AppColor.white),
-                          shape: MaterialStateProperty.all(
+                              WidgetStateProperty.all(AppColor.white),
+                          shape: WidgetStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.w),
                             ),
                           ),
-                          padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 0))
+                          padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 0))
                         ),
                         child: Container(
                           decoration: BoxDecoration(
@@ -152,15 +152,15 @@ class HomePage extends StatelessWidget {
                     Navigator.of(context).pushNamed(AppRoutes.TAFSEER_ROUTES);
                   },
                   style: ButtonStyle(
-                    overlayColor: MaterialStateProperty.all(
+                    overlayColor: WidgetStateProperty.all(
                         AppColor.black.withOpacity(0.1)),
-                    backgroundColor: MaterialStateProperty.all(AppColor.primary6),
-                    shape: MaterialStateProperty.all(
+                    backgroundColor: WidgetStateProperty.all(AppColor.primary6),
+                    shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.w),
                       ),
                     ),
-                      padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 0))
+                      padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 0))
                   ),
                   child: Container(
                     decoration:  BoxDecoration(

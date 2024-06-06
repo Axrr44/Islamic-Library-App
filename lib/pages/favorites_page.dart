@@ -58,8 +58,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     .pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
               },
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(AppColor.primary1),
-                shape: MaterialStateProperty.all(
+                backgroundColor: WidgetStateProperty.all(AppColor.primary1),
+                shape: WidgetStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.w),
                   ),

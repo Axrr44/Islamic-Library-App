@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import '../models/reciter_model.dart';
 import '../models/tafseer_books.dart';
 import '../config/app_languages.dart';
-import '../models/tafseer_response.dart';
 
 class AppData {
   // Books(hadiths)

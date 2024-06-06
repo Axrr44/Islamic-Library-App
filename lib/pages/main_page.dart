@@ -798,13 +798,13 @@ class _MainPageState extends State<MainPage> {
                           AuthServices.signOut(context);
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(AppColor.black),
-                          shape: MaterialStateProperty.all(
+                          backgroundColor: WidgetStateProperty.all(AppColor.black),
+                          shape: WidgetStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5.w),
                             ),
                           ),
-                          minimumSize: MaterialStateProperty.all(Size(200.w, 50.h)),
+                          minimumSize: WidgetStateProperty.all(Size(200.w, 50.h)),
                         ),
                         child: Text(
                           "Sign out",
