@@ -6,12 +6,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freelancer/pages/quran_aya_page.dart';
 import 'package:freelancer/services/app_data_pref.dart';
 import 'package:freelancer/utilities/utility.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:arabic_numbers/arabic_numbers.dart';
 import '../config/app_colors.dart';
 import '../config/app_languages.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../config/toast_message.dart';
+import '../services/admob_service.dart';
 import '../services/app_data.dart';
 
 class QuranSuraPage extends StatefulWidget {
@@ -24,6 +26,7 @@ class QuranSuraPage extends StatefulWidget {
 class _QuranSuraPageState extends State<QuranSuraPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  BannerAd? _bannerAd;
   int surahIdLastRead = 0;
   int verseIdLastRead = 0;
 
@@ -31,6 +34,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _createBannerAd();
   }
 
   @override
@@ -295,143 +299,166 @@ class _QuranSuraPageState extends State<QuranSuraPage>
     );
   }
 
+  void _createBannerAd() {
+    _bannerAd = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdmobService.bannerAdUnitId(true),
+      listener: AdmobService.bannerListener,
+      request: const AdRequest(),
+    )..load();
+  }
+
+
   Widget _header(double width, double height, BuildContext context,
       bool isMobile, String currentLanguage) {
-    return Stack(children: [
-      ShaderMask(
-        shaderCallback: (bounds) {
-          return LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0)],
-          ).createShader(bounds);
-        },
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("assets/images/islamic_pattern_2.png"),
-                fit: BoxFit.cover),
+    return Stack(
+      children: [
+        ShaderMask(
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0)],
+            ).createShader(bounds);
+          },
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/images/islamic_pattern_2.png"),
+                  fit: BoxFit.cover),
+            ),
+            width: width,
+            height: height / 3 - 40.h,
+            alignment: Alignment.bottomCenter,
           ),
-          width: width,
-          height: height / 3 - 40.h,
-          alignment: Alignment.bottomCenter,
         ),
-      ),
-      Container(
-        width: width,
-        height: isMobile == true ? height / 3 : height / 2 - 100,
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding:
-              EdgeInsets.only(top: 50.h, bottom: 10.h, right: 20.w, left: 20.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(isMobile == true ? 15.w : 10.w),
-                    child: Container(
-                      color: AppColor.primary1,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          currentLanguage == Languages.EN.languageCode
-                              ? Icons.keyboard_arrow_left_rounded
-                              : Icons.keyboard_arrow_right_rounded,
-                          size: 35.w,
-                          color: AppColor.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.quran,
-                        style: TextStyle(
-                            fontSize: 60.sp,
-                            color: AppColor.black,
-                            fontFamily: 'AEFont',
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        width: width / 2,
-                        child: Text(
-                          AppLocalizations.of(context)!.quranSubTitle,
-                          style: TextStyle(fontSize: 15.sp, color: Colors.grey),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(isMobile == true ? 15.w : 10.w),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: AppColor.white,
-                        border: Border.all(
-                          color: AppColor.black,
-                          width: 1.w,
-                        ),
-                        borderRadius: BorderRadius.circular(
-                            isMobile == true ? 15.w : 10.w),
-                      ),
+        if (_bannerAd != null)
+          Positioned(
+            top: 0, // Set to top of the screen
+            left: 0,
+            right: 0,
+            child: SizedBox(
+              width: width,
+              height: _bannerAd!.size.height.toDouble(),
+              child: AdWidget(ad: _bannerAd!),
+            ),
+          ),
+        Container(
+          width: width,
+          height:  height / 2  - 100,
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding:
+            EdgeInsets.only(top: 80.h, bottom: 10.h, right: 20.w, left: 20.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius:
+                      BorderRadius.circular(isMobile == true ? 15.w : 10.w),
                       child: Container(
+                        color: AppColor.primary1,
                         child: IconButton(
-                          onPressed: () async {
-                            await _loadQuranData();
-                            if (surahIdLastRead != -1) {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => QuranAyaPage(
-                                        surahId: surahIdLastRead,
-                                        initialPage: quran.getPageNumber(
-                                                surahIdLastRead,
-                                                verseIdLastRead) -
-                                            1,
-                                      )));
-                            }else {
-                              ToastMessage.showMessage(AppLocalizations.of(context)!.noLastRead);
-                            }
+                          onPressed: () {
+                            Navigator.pop(context);
                           },
                           icon: Icon(
-                            Icons.bookmark_outline_rounded,
-                            color: AppColor.black,
+                            currentLanguage == Languages.EN.languageCode
+                                ? Icons.keyboard_arrow_left_rounded
+                                : Icons.keyboard_arrow_right_rounded,
                             size: 35.w,
+                            color: AppColor.white,
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 5.h,
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.lastRead,
-                    style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Colors.grey,
-                        fontFamily: Utility.getTextFamily(currentLanguage)),
-                  )
-                ],
-              )
-            ],
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.quran,
+                          style: TextStyle(
+                              fontSize: 60.sp,
+                              color: AppColor.black,
+                              fontFamily: 'AEFont',
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: width / 2,
+                          child: Text(
+                            AppLocalizations.of(context)!.quranSubTitle,
+                            style: TextStyle(fontSize: 15.sp, color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ClipRRect(
+                      borderRadius:
+                      BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColor.white,
+                          border: Border.all(
+                            color: AppColor.black,
+                            width: 1.w,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                              isMobile == true ? 15.w : 10.w),
+                        ),
+                        child: Container(
+                          child: IconButton(
+                            onPressed: () async {
+                              await _loadQuranData();
+                              if (surahIdLastRead != -1) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => QuranAyaPage(
+                                      surahId: surahIdLastRead,
+                                      initialPage: quran.getPageNumber(
+                                          surahIdLastRead,
+                                          verseIdLastRead) -
+                                          1,
+                                    )));
+                              } else {
+                                ToastMessage.showMessage(AppLocalizations.of(context)!.noLastRead);
+                              }
+                            },
+                            icon: Icon(
+                              Icons.bookmark_outline_rounded,
+                              color: AppColor.black,
+                              size: 35.w,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5.h,
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.lastRead,
+                      style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.grey,
+                          fontFamily: Utility.getTextFamily(currentLanguage)),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   String convertToString(int number) {
