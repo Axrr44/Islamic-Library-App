@@ -79,7 +79,7 @@ class _MainPageState extends State<MainPage> {
     if (show) {
       createTutorial();
       Future.delayed(Duration.zero, showTutorial);
-    }else{
+    } else {
       _createInterstitialAd();
     }
   }
@@ -145,9 +145,13 @@ class _MainPageState extends State<MainPage> {
     tutorialCoachMark = TutorialCoachMark(
       targets: _createTargets(),
       colorShadow: AppColor.black,
-      onFinish: (){AppDataPreferences.setShowTutorial(false);},
-      onSkip: (){AppDataPreferences.setShowTutorial(false);
-        return true;},
+      onFinish: () {
+        AppDataPreferences.setShowTutorial(false);
+      },
+      onSkip: () {
+        AppDataPreferences.setShowTutorial(false);
+        return true;
+      },
       textSkip: AppLocalizations.of(context)!.skip,
       paddingFocus: 2.w,
       opacityShadow: 0.5,
@@ -195,7 +199,7 @@ class _MainPageState extends State<MainPage> {
           TargetContent(
             align: ContentAlign.top,
             builder: (context, controller) {
-              return  Column(
+              return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -233,7 +237,7 @@ class _MainPageState extends State<MainPage> {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height : 100.h)
+                  SizedBox(height: 100.h)
                 ],
               );
             },
@@ -560,20 +564,21 @@ class _MainPageState extends State<MainPage> {
                       width: 200.w,
                       child: ElevatedButton(
                         onPressed: () {
-                          AppDataPreferences.setFilterSearch(_selectedFilterSearch);
+                          AppDataPreferences.setFilterSearch(
+                              _selectedFilterSearch);
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.w),
-                          ),
-                          backgroundColor: Colors.black
-                        ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.w),
+                            ),
+                            backgroundColor: Colors.black),
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 10.h),
                           child: Text(
                             AppLocalizations.of(context)!.set,
-                            style: TextStyle(fontSize: 20.sp,color: Colors.white),
+                            style:
+                                TextStyle(fontSize: 20.sp, color: Colors.white),
                           ),
                         ),
                       ),
@@ -585,9 +590,7 @@ class _MainPageState extends State<MainPage> {
           );
         });
       },
-    ).then((_) => {
-      _loadSearchDialogData()
-    });
+    ).then((_) => {_loadSearchDialogData()});
   }
 
   void _showFilterFavoriteDialog(String currentLanguage) {
@@ -764,7 +767,8 @@ class _MainPageState extends State<MainPage> {
                         ),
                         Text(
                           "English",
-                          style: TextStyle(fontSize: 15.sp, color: Colors.black),
+                          style:
+                              TextStyle(fontSize: 15.sp, color: Colors.black),
                         ),
                         Radio<String>(
                           value: "ar",
@@ -781,7 +785,8 @@ class _MainPageState extends State<MainPage> {
                         ),
                         Text(
                           "العربية",
-                          style: TextStyle(fontSize: 15.sp, color: Colors.black),
+                          style:
+                              TextStyle(fontSize: 15.sp, color: Colors.black),
                         ),
                       ],
                     ),
@@ -798,24 +803,26 @@ class _MainPageState extends State<MainPage> {
                           AuthServices.signOut(context);
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(AppColor.black),
+                          backgroundColor:
+                              MaterialStateProperty.all(AppColor.black),
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5.w),
                             ),
                           ),
-                          minimumSize: MaterialStateProperty.all(Size(200.w, 50.h)),
+                          minimumSize:
+                              MaterialStateProperty.all(Size(200.w, 50.h)),
                         ),
                         child: Text(
                           "Sign out",
-                          style: TextStyle(fontSize: 20.sp, color: AppColor.white),
+                          style:
+                              TextStyle(fontSize: 20.sp, color: AppColor.white),
                         ),
                       ),
                     ]
                   ],
                 ),
               );
-
             },
           ),
         );
@@ -853,7 +860,9 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
           if (mainProvider.currentPageName ==
-              AppLocalizations.of(context)!.home)
+                  AppLocalizations.of(context)!.home ||
+              mainProvider.currentPageName ==
+                  AppLocalizations.of(context)!.profile)
             Positioned(
               top: 0, // Set to top of the screen
               left: 0,
@@ -927,13 +936,20 @@ class _MainPageState extends State<MainPage> {
                                   onPressed: () {
                                     _actionOfHeaderButton();
                                   },
-                                  icon: mainProvider.currentPageName != AppLocalizations.of(context)!.search ?
-                                  Icon(
-                                    _iconHeader(mainProvider.currentPageName),
-                                    size: 35.w,
-                                    color: AppColor.black,
-                                  ) : SizedBox(width: 35.w,height: 35.w,child:
-                                  Image.asset("assets/images/filter.png"),),
+                                  icon: mainProvider.currentPageName !=
+                                          AppLocalizations.of(context)!.search
+                                      ? Icon(
+                                          _iconHeader(
+                                              mainProvider.currentPageName),
+                                          size: 35.w,
+                                          color: AppColor.black,
+                                        )
+                                      : SizedBox(
+                                          width: 35.w,
+                                          height: 35.w,
+                                          child: Image.asset(
+                                              "assets/images/filter.png"),
+                                        ),
                                 ),
                               ),
                             ),
@@ -1135,7 +1151,8 @@ class _MainPageState extends State<MainPage> {
               text: AppLocalizations.of(context)!.profile,
               textStyle: TextStyle(
                   fontSize: 15.sp,
-                  fontFamily: 'ATF',fontWeight: FontWeight.bold),
+                  fontFamily: 'ATF',
+                  fontWeight: FontWeight.bold),
               iconColor: AppColor.black,
               iconSize: 20.w,
               onPressed: () {
@@ -1235,7 +1252,8 @@ class _MainPageState extends State<MainPage> {
                   SizedBox(width: 8.w),
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+                      backgroundColor:
+                          MaterialStateProperty.all(AppColor.primary1),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
@@ -1261,5 +1279,4 @@ class _MainPageState extends State<MainPage> {
       },
     );
   }
-
 }

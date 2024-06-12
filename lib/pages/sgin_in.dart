@@ -176,7 +176,7 @@ class SignIn extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SvgPicture.asset(
+                            Image.asset(
                               'assets/images/apple.png',
                               height: 24.0.w,
                               width: 24.0.w,

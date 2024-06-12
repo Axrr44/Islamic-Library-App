@@ -843,9 +843,9 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
         return SizedBox(
           height: height / 2 + 50.h,
           width: width,
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
-            child: SingleChildScrollView(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 20.w),
               child: Column(
                 children: [
                   Text(
