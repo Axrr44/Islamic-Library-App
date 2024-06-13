@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancer/config/app_languages.dart';
 import 'package:freelancer/services/app_data_pref.dart';
 import 'package:freelancer/utilities/utility.dart';
+import 'package:provider/provider.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../providers/language_provider.dart';
 
 
 class ViewPager extends StatefulWidget {
@@ -18,6 +23,16 @@ class ViewPager extends StatefulWidget {
 class _ViewPagerState extends State<ViewPager> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      if (await AppDataPreferences.getShowLanguage()) {
+        _showLanguageDialog(context);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -213,4 +228,88 @@ class _ViewPagerState extends State<ViewPager> {
       ),
     );
   }
+
+  void _showLanguageDialog(BuildContext context) {
+    var languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    String currentLanguage = Localizations.localeOf(context).languageCode;
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          content: Padding(
+            padding: EdgeInsets.only(top: 10.h),
+            child: Text(
+              AppLocalizations.of(context)!.chooseTheLanguage,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15.sp),
+            ),
+          ),
+          actions: <Widget>[
+            Center( // Center the Row
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.grey),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.w),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (currentLanguage != Languages.AR.languageCode) {
+                        languageProvider.setCurrentLanguage('ar');
+                        Phoenix.rebirth(context);
+                      }
+                      AppDataPreferences.setShowLanguage(false);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "العربية",
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.grey),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.w),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (currentLanguage != Languages.EN.languageCode) {
+                        languageProvider.setCurrentLanguage('en');
+                        Phoenix.rebirth(context);
+                      }
+                      AppDataPreferences.setShowLanguage(false);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "English",
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
