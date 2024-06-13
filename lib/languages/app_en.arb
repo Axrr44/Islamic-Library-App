@@ -103,7 +103,9 @@
   "yes" : "Yes",
   "no" : "No",
   "exitDialog" : "Do you want to exit the application?",
-  "apple" : "Apple"
+  "apple" : "Apple",
+  "chooseTheLanguage" : "Choose the language"
+
 
 
 

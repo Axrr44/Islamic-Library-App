@@ -217,5 +217,16 @@ class AppDataPreferences {
     return _prefs!.getBool("GUEST-USER") ?? false;
   }
 
+  //Language
+
+  static Future<void> setShowLanguage(bool value) async {
+    await _initPrefs();
+    await _prefs!.setBool("SHOW-LANGUAGE", value);
+  }
+  static Future<bool> getShowLanguage() async {
+    await _initPrefs();
+    return _prefs!.getBool("SHOW-LANGUAGE") ?? true;
+  }
+
 }
 
