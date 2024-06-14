@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +18,6 @@ import 'components/custom_progress.dart';
 import 'config/app_routes.dart';
 import 'firebase_options.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -28,8 +25,8 @@ Future<void> main() async {
   );
 
   MobileAds.instance.initialize();
-  SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom]);
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -55,32 +52,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context,provider,_)
-      {
-        return ScreenUtilInit(
-          designSize: const Size(360, 690),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          child: GlobalLoaderOverlay(
-            overlayColor: Colors.grey.withOpacity(0.3),
-            useDefaultLoading: false,
-            overlayWidgetBuilder: (_) {
-              return customProgress();
-            },
-            child: MaterialApp(
-                theme: ThemeData(fontFamily: 'Custom'),
-                initialRoute: AppRoutes.SPLASH_SCREEN_REOUTS,
-                routes: AppRoutes.ROUTES,
-                localizationsDelegates: AppLocalizations.localizationsDelegates,
-                supportedLocales: AppLocalizations.supportedLocales,
-                locale: Locale(provider.currentLanguage)),
-          ),
-        );
-      }
-    );
+    return Consumer<LanguageProvider>(builder: (context, provider, _) {
+      return ScreenUtilInit(
+        designSize: const Size(360, 690),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        child: GlobalLoaderOverlay(
+          overlayColor: Colors.grey.withOpacity(0.3),
+          useDefaultLoading: false,
+          overlayWidgetBuilder: (_) {
+            return customProgress();
+          },
+          child: MaterialApp(
+              theme: ThemeData(fontFamily: 'Custom'),
+              initialRoute: AppRoutes.SPLASH_SCREEN_REOUTS,
+              routes: AppRoutes.ROUTES,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: Locale(provider.currentLanguage)),
+        ),
+      );
+    });
   }
-  Future<String> getCurrentLanguage(){
+
+  Future<String> getCurrentLanguage() {
     return AppDataPreferences.getCurrentLanguage();
   }
 }
