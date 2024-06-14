@@ -33,6 +33,7 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
   late int _selectedFilterSearch;
   late int _indexOfHadith = 0;
+  bool isSearching = false;
   late int _mufseerId;
   bool _isLoading = false;
   Timer? _debounce;
@@ -150,6 +151,17 @@ class _SearchPageState extends State<SearchPage> {
               elevation: 2,
               child: TextField(
                 controller: _searchController,
+                onChanged: (value) {
+                  if (value.trim().isNotEmpty) {
+                    setState(() {
+                      isSearching = true;
+                    });
+                  } else {
+                    setState(() {
+                      isSearching = false;
+                    });
+                  }
+                },
                 style: TextStyle(fontSize: 15.sp),
                 textAlign: TextAlign.center,
                 cursorColor: Colors.black,
@@ -176,25 +188,26 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
         ),
-        IconButton(
-          onPressed: () async {
-            await _loadSearchDialogData();
-            _search(_searchController.text.trim());
-          },
-          icon: Icon(
-            color: AppColor.white,
-            Icons.search_rounded,
-            size: 43.w,
-          ),
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.black),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.w),
+        if (isSearching)
+          IconButton(
+            onPressed: () async {
+              await _loadSearchDialogData();
+              _search(_searchController.text.trim());
+            },
+            icon: Icon(
+              color: AppColor.white,
+              Icons.search_rounded,
+              size: 43.w,
+            ),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.black),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.w),
+                ),
               ),
             ),
-          ),
-        )
+          )
       ],
     );
   }

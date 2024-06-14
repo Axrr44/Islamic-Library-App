@@ -92,7 +92,7 @@ class AuthServices {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) return null;
-
+      context.loaderOverlay.show();
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
@@ -103,11 +103,13 @@ class AuthServices {
       UserCredential userCredential = await auth.signInWithCredential(credential);
 
       if (userCredential.user != null) {
+        context.loaderOverlay.hide();
         Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
       }
 
       return userCredential;
     } catch (e) {
+      context.loaderOverlay.hide();
       print('Error signing in with Google: $e');
       return null;
     }
@@ -115,6 +117,8 @@ class AuthServices {
 
   static Future<UserCredential?> signInWithApple(BuildContext context) async {
     try {
+      context.loaderOverlay.show();
+
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -131,11 +135,13 @@ class AuthServices {
       UserCredential userCredential = await auth.signInWithCredential(appleCredential);
 
       if (userCredential.user != null) {
+        context.loaderOverlay.hide();
         Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
       }
 
       return userCredential;
     } catch (e) {
+      context.loaderOverlay.hide();
       print('Error signing in with Apple: $e');
       return null;
     }
