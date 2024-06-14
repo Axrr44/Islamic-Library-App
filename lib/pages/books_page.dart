@@ -57,7 +57,7 @@ class _BooksPageState extends State<BooksPage> {
   void _createBannerAd() {
     _bannerAd = BannerAd(
       size: AdSize.fullBanner,
-      adUnitId: AdmobService.bannerAdUnitId(true),
+      adUnitId: AdmobService.bannerAdUnitId(false),
       listener: AdmobService.bannerListener,
       request: const AdRequest(),
     )..load();
