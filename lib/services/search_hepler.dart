@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:isolate';
-import 'package:freelancer/services/app_data.dart';
+import 'package:islamiclibrary/services/app_data.dart';
 import 'package:http/http.dart' as http;
 import '../models/hadith_model.dart';
 import '../models/tafseer_response.dart';
@@ -8,7 +8,6 @@ import '../utilities/utility.dart';
 import 'package:quran/quran.dart' as quran;
 
 class SearchHelper {
-
   static void searchIsolate(Map<String, dynamic> data) async {
     String query = data['query'];
     SendPort sendPort = data['sendPort'];
@@ -27,7 +26,6 @@ class SearchHelper {
       quranResults = await SearchHelper._getQuranSearchResult(
           arabicSearchResults, translationSearchResults);
       results = quranResults;
-
     } else if (searchFilterSearch == 1) {
       hadithResults = await SearchHelper._getHadithSearchResult(query, hadiths);
       results = hadithResults;
@@ -51,8 +49,8 @@ class SearchHelper {
           'type': 'quran',
           'surah': quran.getSurahNameArabic(result['surah']),
           'verse': quran.getVerse(result['surah'], result['verse']),
-          'verseNumber' : result['verse'],
-          'surahNumber' : result['surah']
+          'verseNumber': result['verse'],
+          'surahNumber': result['surah']
         });
       }
     }
@@ -63,8 +61,8 @@ class SearchHelper {
           'type': 'quran',
           'surah': quran.getSurahName(result['surah']),
           'verse': quran.getVerseTranslation(result['surah'], result['verse']),
-          'verseNumber' : result['verse'],
-          'surahNumber' : result['surah']
+          'verseNumber': result['verse'],
+          'surahNumber': result['surah']
         });
       }
     }
@@ -90,9 +88,9 @@ class SearchHelper {
           'type': 'hadith',
           'arabic': hadith.arabic!,
           'english': hadith.english!,
-          'bookId' : hadith.bookId,
-          'chapterId' : hadith.chapterId,
-          'idInBook' : hadith.idInBook
+          'bookId': hadith.bookId,
+          'chapterId': hadith.chapterId,
+          'idInBook': hadith.idInBook
         });
       }
     }
@@ -108,7 +106,8 @@ class SearchHelper {
 
     if (arabicSearchResults['result'] != null) {
       for (var result in arabicSearchResults['result']) {
-        var tafseer = await _fetchTafseerData(result['surah'], result['verse'], mufseerId);
+        var tafseer = await _fetchTafseerData(
+            result['surah'], result['verse'], mufseerId);
         var tafseerInfo = await AppData.getSpecificMufseer(tafseer!.tafseerId);
         tafseerResult.add({
           'type': 'tafseer',
@@ -118,16 +117,17 @@ class SearchHelper {
           'verseNumber': result['verse'],
           'surahNumber': result['surah'],
           'tafseerId': tafseer.tafseerId,
-          'author' : tafseerInfo.author,
-          'name' : tafseerInfo.name,
-          'bookName' : tafseerInfo.bookName
+          'author': tafseerInfo.author,
+          'name': tafseerInfo.name,
+          'bookName': tafseerInfo.bookName
         });
       }
     }
 
     if (translationSearchResults['result'] != null) {
       for (var result in translationSearchResults['result']) {
-        var tafseer = await _fetchTafseerData(result['surah'], result['verse'], mufseerId);
+        var tafseer = await _fetchTafseerData(
+            result['surah'], result['verse'], mufseerId);
         var tafseerInfo = await AppData.getSpecificMufseer(tafseer!.tafseerId);
         tafseerResult.add({
           'type': 'tafseer',
@@ -137,16 +137,15 @@ class SearchHelper {
           'verseNumber': result['verse'],
           'surahNumber': result['surah'],
           'tafseerId': tafseer.tafseerId,
-          'author' : tafseerInfo.author,
-          'name' : tafseerInfo.name,
-          'bookName' : tafseerInfo.bookName
+          'author': tafseerInfo.author,
+          'name': tafseerInfo.name,
+          'bookName': tafseerInfo.bookName
         });
       }
     }
 
     return tafseerResult;
   }
-
 
   static Future<TafseerResponse?> _fetchTafseerData(
       int surah, int verse, int mufseerId) async {
@@ -160,5 +159,4 @@ class SearchHelper {
       return null;
     }
   }
-
 }

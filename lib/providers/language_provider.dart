@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:freelancer/services/app_data_pref.dart';
+import 'package:islamiclibrary/services/app_data_pref.dart';
 import 'dart:io' show Platform;
-
 
 class LanguageProvider with ChangeNotifier {
   String _currentLanguage = Platform.localeName.split('_')[0];

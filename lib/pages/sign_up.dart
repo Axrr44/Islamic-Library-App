@@ -4,8 +4,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:freelancer/services/app_data_pref.dart';
-import 'package:freelancer/utilities/utility.dart';
+import 'package:islamiclibrary/services/app_data_pref.dart';
+import 'package:islamiclibrary/utilities/utility.dart';
 import '../components/custom_textfield.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
@@ -132,7 +132,8 @@ class _SignUpState extends State<SignUp> {
                               ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.of(context).pushNamed(AppRoutes.TERMS_PAGE);
+                                  Navigator.of(context)
+                                      .pushNamed(AppRoutes.TERMS_PAGE);
                                 },
                             ),
                             const TextSpan(
@@ -149,7 +150,8 @@ class _SignUpState extends State<SignUp> {
                               ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.of(context).pushNamed(AppRoutes.PRIVACY_POLICY_PAGE);
+                                  Navigator.of(context)
+                                      .pushNamed(AppRoutes.PRIVACY_POLICY_PAGE);
                                 },
                             ),
                           ],
@@ -166,10 +168,11 @@ class _SignUpState extends State<SignUp> {
                   height: height / 15,
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                      MaterialStateProperty.all(isPrivacyCheck ? AppColor.primary1 : Colors.grey[350]),
+                      backgroundColor: MaterialStateProperty.all(isPrivacyCheck
+                          ? AppColor.primary1
+                          : Colors.grey[350]),
                       foregroundColor:
-                      MaterialStateProperty.all(AppColor.white),
+                          MaterialStateProperty.all(AppColor.white),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
@@ -207,15 +210,14 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: 20.h,
                 ),
-                if(Platform.isAndroid)
+                if (Platform.isAndroid)
                   SizedBox(
                       width: width / 2 + 40,
                       height: width / 7,
                       child: ElevatedButton(
                         onPressed: () {
                           AuthServices.signInWithGoogle(context);
-                        }
-                        ,
+                        },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
@@ -233,12 +235,12 @@ class _SignUpState extends State<SignUp> {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text:
-                                    AppLocalizations.of(context)!.signInWith,
+                                    text: AppLocalizations.of(context)!
+                                        .signInWith,
                                     style: TextStyle(
                                       fontSize: 15.sp,
-                                      fontFamily:
-                                      Utility.getTextFamily(currentLanguage),
+                                      fontFamily: Utility.getTextFamily(
+                                          currentLanguage),
                                       color: Colors.black,
                                     ),
                                   ),
@@ -246,8 +248,8 @@ class _SignUpState extends State<SignUp> {
                                     text: AppLocalizations.of(context)!.google,
                                     style: TextStyle(
                                       fontSize: 15.sp,
-                                      fontFamily:
-                                      Utility.getTextFamily(currentLanguage),
+                                      fontFamily: Utility.getTextFamily(
+                                          currentLanguage),
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
@@ -258,15 +260,14 @@ class _SignUpState extends State<SignUp> {
                           ],
                         ),
                       )),
-                if(Platform.isIOS)
+                if (Platform.isIOS)
                   SizedBox(
                       width: width / 2 + 40,
                       height: width / 7,
                       child: ElevatedButton(
                         onPressed: () {
                           AuthServices.signInWithApple(context);
-                        }
-                        ,
+                        },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
@@ -284,12 +285,12 @@ class _SignUpState extends State<SignUp> {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text:
-                                    AppLocalizations.of(context)!.signInWith,
+                                    text: AppLocalizations.of(context)!
+                                        .signInWith,
                                     style: TextStyle(
                                       fontSize: 15.sp,
-                                      fontFamily:
-                                      Utility.getTextFamily(currentLanguage),
+                                      fontFamily: Utility.getTextFamily(
+                                          currentLanguage),
                                       color: Colors.black,
                                     ),
                                   ),
@@ -297,8 +298,8 @@ class _SignUpState extends State<SignUp> {
                                     text: AppLocalizations.of(context)!.apple,
                                     style: TextStyle(
                                       fontSize: 15.sp,
-                                      fontFamily:
-                                      Utility.getTextFamily(currentLanguage),
+                                      fontFamily: Utility.getTextFamily(
+                                          currentLanguage),
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/config/app_languages.dart';
-import 'package:freelancer/services/app_data_pref.dart';
-import 'package:freelancer/utilities/utility.dart';
+import 'package:islamiclibrary/config/app_languages.dart';
+import 'package:islamiclibrary/services/app_data_pref.dart';
+import 'package:islamiclibrary/utilities/utility.dart';
 import 'package:provider/provider.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
@@ -11,14 +11,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../providers/language_provider.dart';
 
-
 class ViewPager extends StatefulWidget {
   const ViewPager({super.key});
 
   @override
   State<ViewPager> createState() => _ViewPagerState();
 }
-
 
 class _ViewPagerState extends State<ViewPager> {
   final PageController _pageController = PageController(initialPage: 0);
@@ -45,7 +43,8 @@ class _ViewPagerState extends State<ViewPager> {
       body: Column(
         children: [
           Expanded(child: _contentOfPageView(width, height)),
-          if (_currentPage == 4) _nextButton(textDirection, height, width, context),
+          if (_currentPage == 4)
+            _nextButton(textDirection, height, width, context),
           _buildPageIndicators(),
         ],
       ),
@@ -134,7 +133,8 @@ class _ViewPagerState extends State<ViewPager> {
     );
   }
 
-  Container _nextButton(TextDirection textDirection, double height, double width, BuildContext context) {
+  Container _nextButton(TextDirection textDirection, double height,
+      double width, BuildContext context) {
     return Container(
       alignment: textDirection == TextDirection.ltr
           ? Alignment.bottomRight
@@ -153,12 +153,14 @@ class _ViewPagerState extends State<ViewPager> {
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut);
             } else {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
+              Navigator.of(context)
+                  .pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
               AppDataPreferences.setShowViewPager(false);
             }
           },
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(AppColor.primary1),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(AppColor.primary1),
             foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
             shape: MaterialStateProperty.all(
               RoundedRectangleBorder(
@@ -166,14 +168,23 @@ class _ViewPagerState extends State<ViewPager> {
               ),
             ),
           ),
-          child: Text(AppLocalizations.of(context)!.next, style: TextStyle(fontSize: 20.sp)),
+          child: Text(AppLocalizations.of(context)!.next,
+              style: TextStyle(fontSize: 20.sp)),
         ),
       ),
     );
   }
 
-  Widget _buildPages(String image, String title, String description, double width,
-      double height, String currentLanguage, double imageSize, double topMargin, double bottomMargin) {
+  Widget _buildPages(
+      String image,
+      String title,
+      String description,
+      double width,
+      double height,
+      String currentLanguage,
+      double imageSize,
+      double topMargin,
+      double bottomMargin) {
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     final bool isMobile = shortestSide < 600;
     return Column(
@@ -185,12 +196,18 @@ class _ViewPagerState extends State<ViewPager> {
         ),
         Text(
           title,
-          style: TextStyle(fontSize: 60.sp, fontWeight: FontWeight.bold, fontFamily: 'AEFont'),
+          style: TextStyle(
+              fontSize: 60.sp,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'AEFont'),
         ),
         SizedBox(
           height: topMargin,
         ),
-        SizedBox(width: imageSize, height: imageSize, child: Image.asset(image, fit: BoxFit.cover)),
+        SizedBox(
+            width: imageSize,
+            height: imageSize,
+            child: Image.asset(image, fit: BoxFit.cover)),
         SizedBox(
           height: bottomMargin,
         ),
@@ -230,7 +247,8 @@ class _ViewPagerState extends State<ViewPager> {
   }
 
   void _showLanguageDialog(BuildContext context) {
-    var languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    var languageProvider =
+        Provider.of<LanguageProvider>(context, listen: false);
     String currentLanguage = Localizations.localeOf(context).languageCode;
 
     showDialog<void>(
@@ -248,7 +266,8 @@ class _ViewPagerState extends State<ViewPager> {
             ),
           ),
           actions: <Widget>[
-            Center( // Center the Row
+            Center(
+              // Center the Row
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -311,5 +330,4 @@ class _ViewPagerState extends State<ViewPager> {
       },
     );
   }
-
 }

@@ -63,9 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '99752408527',
     projectId: 'the-islamic-library-30896',
     storageBucket: 'the-islamic-library-30896.appspot.com',
-    androidClientId: '99752408527-t17sg7f448d7sbe7mmmm3pj6k3ql9n64.apps.googleusercontent.com',
-    iosClientId: '99752408527-62pho349ns7s2khbcj0s7eie4c73vhri.apps.googleusercontent.com',
-    iosBundleId: 'com.example.freelancer',
+    androidClientId:
+        '99752408527-t17sg7f448d7sbe7mmmm3pj6k3ql9n64.apps.googleusercontent.com',
+    iosClientId:
+        '99752408527-62pho349ns7s2khbcj0s7eie4c73vhri.apps.googleusercontent.com',
+    iosBundleId: 'com.example.islamiclibrary',
   );
-
 }

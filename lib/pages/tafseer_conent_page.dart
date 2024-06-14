@@ -3,8 +3,8 @@ import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/models/favorite_model.dart';
-import 'package:freelancer/services/firestore_service.dart';
+import 'package:islamiclibrary/models/favorite_model.dart';
+import 'package:islamiclibrary/services/firestore_service.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
@@ -96,7 +96,10 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.sim_card_download_rounded,size: 150.w,),
+          Icon(
+            Icons.sim_card_download_rounded,
+            size: 150.w,
+          ),
           SizedBox(height: 20.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -162,8 +165,8 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                   },
                 ),
               ),
-              if(quran.getVerseCount(widget.surahId) >= 10)
-              _buildScrollbar(_tafseerContents.length, currentLanguage),
+              if (quran.getVerseCount(widget.surahId) >= 10)
+                _buildScrollbar(_tafseerContents.length, currentLanguage),
             ],
           ),
         ),
@@ -252,9 +255,16 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
     bool isEnglish = currentLanguage == Languages.EN.languageCode;
     return Padding(
       padding: EdgeInsets.only(
-          right: isEnglish ? isBiggerT10 ? 0 : 20.w  : 20.w,
-          left: isEnglish? 20.w :
-          isBiggerT10 ? 0 : 20.w ),
+          right: isEnglish
+              ? isBiggerT10
+                  ? 0
+                  : 20.w
+              : 20.w,
+          left: isEnglish
+              ? 20.w
+              : isBiggerT10
+                  ? 0
+                  : 20.w),
       child: ScrollablePositionedList.separated(
         itemScrollController: _scrollController,
         itemCount: contents.length + 1,

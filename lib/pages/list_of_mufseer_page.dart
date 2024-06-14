@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/config/app_languages.dart';
-import 'package:freelancer/pages/tafseer_conent_page.dart';
+import 'package:islamiclibrary/config/app_languages.dart';
+import 'package:islamiclibrary/pages/tafseer_conent_page.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:quran/quran.dart' as quran;
 import '../config/app_colors.dart';
@@ -37,7 +37,8 @@ class _ListOfMufseerPageState extends State<ListOfMufseerPage> {
           currentLanguage == Languages.EN.languageCode
               ? quran.getSurahName(widget.surahId)
               : quran.getSurahNameArabic(widget.surahId),
-          style: TextStyle(fontSize: 25.sp,fontFamily: 'ATF',fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 25.sp, fontFamily: 'ATF', fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -52,12 +53,10 @@ class _ListOfMufseerPageState extends State<ListOfMufseerPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           context.loaderOverlay.show();
           return Container();
-        }
-        else if (snapshot.hasError) {
+        } else if (snapshot.hasError) {
           context.loaderOverlay.hide();
           return const Center(child: Text('Error: No internet connection'));
-        }
-        else {
+        } else {
           context.loaderOverlay.hide();
           List<Tafseer>? tafseerList = snapshot.data;
           if (tafseerList != null && tafseerList.isNotEmpty) {
@@ -83,12 +82,15 @@ class _ListOfMufseerPageState extends State<ListOfMufseerPage> {
                       child: InkWell(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => TafseerContentPage(surahId: widget.surahId,
-                            mufseer: Tafseer(id: tafseer.id,
-                                name: tafseer.name,
-                                language: tafseer.language,
-                                author: tafseer.author,
-                                bookName: tafseer.bookName),),
+                            builder: (context) => TafseerContentPage(
+                              surahId: widget.surahId,
+                              mufseer: Tafseer(
+                                  id: tafseer.id,
+                                  name: tafseer.name,
+                                  language: tafseer.language,
+                                  author: tafseer.author,
+                                  bookName: tafseer.bookName),
+                            ),
                           ));
                         },
                         child: Padding(
@@ -126,5 +128,4 @@ class _ListOfMufseerPageState extends State<ListOfMufseerPage> {
       },
     );
   }
-
 }

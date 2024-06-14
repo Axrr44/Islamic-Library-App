@@ -9,15 +9,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:freelancer/components/custom_appbar.dart';
-import 'package:freelancer/config/app_colors.dart';
-import 'package:freelancer/config/toast_message.dart';
-import 'package:freelancer/models/favorite_model.dart';
-import 'package:freelancer/providers/tafseer_dialog_provider.dart';
-import 'package:freelancer/services/app_data_pref.dart';
-import 'package:freelancer/services/authentication.dart';
-import 'package:freelancer/services/firestore_service.dart';
-import 'package:freelancer/utilities/utility.dart';
+import 'package:islamiclibrary/components/custom_appbar.dart';
+import 'package:islamiclibrary/config/app_colors.dart';
+import 'package:islamiclibrary/config/toast_message.dart';
+import 'package:islamiclibrary/models/favorite_model.dart';
+import 'package:islamiclibrary/providers/tafseer_dialog_provider.dart';
+import 'package:islamiclibrary/services/app_data_pref.dart';
+import 'package:islamiclibrary/services/authentication.dart';
+import 'package:islamiclibrary/services/firestore_service.dart';
+import 'package:islamiclibrary/utilities/utility.dart';
 import 'package:provider/provider.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:http/http.dart' as http;
@@ -169,9 +169,9 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                 return const Center(
                   child: CircularProgressIndicator(color: Colors.black),
                 );
-              }
-              else if (snapshot.hasError) {
-                return const Center(child: Text('Error: No internet connection'));
+              } else if (snapshot.hasError) {
+                return const Center(
+                    child: Text('Error: No internet connection'));
               } else if (!snapshot.hasData) {
                 return const SizedBox();
               } else {
@@ -297,7 +297,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
       List<String> versesText = [];
       quran
           .getVersesTextByPage(
-              quran.getPageNumber(surahIdLastRead, verseIdLastRead),verseEndSymbol: true)
+              quran.getPageNumber(surahIdLastRead, verseIdLastRead),
+              verseEndSymbol: true)
           .forEach((element) {
         versesText.add(element);
       });
@@ -351,8 +352,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                       )),
                   IconButton(
                       onPressed: () async {
-                        await Share.share("${getDataByPage()}[${currentLanguage == Languages.EN.languageCode
-                        ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)}]");
+                        await Share.share(
+                            "${getDataByPage()}[${currentLanguage == Languages.EN.languageCode ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)}]");
                       },
                       icon: Icon(
                         Icons.share,
@@ -715,8 +716,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                     ),
                     InkWell(
                       onTap: () async {
-                        await Share.share("$ayahText[${currentLanguage == Languages.EN.languageCode
-                            ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)}]");
+                        await Share.share(
+                            "$ayahText[${currentLanguage == Languages.EN.languageCode ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)}]");
                         Navigator.of(context).pop();
                       },
                       child: ListTile(
@@ -738,28 +739,27 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                       color: Colors.grey,
                     ),
                     InkWell(
-                      onTap: (){
-                        if(AuthServices.getCurrentUser() == null)
-                          {
-                            ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteToastMessage);
-                            return ;
-                          }
+                      onTap: () {
+                        if (AuthServices.getCurrentUser() == null) {
+                          ToastMessage.showMessage(AppLocalizations.of(context)!
+                              .favoriteToastMessage);
+                          return;
+                        }
                         FireStoreService.addFavorite(Favorite(
                             type: "Quran",
                             title: isEnglish
                                 ? quran.getSurahNameEnglish(ayah.surah.number)
                                 : quran.getSurahNameArabic(ayah.surah.number),
                             content: ayahText,
-                          surahId: ayah.surah.number,
-                          verseId: ayah.numberInSurah,
-                          author: '',
-                          bookName: '',
-                          hadithBookId: 0,
-                          hadithChapterId: 0,
-                          hadithIdInBook: 0,
-                          tafseerId: 0,
-                          tafseerName: ''
-                        ));
+                            surahId: ayah.surah.number,
+                            verseId: ayah.numberInSurah,
+                            author: '',
+                            bookName: '',
+                            hadithBookId: 0,
+                            hadithChapterId: 0,
+                            hadithIdInBook: 0,
+                            tafseerId: 0,
+                            tafseerName: ''));
                         ToastMessage.showMessage(
                             AppLocalizations.of(context)!.favoriteIt);
                       },
@@ -845,7 +845,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
           width: width,
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 20.w),
+              padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
               child: Column(
                 children: [
                   Text(
@@ -950,8 +950,13 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.arrow_drop_down_circle_outlined,size: 30.w,),
-                SizedBox(width: 20.w,),
+                Icon(
+                  Icons.arrow_drop_down_circle_outlined,
+                  size: 30.w,
+                ),
+                SizedBox(
+                  width: 20.w,
+                ),
                 Container(
                   height: 50.h,
                   width: 230.w,

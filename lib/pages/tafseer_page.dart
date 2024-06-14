@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/config/app_languages.dart';
-import 'package:freelancer/pages/list_of_mufseer_page.dart';
-import 'package:freelancer/pages/tafseer_conent_page.dart';
-import 'package:freelancer/utilities/utility.dart';
+import 'package:islamiclibrary/config/app_languages.dart';
+import 'package:islamiclibrary/pages/list_of_mufseer_page.dart';
+import 'package:islamiclibrary/pages/tafseer_conent_page.dart';
+import 'package:islamiclibrary/utilities/utility.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../config/app_colors.dart';
 import '../config/toast_message.dart';
@@ -12,7 +12,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/admob_service.dart';
 import '../services/app_data_pref.dart';
 import 'package:quran/quran.dart' as quran;
-
 
 class TafseerPage extends StatefulWidget {
   const TafseerPage({super.key});
@@ -41,7 +40,6 @@ class _TafseerPageState extends State<TafseerPage> {
     _loadTafseerData();
   }
 
-
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -55,7 +53,7 @@ class _TafseerPageState extends State<TafseerPage> {
         child: Column(
           children: [
             _header(width, height, context, isMobile, currentLanguage),
-            _listOfSurah(width,height,context,currentLanguage),
+            _listOfSurah(width, height, context, currentLanguage),
           ],
         ),
       ),
@@ -68,7 +66,8 @@ class _TafseerPageState extends State<TafseerPage> {
     _indexOfScrolling = await AppDataPreferences.getTafseerIndex();
   }
 
-  Widget _listOfSurah(double width, double height, BuildContext context, String currentLanguage) {
+  Widget _listOfSurah(double width, double height, BuildContext context,
+      String currentLanguage) {
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
       child: Padding(
@@ -94,13 +93,15 @@ class _TafseerPageState extends State<TafseerPage> {
                   ));
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
                         currentLanguage == Languages.EN.languageCode
-                        ? quran.getSurahName(index + 1) : quran.getSurahNameArabic(index + 1),
+                            ? quran.getSurahName(index + 1)
+                            : quran.getSurahNameArabic(index + 1),
                         style: TextStyle(fontSize: 14.sp),
                       ),
                       Icon(
@@ -136,7 +137,10 @@ class _TafseerPageState extends State<TafseerPage> {
             return LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0)],
+              colors: [
+                Colors.grey.withOpacity(0.1),
+                Colors.grey.withOpacity(0)
+              ],
             ).createShader(bounds);
           },
           child: Container(
@@ -163,7 +167,7 @@ class _TafseerPageState extends State<TafseerPage> {
           ),
         Container(
           width: width,
-          height:  height / 2  - 100,
+          height: height / 2 - 100,
           alignment: Alignment.bottomCenter,
           child: Padding(
             padding: EdgeInsets.only(
@@ -177,7 +181,7 @@ class _TafseerPageState extends State<TafseerPage> {
                   children: [
                     ClipRRect(
                       borderRadius:
-                      BorderRadius.circular(isMobile ? 15.w : 10.w),
+                          BorderRadius.circular(isMobile ? 15.w : 10.w),
                       child: Container(
                         color: AppColor.primary1,
                         child: IconButton(
@@ -213,10 +217,10 @@ class _TafseerPageState extends State<TafseerPage> {
                             style: TextStyle(
                                 fontSize: 15.sp,
                                 color: Colors.grey,
-                                fontFamily: currentLanguage ==
-                                    Languages.EN.languageCode
-                                    ? 'EnglishQuran'
-                                    : 'Hafs'),
+                                fontFamily:
+                                    currentLanguage == Languages.EN.languageCode
+                                        ? 'EnglishQuran'
+                                        : 'Hafs'),
                           ),
                         ),
                       ],
@@ -228,12 +232,12 @@ class _TafseerPageState extends State<TafseerPage> {
                   children: [
                     ClipRRect(
                       borderRadius:
-                      BorderRadius.circular(isMobile ? 15.w : 10.w),
+                          BorderRadius.circular(isMobile ? 15.w : 10.w),
                       child: Container(
                         decoration: BoxDecoration(
                           color: AppColor.white,
                           borderRadius:
-                          BorderRadius.circular(isMobile ? 15.w : 10.w),
+                              BorderRadius.circular(isMobile ? 15.w : 10.w),
                           border: Border.all(
                             color: AppColor.black, // Set the border color here
                             width: 1.w, // Set the border width here
@@ -252,7 +256,8 @@ class _TafseerPageState extends State<TafseerPage> {
                                 ),
                               ));
                             } else {
-                              ToastMessage.showMessage(AppLocalizations.of(context)!.noLastRead);
+                              ToastMessage.showMessage(
+                                  AppLocalizations.of(context)!.noLastRead);
                             }
                           },
                           icon: Icon(

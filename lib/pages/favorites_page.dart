@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:freelancer/pages/quran_aya_page.dart';
-import 'package:freelancer/pages/tafseer_conent_page.dart';
-import 'package:freelancer/providers/favorite_provider.dart';
+import 'package:islamiclibrary/pages/quran_aya_page.dart';
+import 'package:islamiclibrary/pages/tafseer_conent_page.dart';
+import 'package:islamiclibrary/providers/favorite_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:quran/surah_data.dart';
@@ -133,7 +133,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     if (favorite.type == 'Tafseer') {
       tafseerContent = favorite.content.split('Split');
       return InkWell(
-        onTap: (){
+        onTap: () {
           if (favorite.type.toLowerCase() == 'Tafseer'.toLowerCase()) {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => TafseerContentPage(
@@ -183,8 +183,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
     return InkWell(
       onTap: () {
-        if (favorite.type.toLowerCase() == 'quran'.toLowerCase())
-        {
+        if (favorite.type.toLowerCase() == 'quran'.toLowerCase()) {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => QuranAyaPage(
                     surahId: favorite.surahId,

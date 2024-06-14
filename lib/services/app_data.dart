@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:freelancer/utilities/utility.dart';
+import 'package:islamiclibrary/utilities/utility.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:http/http.dart' as http;
 import '../models/reciter_model.dart';
@@ -430,12 +430,12 @@ class AppData {
 
   static Future<Tafseer> getSpecificMufseer(int tafseerId) async {
     final response =
-    await http.get(Uri.parse('http://api.quran-tafseer.com/tafseer'));
+        await http.get(Uri.parse('http://api.quran-tafseer.com/tafseer'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       Map<String, dynamic>? tafseerJson = data.firstWhere(
-            (json) => json['id'] == tafseerId,
+        (json) => json['id'] == tafseerId,
         orElse: () => null,
       );
       if (tafseerJson != null) {
@@ -447,6 +447,4 @@ class AppData {
       throw Exception('Failed to load Tafseer data');
     }
   }
-
-
 }

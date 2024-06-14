@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:freelancer/utilities/utility.dart';
+import 'package:islamiclibrary/utilities/utility.dart';
 import '../components/custom_textfield.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
@@ -36,9 +36,11 @@ class SignIn extends StatelessWidget {
                 SizedBox(
                   height: height / 8,
                 ),
-                Text(AppLocalizations.of(context)!.signInDescription,
-                    textAlign: TextAlign.center,style:
-                  TextStyle(fontSize: 15.sp,color: Colors.black),),
+                Text(
+                  AppLocalizations.of(context)!.signInDescription,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15.sp, color: Colors.black),
+                ),
                 SizedBox(
                   height: height / 10 - 20.h,
                 ),
@@ -63,9 +65,9 @@ class SignIn extends StatelessWidget {
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                      MaterialStateProperty.all(AppColor.primary1),
+                          MaterialStateProperty.all(AppColor.primary1),
                       foregroundColor:
-                      MaterialStateProperty.all(AppColor.white),
+                          MaterialStateProperty.all(AppColor.white),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
@@ -80,8 +82,9 @@ class SignIn extends StatelessWidget {
                     },
                     child: Text(
                       AppLocalizations.of(context)!.signIn,
-                      style: TextStyle(fontSize: 20.sp,
-                      fontFamily: Utility.getTextFamily(currentLanguage)),
+                      style: TextStyle(
+                          fontSize: 20.sp,
+                          fontFamily: Utility.getTextFamily(currentLanguage)),
                     ),
                   ),
                 ),
@@ -94,80 +97,80 @@ class SignIn extends StatelessWidget {
                           .pushNamed(AppRoutes.PASSWORD_RESET_ROUTES);
                     },
                     child: Text(AppLocalizations.of(context)!.forgetPassword,
-                        style:
-                            TextStyle(fontSize: 15.sp, color: AppColor.black,
-                            fontFamily: Utility.getTextFamily(currentLanguage)))),
+                        style: TextStyle(
+                            fontSize: 15.sp,
+                            color: AppColor.black,
+                            fontFamily:
+                                Utility.getTextFamily(currentLanguage)))),
                 SizedBox(
                   height: 20.h,
                 ),
                 Text(
                   AppLocalizations.of(context)!.signInFG,
                   style:
-                  TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: 20.h,
                 ),
-                if(Platform.isAndroid)
+                if (Platform.isAndroid)
                   SizedBox(
-                    width: width / 2 + 40,
-                    height: width / 7,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        AuthServices.signInWithGoogle(context);
-                      }
-                          ,
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                      width: width / 2 + 40,
+                      height: width / 7,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          AuthServices.signInWithGoogle(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/google-icon.svg',
-                            height: 24.0.w,
-                            width: 24.0.w,
-                          ),
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text:
-                                  AppLocalizations.of(context)!.signInWith,
-                                  style: TextStyle(
-                                    fontSize: 15.sp,
-                                    fontFamily:
-                                    Utility.getTextFamily(currentLanguage),
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: AppLocalizations.of(context)!.google,
-                                  style: TextStyle(
-                                    fontSize: 15.sp,
-                                    fontFamily:
-                                    Utility.getTextFamily(currentLanguage),
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/google-icon.svg',
+                              height: 24.0.w,
+                              width: 24.0.w,
                             ),
-                          ),
-                        ],
-                      ),
-                    )),
-                if(Platform.isIOS)
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: AppLocalizations.of(context)!
+                                        .signInWith,
+                                    style: TextStyle(
+                                      fontSize: 15.sp,
+                                      fontFamily: Utility.getTextFamily(
+                                          currentLanguage),
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: AppLocalizations.of(context)!.google,
+                                    style: TextStyle(
+                                      fontSize: 15.sp,
+                                      fontFamily: Utility.getTextFamily(
+                                          currentLanguage),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                if (Platform.isIOS)
                   SizedBox(
                       width: width / 2 + 40,
                       height: width / 7,
                       child: ElevatedButton(
                         onPressed: () {
                           AuthServices.signInWithApple(context);
-                        }
-                        ,
+                        },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
@@ -185,12 +188,12 @@ class SignIn extends StatelessWidget {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text:
-                                    AppLocalizations.of(context)!.signInWith,
+                                    text: AppLocalizations.of(context)!
+                                        .signInWith,
                                     style: TextStyle(
                                       fontSize: 15.sp,
-                                      fontFamily:
-                                      Utility.getTextFamily(currentLanguage),
+                                      fontFamily: Utility.getTextFamily(
+                                          currentLanguage),
                                       color: Colors.black,
                                     ),
                                   ),
@@ -198,8 +201,8 @@ class SignIn extends StatelessWidget {
                                     text: AppLocalizations.of(context)!.apple,
                                     style: TextStyle(
                                       fontSize: 15.sp,
-                                      fontFamily:
-                                      Utility.getTextFamily(currentLanguage),
+                                      fontFamily: Utility.getTextFamily(
+                                          currentLanguage),
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
@@ -210,14 +213,14 @@ class SignIn extends StatelessWidget {
                           ],
                         ),
                       )),
-                SizedBox(
-                  height: height / 15
-                ),
+                SizedBox(height: height / 15),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text(
                     AppLocalizations.of(context)!.dontHaveAccount,
-                    style: TextStyle(fontSize: 15.sp,fontFamily: Utility.getTextFamily(currentLanguage),
-                    fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 15.sp,
+                        fontFamily: Utility.getTextFamily(currentLanguage),
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     width: 5.w,
@@ -230,7 +233,7 @@ class SignIn extends StatelessWidget {
                       child: Text(
                         AppLocalizations.of(context)!.signUp,
                         style: TextStyle(
-                          fontFamily: Utility.getTextFamily(currentLanguage),
+                            fontFamily: Utility.getTextFamily(currentLanguage),
                             fontSize: 20.sp,
                             fontWeight: FontWeight.bold,
                             color: AppColor.primary2),
@@ -242,7 +245,8 @@ class SignIn extends StatelessWidget {
                 TextButton(
                     onPressed: () {
                       AppDataPreferences.setIsGuest(true);
-                      Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN_ROUTES);
+                      Navigator.of(context)
+                          .pushReplacementNamed(AppRoutes.MAIN_ROUTES);
                     },
                     child: Text(
                       AppLocalizations.of(context)!.guest,

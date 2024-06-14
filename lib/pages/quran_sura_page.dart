@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:freelancer/pages/quran_aya_page.dart';
-import 'package:freelancer/services/app_data_pref.dart';
-import 'package:freelancer/utilities/utility.dart';
+import 'package:islamiclibrary/pages/quran_aya_page.dart';
+import 'package:islamiclibrary/services/app_data_pref.dart';
+import 'package:islamiclibrary/utilities/utility.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:arabic_numbers/arabic_numbers.dart';
@@ -159,7 +159,9 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                               ? convertToString(index)
                               : ArabicNumbers.convert(convertToString(index)),
                           style: TextStyle(
-                              fontSize: 35.sp, fontWeight: FontWeight.w700,color: AppColor.primary1),
+                              fontSize: 35.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColor.primary1),
                         ),
                       ),
                     ],
@@ -230,7 +232,8 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                               convertToString(index)),
                                       style: TextStyle(
                                           fontSize: 10.sp,
-                                          fontWeight: FontWeight.w700,color: AppColor.primary1),
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColor.primary1),
                                     ),
                                   ),
                                 ),
@@ -308,7 +311,6 @@ class _QuranSuraPageState extends State<QuranSuraPage>
     )..load();
   }
 
-
   Widget _header(double width, double height, BuildContext context,
       bool isMobile, String currentLanguage) {
     return Stack(
@@ -318,7 +320,10 @@ class _QuranSuraPageState extends State<QuranSuraPage>
             return LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0)],
+              colors: [
+                Colors.grey.withOpacity(0.1),
+                Colors.grey.withOpacity(0)
+              ],
             ).createShader(bounds);
           },
           child: Container(
@@ -345,11 +350,11 @@ class _QuranSuraPageState extends State<QuranSuraPage>
           ),
         Container(
           width: width,
-          height:  height / 2  - 100,
+          height: height / 2 - 100,
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding:
-            EdgeInsets.only(top: 80.h, bottom: 10.h, right: 20.w, left: 20.w),
+            padding: EdgeInsets.only(
+                top: 80.h, bottom: 10.h, right: 20.w, left: 20.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -359,7 +364,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                   children: [
                     ClipRRect(
                       borderRadius:
-                      BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                          BorderRadius.circular(isMobile == true ? 15.w : 10.w),
                       child: Container(
                         color: AppColor.primary1,
                         child: IconButton(
@@ -392,7 +397,8 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                           width: width / 2,
                           child: Text(
                             AppLocalizations.of(context)!.quranSubTitle,
-                            style: TextStyle(fontSize: 15.sp, color: Colors.grey),
+                            style:
+                                TextStyle(fontSize: 15.sp, color: Colors.grey),
                           ),
                         ),
                       ],
@@ -404,7 +410,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                   children: [
                     ClipRRect(
                       borderRadius:
-                      BorderRadius.circular(isMobile == true ? 15.w : 10.w),
+                          BorderRadius.circular(isMobile == true ? 15.w : 10.w),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: AppColor.white,
@@ -422,14 +428,15 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                               if (surahIdLastRead != -1) {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => QuranAyaPage(
-                                      surahId: surahIdLastRead,
-                                      initialPage: quran.getPageNumber(
-                                          surahIdLastRead,
-                                          verseIdLastRead) -
-                                          1,
-                                    )));
+                                          surahId: surahIdLastRead,
+                                          initialPage: quran.getPageNumber(
+                                                  surahIdLastRead,
+                                                  verseIdLastRead) -
+                                              1,
+                                        )));
                               } else {
-                                ToastMessage.showMessage(AppLocalizations.of(context)!.noLastRead);
+                                ToastMessage.showMessage(
+                                    AppLocalizations.of(context)!.noLastRead);
                               }
                             },
                             icon: Icon(

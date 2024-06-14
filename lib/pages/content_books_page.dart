@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:freelancer/models/favorite_model.dart';
-import 'package:freelancer/providers/sub_search_provider.dart';
-import 'package:freelancer/services/firestore_service.dart';
-import 'package:freelancer/utilities/utility.dart';
+import 'package:islamiclibrary/models/favorite_model.dart';
+import 'package:islamiclibrary/providers/sub_search_provider.dart';
+import 'package:islamiclibrary/services/firestore_service.dart';
+import 'package:islamiclibrary/utilities/utility.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
@@ -151,9 +151,9 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                               child: _listOfHadiths(
                                   filteredHadiths, chapters, currentLanguage),
                             ),
-                            if(filteredHadiths.length >= 10)
-                            _buildScrollbar(filteredHadiths.length,
-                                filteredHadiths, currentLanguage),
+                            if (filteredHadiths.length >= 10)
+                              _buildScrollbar(filteredHadiths.length,
+                                  filteredHadiths, currentLanguage),
                           ],
                         );
                       },
@@ -238,9 +238,16 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
     bool isBiggerT10 = hadiths.length >= 10;
     return Padding(
       padding: EdgeInsets.only(
-          right: isEnglish ? isBiggerT10 ? 0 : 20.w  : 20.w,
-          left: isEnglish? 20.w :
-          isBiggerT10 ? 0 : 20.w ),
+          right: isEnglish
+              ? isBiggerT10
+                  ? 0
+                  : 20.w
+              : 20.w,
+          left: isEnglish
+              ? 20.w
+              : isBiggerT10
+                  ? 0
+                  : 20.w),
       child: ScrollablePositionedList.separated(
         itemScrollController: _scrollController,
         itemCount: hadiths.length + 1,
@@ -381,7 +388,8 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
       BuildContext context, String hadith, int index, int? idInBook) {
     copy() {
       final value = ClipboardData(
-        text: "$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}/$idInBook]",
+        text:
+            "$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}/$idInBook]",
       );
       Clipboard.setData(value);
       Fluttertoast.showToast(

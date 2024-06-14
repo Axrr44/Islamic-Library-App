@@ -1,4 +1,4 @@
-package com.example.freelancer
+package com.example.islamiclibrary
 
 import io.flutter.embedding.android.FlutterActivity
 

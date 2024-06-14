@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancer/config/toast_message.dart';
-import 'package:freelancer/pages/chapter_of_books_page.dart';
+import 'package:islamiclibrary/config/toast_message.dart';
+import 'package:islamiclibrary/pages/chapter_of_books_page.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../config/app_languages.dart';
 import '../services/admob_service.dart';
@@ -53,7 +53,6 @@ class _BooksPageState extends State<BooksPage> {
     );
   }
 
-
   void _createBannerAd() {
     _bannerAd = BannerAd(
       size: AdSize.fullBanner,
@@ -72,7 +71,10 @@ class _BooksPageState extends State<BooksPage> {
             return LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0)],
+              colors: [
+                Colors.grey.withOpacity(0.1),
+                Colors.grey.withOpacity(0)
+              ],
             ).createShader(bounds);
           },
           child: Container(
@@ -100,7 +102,7 @@ class _BooksPageState extends State<BooksPage> {
           ),
         Container(
           width: width,
-          height:  height / 2  - 100,
+          height: height / 2 - 100,
           alignment: Alignment.bottomCenter,
           child: Padding(
             padding: EdgeInsets.only(top: 80.h, right: 20.w, left: 20.w),
@@ -112,7 +114,8 @@ class _BooksPageState extends State<BooksPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(isMobile ? 15.w : 10.w),
+                      borderRadius:
+                          BorderRadius.circular(isMobile ? 15.w : 10.w),
                       child: Container(
                         color: AppColor.primary1,
                         child: IconButton(
@@ -147,15 +150,15 @@ class _BooksPageState extends State<BooksPage> {
                           child: Text(
                             AppLocalizations.of(context)!.hadithsSubTitle,
                             style: TextStyle(
-                              fontSize: currentLanguage ==
-                                  Languages.EN.languageCode
-                                  ? 10.sp
-                                  : 15.sp,
+                              fontSize:
+                                  currentLanguage == Languages.EN.languageCode
+                                      ? 10.sp
+                                      : 15.sp,
                               color: Colors.grey,
-                              fontFamily: currentLanguage ==
-                                  Languages.EN.languageCode
-                                  ? 'EnglishQuran'
-                                  : 'Hafs',
+                              fontFamily:
+                                  currentLanguage == Languages.EN.languageCode
+                                      ? 'EnglishQuran'
+                                      : 'Hafs',
                             ),
                           ),
                         ),
@@ -168,7 +171,7 @@ class _BooksPageState extends State<BooksPage> {
                   children: [
                     ClipRRect(
                       borderRadius:
-                      BorderRadius.circular(isMobile ? 15.w : 10.w),
+                          BorderRadius.circular(isMobile ? 15.w : 10.w),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: AppColor.white,
@@ -176,8 +179,8 @@ class _BooksPageState extends State<BooksPage> {
                             color: AppColor.black,
                             width: 1.w,
                           ),
-                          borderRadius: BorderRadius.circular(
-                              isMobile ? 15.w : 10.w),
+                          borderRadius:
+                              BorderRadius.circular(isMobile ? 15.w : 10.w),
                         ),
                         child: Container(
                           color: AppColor.white.withOpacity(0.0),
@@ -232,7 +235,8 @@ class _BooksPageState extends State<BooksPage> {
     _chapterName = await AppDataPreferences.getHadithChapterName();
   }
 
-  Widget _listOfHadiths(double width, double height, BuildContext context, String currentLanguage) {
+  Widget _listOfHadiths(double width, double height, BuildContext context,
+      String currentLanguage) {
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
       child: Padding(
@@ -249,24 +253,29 @@ class _BooksPageState extends State<BooksPage> {
           ),
           itemCount: 14,
           itemBuilder: (_, index) {
-            bool isDarimi = "Sunan ad-Darimi" == AppData.getBookName(context, index);
+            bool isDarimi =
+                "Sunan ad-Darimi" == AppData.getBookName(context, index);
             return Card(
               color: isDarimi ? Colors.grey.withOpacity(0.5) : AppColor.white,
               child: InkWell(
                 onTap: isDarimi
                     ? null
                     : () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ChapterOfBooksPage(selectedHadith: index),
-                  ));
-                },
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              ChapterOfBooksPage(selectedHadith: index),
+                        ));
+                      },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        isDarimi ? "Only arabic" : AppData.getBookName(context, index),
+                        isDarimi
+                            ? "Only arabic"
+                            : AppData.getBookName(context, index),
                         style: TextStyle(fontSize: 14.sp),
                       ),
                       Icon(
@@ -283,5 +292,4 @@ class _BooksPageState extends State<BooksPage> {
       ),
     );
   }
-
 }

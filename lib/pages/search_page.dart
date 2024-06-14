@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:freelancer/config/app_languages.dart';
-import 'package:freelancer/services/app_data.dart';
-import 'package:freelancer/utilities/utility.dart';
+import 'package:islamiclibrary/config/app_languages.dart';
+import 'package:islamiclibrary/services/app_data.dart';
+import 'package:islamiclibrary/utilities/utility.dart';
 import 'package:share_plus/share_plus.dart';
 import '../config/app_colors.dart';
 import '../config/toast_message.dart';
@@ -529,12 +529,12 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _favorite(int index, String currentLanguage, BuildContext context) {
-    if(AuthServices.getCurrentUser() == null)
-    {
-      ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteToastMessage);
-      return ;
+    if (AuthServices.getCurrentUser() == null) {
+      ToastMessage.showMessage(
+          AppLocalizations.of(context)!.favoriteToastMessage);
+      return;
     }
-       if (_searchResults[index]['type'] == 'quran') {
+    if (_searchResults[index]['type'] == 'quran') {
       FireStoreService.addFavorite(Favorite(
           type: 'quran',
           title: _searchResults[index]['surah'],
@@ -548,8 +548,7 @@ class _SearchPageState extends State<SearchPage> {
           hadithIdInBook: 0,
           tafseerId: 0,
           tafseerName: ''));
-    } else if (_searchResults[index]['type'] ==
-        'tafseer') {
+    } else if (_searchResults[index]['type'] == 'tafseer') {
       FireStoreService.addFavorite(Favorite(
           type: 'tafseer',
           title: _searchResults[index]['surah'],
@@ -564,24 +563,24 @@ class _SearchPageState extends State<SearchPage> {
           tafseerId: _searchResults[index]['tafseerId'],
           tafseerName: _searchResults[index]['name']));
     } else {
-
       FireStoreService.addFavorite(Favorite(
           type: 'hadith',
           title: _searchResults[index]['surah'],
-          content: currentLanguage == Languages.EN.languageCode ?
-          _searchResults[index]['english'] : _searchResults[index]['arabic'],
+          content: currentLanguage == Languages.EN.languageCode
+              ? _searchResults[index]['english']
+              : _searchResults[index]['arabic'],
           surahId: 0,
           verseId: 0,
-          author: AppData.getBookName(context, AppData.convertBookIdTo012(_searchResults[index]['bookId'])),
-          bookName: AppData.getBookName(context, AppData.convertBookIdTo012(_searchResults[index]['bookId'])),
+          author: AppData.getBookName(context,
+              AppData.convertBookIdTo012(_searchResults[index]['bookId'])),
+          bookName: AppData.getBookName(context,
+              AppData.convertBookIdTo012(_searchResults[index]['bookId'])),
           hadithBookId: _searchResults[index]['bookId'],
           hadithChapterId: _searchResults[index]['chapterId'],
           hadithIdInBook: _searchResults[index]['idInBook'],
           tafseerId: 0,
           tafseerName: ''));
     }
-    ToastMessage.showMessage(
-        AppLocalizations.of(context)!.favoriteIt);
+    ToastMessage.showMessage(AppLocalizations.of(context)!.favoriteIt);
   }
-
 }

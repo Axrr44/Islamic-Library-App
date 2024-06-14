@@ -1,7 +1,7 @@
-import 'package:freelancer/components/view_pager.dart';
-import 'package:freelancer/pages/privacy_policy_page.dart';
-import 'package:freelancer/pages/splash_page.dart';
-import 'package:freelancer/pages/terms_and_conditions_page.dart';
+import 'package:islamiclibrary/components/view_pager.dart';
+import 'package:islamiclibrary/pages/privacy_policy_page.dart';
+import 'package:islamiclibrary/pages/splash_page.dart';
+import 'package:islamiclibrary/pages/terms_and_conditions_page.dart';
 
 import '../pages/books_page.dart';
 import '../pages/main_page.dart';
@@ -11,10 +11,7 @@ import '../pages/sgin_in.dart';
 import '../pages/sign_up.dart';
 import '../pages/tafseer_page.dart';
 
-class AppRoutes{
-
-
-
+class AppRoutes {
   static const MAIN_ROUTES = "/main-page";
   static const SIGN_IN_ROUTES = "/sign-in-page";
   static const SIGN_UP_ROUTES = "/sign-up-page";
@@ -28,7 +25,8 @@ class AppRoutes{
   static const PRIVACY_POLICY_PAGE = "/privacy-policy-page";
   static const TERMS_PAGE = "/terms-page";
 
-  static final ROUTES = {SIGN_IN_ROUTES: (context) => SignIn(),
+  static final ROUTES = {
+    SIGN_IN_ROUTES: (context) => SignIn(),
     SIGN_UP_ROUTES: (context) => const SignUp(),
     MAIN_ROUTES: (context) => const MainPage(),
     PASSWORD_RESET_ROUTES: (context) => RestPasswordPage(),
@@ -40,6 +38,4 @@ class AppRoutes{
     PRIVACY_POLICY_PAGE: (context) => const PrivacyPolicyPage(),
     TERMS_PAGE: (context) => const TermsAndConditionsPage(),
   };
-
-
 }

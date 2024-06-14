@@ -1,15 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:freelancer/services/authentication.dart';
+import 'package:islamiclibrary/services/authentication.dart';
 
 import '../models/favorite_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FireStoreService {
-
   static DocumentReference _getUserFavoritesDocument() {
     User? currentUser = AuthServices.getCurrentUser();
     if (currentUser != null) {
-      print('User ID: ${currentUser.uid}');  // Debug print
+      print('User ID: ${currentUser.uid}'); // Debug print
       return FirebaseFirestore.instance
           .collection('favorites')
           .doc(currentUser.uid);
@@ -24,13 +23,14 @@ class FireStoreService {
       await userFavoritesDoc.set({
         'favorites': FieldValue.arrayUnion([favorite.toMap()])
       }, SetOptions(merge: true));
-      print('Favorite added successfully');  // Debug print
+      print('Favorite added successfully'); // Debug print
     } catch (e) {
-      print('Error adding favorite: $e');  // Debug print
+      print('Error adding favorite: $e'); // Debug print
     }
   }
 
-  static Future<List<Favorite>> getFavoritesIgnoringTypes(List<String> ignoreTypes) async {
+  static Future<List<Favorite>> getFavoritesIgnoringTypes(
+      List<String> ignoreTypes) async {
     try {
       DocumentReference userFavoritesDoc = _getUserFavoritesDocument();
       DocumentSnapshot docSnapshot = await userFavoritesDoc.get();
@@ -39,7 +39,7 @@ class FireStoreService {
         List<Favorite> favorites = favoritesList.map((item) {
           return Favorite.fromMap(item as Map<String, dynamic>);
         }).toList();
-        print('Favorites fetched successfully');  // Debug print
+        print('Favorites fetched successfully'); // Debug print
         return favorites.where((favorite) {
           return !ignoreTypes.contains(favorite.type);
         }).toList();
@@ -47,9 +47,8 @@ class FireStoreService {
         return [];
       }
     } catch (e) {
-      print('Error fetching favorites: $e');  // Debug print
+      print('Error fetching favorites: $e'); // Debug print
       return [];
     }
   }
-
 }
