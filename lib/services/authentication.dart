@@ -8,7 +8,6 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../components/custom_dialog.dart';
 import '../config/app_colors.dart';
 import '../config/app_routes.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 class AuthServices {

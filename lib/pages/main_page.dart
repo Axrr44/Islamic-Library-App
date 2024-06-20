@@ -36,6 +36,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   BannerAd? _bannerAd;
+  NativeAd? _nativeAd;
+  bool _isAdLoaded = false ;
   InterstitialAd? _interstitialAd;
   late String _selectedLanguage;
   late int _selectedFilterSearch;
@@ -72,6 +74,38 @@ class _MainPageState extends State<MainPage> {
     ];
     _checkAndShowTutorial();
     _createBannerAd();
+    _loadNativeAd();
+  }
+
+  @override
+  void dispose() {
+    _nativeAd?.dispose();
+    _isAdLoaded = false ;
+    super.dispose();
+  }
+
+  void _loadNativeAd()
+  {
+    _nativeAd = NativeAd(
+        adUnitId: AdmobService.nativeAdUnitId(false),
+        listener: NativeAdListener(
+          onAdLoaded: (ad){
+            setState(() {
+              _isAdLoaded = true;
+              print("is loaded");
+            });
+          },
+          onAdFailedToLoad: (ad,error)
+            {
+              setState(() {
+                _isAdLoaded = false ;
+                print("failed to load");
+              });
+            }
+        ),
+        request: const AdRequest(),
+    nativeTemplateStyle: NativeTemplateStyle(templateType: TemplateType.medium));
+    _nativeAd!.load();
   }
 
   Future<void> _checkAndShowTutorial() async {
@@ -810,8 +844,7 @@ class _MainPageState extends State<MainPage> {
                               borderRadius: BorderRadius.circular(5.w),
                             ),
                           ),
-                          minimumSize:
-                              MaterialStateProperty.all(Size(200.w, 50.h)),
+                          minimumSize: MaterialStateProperty.all(Size(200.w, 50.h)),
                         ),
                         child: Text(
                           "Sign out",
@@ -1216,13 +1249,30 @@ class _MainPageState extends State<MainPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          content: Padding(
-            padding: EdgeInsets.only(top: 10.h),
-            child: Text(
-              AppLocalizations.of(context)!.exitDialog,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15.sp),
-            ),
+          content: StatefulBuilder(
+            builder: (context,setState)
+            {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_isAdLoaded)
+                    Container(
+                      height: 150.h,
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      child: AdWidget(ad: _nativeAd!),
+                    ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 15.h),
+                    child: Text(
+                      AppLocalizations.of(context)!.exitDialog,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15.sp),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
           actions: <Widget>[
             Center(
@@ -1242,7 +1292,7 @@ class _MainPageState extends State<MainPage> {
                       Navigator.of(context).pop(false);
                     },
                     child: Text(
-                      AppLocalizations.of(context)!.no,
+                      'No',
                       style: TextStyle(
                         fontSize: 15.sp,
                         color: Colors.white,
@@ -1252,8 +1302,7 @@ class _MainPageState extends State<MainPage> {
                   SizedBox(width: 8.w),
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(AppColor.primary1),
+                      backgroundColor: MaterialStateProperty.all(AppColor.primary1),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
@@ -1264,7 +1313,7 @@ class _MainPageState extends State<MainPage> {
                       Navigator.of(context).pop(true);
                     },
                     child: Text(
-                      AppLocalizations.of(context)!.yes,
+                      'Yes',
                       style: TextStyle(
                         fontSize: 15.sp,
                         color: Colors.white,

@@ -37,4 +37,19 @@ class AdmobService {
       throw UnsupportedError("Unsupported platform");
     }
   }
+
+  static String nativeAdUnitId(bool isTest) {
+    if (Platform.isAndroid) {
+      return isTest
+          ? "ca-app-pub-3940256099942544/2247696110"
+          : "ca-app-pub-3940256099942544/2247696110";
+    } else if (Platform.isIOS) {
+      return isTest
+          ? "ca-app-pub-3940256099942544/3986624511"
+          : "ca-app-pub-3940256099942544/3986624511";
+    } else {
+      throw UnsupportedError("Unsupported platform");
+    }
+  }
+
 }
