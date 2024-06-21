@@ -42,11 +42,11 @@ class AdmobService {
     if (Platform.isAndroid) {
       return isTest
           ? "ca-app-pub-3940256099942544/2247696110"
-          : "ca-app-pub-3940256099942544/2247696110";
+          : "ca-app-pub-3819163654340613/1860493841";
     } else if (Platform.isIOS) {
       return isTest
           ? "ca-app-pub-3940256099942544/3986624511"
-          : "ca-app-pub-3940256099942544/3986624511";
+          : "ca-app-pub-3819163654340613/8617473883";
     } else {
       throw UnsupportedError("Unsupported platform");
     }
