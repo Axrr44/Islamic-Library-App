@@ -486,4 +486,122 @@ class Utility {
     int maxDigits = 3;
     return number.toString().padLeft(maxDigits, '0');
   }
+
+  static String convertLanguageCodeToName(String languageCode) {
+    switch (languageCode) {
+      case 'en':
+        return 'English';
+      case 'ar':
+        return 'العربية';
+      case 'nl':
+        return 'Dutch';
+      case 'fr':
+        return 'Français';
+      case 'ru':
+        return 'Русский';
+      case 'ur':
+        return 'اردو';
+      case 'tr':
+        return 'Türkçe';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  static String convertNameToLanguageCode(String languageName) {
+    switch (languageName.toLowerCase()) {
+      case 'english':
+        return 'en';
+      case 'العربية':
+        return 'ar';
+      case 'dutch':
+        return 'nl';
+      case 'français':
+        return 'fr';
+      case 'русский':
+        return 'ru';
+      case 'اردو':
+        return 'ur';
+      case 'türkçe':
+        return 'tr';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  static String getLanguageByIndex(int index) {
+    switch (index) {
+      case 0:
+        return 'English';
+      case 1:
+        return 'العربية';
+      case 2:
+        return 'Dutch';
+      case 3:
+        return 'Français';
+      case 4:
+        return 'Русский';
+      case 5:
+        return 'اردو';
+      case 6:
+        return 'Türkçe';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  static bool isEnglishOrArabic(String currentLanguage) {
+    return (currentLanguage == Languages.EN.languageCode) ||
+        (currentLanguage == Languages.AR.languageCode);
+  }
+
+  static bool isTheSameLanguage(String currentLanguage, String checkLanguage) {
+    return currentLanguage == checkLanguage;
+  }
+
+  static bool isRTLLanguage(String currentLanguage) {
+    switch (currentLanguage) {
+      case 'en':
+        return false;
+      case 'ar':
+        return true;
+      case 'nl':
+        return false;
+      case 'fr':
+        return false;
+      case 'ru':
+        return false;
+      case 'ur':
+        return true;
+      case 'tr':
+        return false;
+      default:
+        return false;
+    }
+  }
+
+  static String getQuranIdentifier(String currentLanguage) {
+    switch (currentLanguage) {
+      case 'en' :
+        return 'en.asad';
+      case 'ar' :
+        return 'quran-uthmani';
+      case 'fr':
+        return 'fr.hamidullah';
+      case 'tr':
+        return 'tr.ates';
+      case 'fa':
+        return 'fa.ayati';
+      case 'ml':
+        return 'ml.abdulhameed"';
+      case 'pt':
+        return 'pt.elhayek';
+      case 'nl':
+        return 'nl.leemhuis';
+      case 'ru':
+        return 'ru.kuliev';
+      default:
+        return 'en.asad'; //
+    }
+  }
 }

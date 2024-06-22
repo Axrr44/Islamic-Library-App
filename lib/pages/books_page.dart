@@ -9,6 +9,7 @@ import '../services/app_data.dart';
 import '../config/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/app_data_pref.dart';
+import '../utilities/utility.dart';
 import 'content_books_page.dart';
 
 class BooksPage extends StatefulWidget {
@@ -105,7 +106,7 @@ class _BooksPageState extends State<BooksPage> {
           height: height / 2 - 100,
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: EdgeInsets.only(top: 80.h, right: 20.w, left: 20.w),
+            padding: EdgeInsets.only(top: 80.h, right: 20.w, left: 20.w,bottom: 5.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -123,9 +124,9 @@ class _BooksPageState extends State<BooksPage> {
                             Navigator.pop(context);
                           },
                           icon: Icon(
-                            currentLanguage == Languages.EN.languageCode
-                                ? Icons.keyboard_arrow_left_rounded
-                                : Icons.keyboard_arrow_right_rounded,
+                            Utility.isRTLLanguage(currentLanguage) ?
+                            Icons.keyboard_arrow_right_rounded :
+                            Icons.keyboard_arrow_left_rounded,
                             size: 35.w,
                             color: AppColor.primary6,
                           ),
@@ -140,20 +141,17 @@ class _BooksPageState extends State<BooksPage> {
                           AppLocalizations.of(context)!.hadiths,
                           style: TextStyle(
                             fontFamily: 'AEFont',
-                            fontSize: 60.sp,
+                            fontSize: Utility.isEnglishOrArabic(currentLanguage) ? 60.sp : 40.sp,
                             color: AppColor.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         SizedBox(
-                          width: width / 2 + 50.w,
+                          width: width / 2 ,
                           child: Text(
                             AppLocalizations.of(context)!.hadithsSubTitle,
                             style: TextStyle(
-                              fontSize:
-                                  currentLanguage == Languages.EN.languageCode
-                                      ? 10.sp
-                                      : 15.sp,
+                              fontSize: Utility.isEnglishOrArabic(currentLanguage) ? 15.sp : 10.sp,
                               color: Colors.grey,
                               fontFamily:
                                   currentLanguage == Languages.EN.languageCode
@@ -216,7 +214,9 @@ class _BooksPageState extends State<BooksPage> {
                     ),
                     Text(
                       AppLocalizations.of(context)!.lastRead,
-                      style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                      style: TextStyle(
+                          fontSize: Utility.isEnglishOrArabic(currentLanguage) ? 12.sp : 10.sp,
+                          color: Colors.grey),
                     ),
                   ],
                 ),

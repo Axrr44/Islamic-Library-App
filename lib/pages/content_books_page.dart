@@ -563,9 +563,9 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                       Navigator.pop(context);
                     },
                     icon: Icon(
-                      currentLanguage == Languages.EN.languageCode
-                          ? Icons.keyboard_arrow_left_rounded
-                          : Icons.keyboard_arrow_right_rounded,
+                      Utility.isRTLLanguage(currentLanguage) ?
+                      Icons.keyboard_arrow_right_rounded :
+                      Icons.keyboard_arrow_left_rounded,
                       size: 35.w,
                       color: AppColor.white,
                     ),

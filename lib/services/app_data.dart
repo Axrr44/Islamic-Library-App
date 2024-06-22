@@ -177,10 +177,29 @@ class AppData {
   // Quran
   static Future<List<String>> fetchSurahData(String language) async {
     List<String> surahNames = [];
+
+
+
     for (int i = 1; i <= quran.totalSurahCount; i++) {
-      String surahName = language == Languages.EN.languageCode
-          ? quran.getSurahNameEnglish(i)
-          : quran.getSurahNameArabic(i);
+      String surahName = "";
+      switch (language) {
+        case 'en':
+          surahName = quran.getSurahNameEnglish(i);
+        case 'ar':
+          surahName = quran.getSurahNameArabic(i);
+        case 'nl':
+          surahName = quran.getSurahNameEnglish(i);
+        case 'fr':
+          surahName = quran.getSurahNameFrench(i);
+        case 'ru':
+          surahName = quran.getSurahNameRussian(i);
+        case 'ur':
+          surahName = quran.getSurahNameArabic(i);
+        case 'tr':
+          surahName = quran.getSurahNameTurkish(i);
+        default:
+          surahName = quran.getSurahNameEnglish(i);
+      }
       surahNames.add(surahName);
     }
     return surahNames;

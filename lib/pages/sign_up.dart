@@ -212,7 +212,7 @@ class _SignUpState extends State<SignUp> {
                 ),
                 if (Platform.isAndroid)
                   SizedBox(
-                      width: width / 2 + 40,
+                      width: Utility.isEnglishOrArabic(currentLanguage) ? width / 2 + 40 : width - 70.w ,
                       height: width / 7,
                       child: ElevatedButton(
                         onPressed: () {
@@ -243,6 +243,9 @@ class _SignUpState extends State<SignUp> {
                                           currentLanguage),
                                       color: Colors.black,
                                     ),
+                                  ),
+                                  const TextSpan(
+                                      text: " "
                                   ),
                                   TextSpan(
                                     text: AppLocalizations.of(context)!.google,

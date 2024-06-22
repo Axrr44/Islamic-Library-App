@@ -541,19 +541,18 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
 
       // Add the end of ayah
       spans.add(TextSpan(
-          text: currentLanguage == Languages.EN.languageCode
-              ? "\uFD3E${ayah.numberInSurah}\uFD3F"
-              : ArabicNumbers.convert(ayah.numberInSurah),
+          text: Utility.isTheSameLanguage(currentLanguage, "ar")
+          ? ArabicNumbers.convert(ayah.numberInSurah) : "\uFD3E${ayah.numberInSurah}\uFD3F",
           style: TextStyle(
               color: Colors.black,
               fontSize:
-                  currentLanguage == Languages.EN.languageCode ? 20.sp : 30.sp,
+                  Utility.isTheSameLanguage(currentLanguage, 'ar') ? 30.sp : 20.sp,
               fontFamily: currentLanguage == Languages.EN.languageCode
                   ? 'EnglishQuran'
                   : 'Hafs',
-              fontWeight: currentLanguage == Languages.EN.languageCode
-                  ? FontWeight.normal
-                  : FontWeight.bold)));
+              fontWeight: Utility.isTheSameLanguage(currentLanguage, 'ar')
+                  ? FontWeight.bold
+                  : FontWeight.normal)));
     }
     return spans;
   }
@@ -566,7 +565,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     String currentLanguage = Localizations.localeOf(context).languageCode;
     final response = await http.get(Uri.parse(
         'https://api.alquran.cloud/v1/page/$pageCount/'
-        '${currentLanguage == Languages.EN.languageCode ? 'en.asad' : 'quran-uthmani'}'));
+        '${Utility.getQuranIdentifier(currentLanguage)}'));
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
       return QuranData.fromJson(jsonData);

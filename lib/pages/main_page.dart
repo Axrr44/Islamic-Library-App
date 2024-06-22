@@ -144,7 +144,6 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    const int notificationCount = 10;
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     final bool isMobile = shortestSide < 600;
 
@@ -160,7 +159,7 @@ class _MainPageState extends State<MainPage> {
       child: Scaffold(
         body: Column(
           children: [
-            _header(width, height, notificationCount, isMobile),
+            _header(width, height, isMobile),
             Expanded(
               child: pages[_currentPage],
             ),
@@ -755,6 +754,9 @@ class _MainPageState extends State<MainPage> {
   void _showSettingDialog(String currentLanguage) {
     var languageProvider =
         Provider.of<LanguageProvider>(context, listen: false);
+    String selectedLanguage =
+    Utility.convertLanguageCodeToName(currentLanguage);
+
     showDialog(
       context: context,
       builder: (context) {
@@ -763,7 +765,7 @@ class _MainPageState extends State<MainPage> {
             builder: (BuildContext context, StateSetter setState) {
               return SizedBox(
                 width: 200.w,
-                height: AuthServices.getCurrentUser() != null ? 250.w : 100.w,
+                height: AuthServices.getCurrentUser() != null ? 300.w : 200.w,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -783,47 +785,71 @@ class _MainPageState extends State<MainPage> {
                         color: Colors.black,
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Radio<String>(
-                          value: "en",
-                          activeColor: Colors.black,
-                          groupValue: _selectedLanguage,
-                          onChanged: (String? value) {
+                    Container(
+                      height: 50.h,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: AppColor.black, width: 1.w),
+                          borderRadius: BorderRadius.circular(5.w)),
+                      child: SizedBox(
+                        height: double.infinity,
+                        child: DropdownButton<String>(
+                          value: selectedLanguage,
+                          iconSize: 0,
+                          underline: Container(),
+                          itemHeight: 50.h,
+                          isExpanded: true,
+                          onChanged: (value)
+                          {
                             setState(() {
-                              _selectedLanguage = value!;
+                              selectedLanguage = value!;
                             });
-                            languageProvider.setCurrentLanguage('en');
-                            AppDataPreferences.resetSearchPreferences();
-                            Phoenix.rebirth(context);
                           },
+                          items: List.generate(7, (index) {
+                            return DropdownMenuItem<String>(
+                              value: Utility.getLanguageByIndex(index),
+                              child: Center(
+                                  child: Text(
+                                    textAlign: TextAlign.center,
+                                    Utility.getLanguageByIndex(index),
+                                    style: TextStyle(
+                                        fontSize: 15.sp,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                            );
+                          }),
                         ),
-                        Text(
-                          "English",
-                          style:
-                              TextStyle(fontSize: 15.sp, color: Colors.black),
-                        ),
-                        Radio<String>(
-                          value: "ar",
-                          activeColor: Colors.black,
-                          groupValue: _selectedLanguage,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedLanguage = value!;
-                            });
-                            languageProvider.setCurrentLanguage('ar');
-                            AppDataPreferences.resetSearchPreferences();
-                            Phoenix.rebirth(context);
-                          },
-                        ),
-                        Text(
-                          "العربية",
-                          style:
-                              TextStyle(fontSize: 15.sp, color: Colors.black),
-                        ),
-                      ],
+                      ),
                     ),
+                    SizedBox(height: 15.h),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.w),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        var languageCode = Utility.convertNameToLanguageCode(selectedLanguage);
+                        if (currentLanguage != languageCode) {
+                          languageProvider.setCurrentLanguage(languageCode);
+                          Phoenix.rebirth(context);
+                        }
+                        AppDataPreferences.setShowLanguage(false);
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.set,
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15.h),
                     if (AuthServices.getCurrentUser() != null) ...[
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -864,7 +890,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _header(
-      double width, double height, int notificationCount, bool isMobile) {
+      double width, double height, bool isMobile) {
     String currentLanguage = Localizations.localeOf(context).languageCode;
     return Consumer<MainPageProvider>(builder: (context, mainProvider, _) {
       return Stack(
@@ -926,8 +952,8 @@ class _MainPageState extends State<MainPage> {
                         style: TextStyle(
                           fontFamily: 'ATF',
                           fontSize: mainProvider.currentPageName.length > 10
-                              ? 40.sp
-                              : 50.sp,
+                              ? Utility.isTheSameLanguage(currentLanguage, "ru") ? 30.sp : 40.sp
+                              : Utility.isTheSameLanguage(currentLanguage, "ru") ? 40.sp : 50.sp,
                           color: AppColor.black,
                           fontWeight: FontWeight.bold,
                         ),
@@ -986,33 +1012,6 @@ class _MainPageState extends State<MainPage> {
                                 ),
                               ),
                             ),
-                            if (notificationCount > 0 &&
-                                mainProvider.currentPageName ==
-                                    AppLocalizations.of(context)!.home)
-                              Positioned(
-                                right: 8.w,
-                                top: 8.w,
-                                child: Container(
-                                  padding: EdgeInsets.all(4.w),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  constraints: BoxConstraints(
-                                    minWidth: 16.w,
-                                    minHeight: 16.w,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      notificationCount.toString(),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10.sp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
                           ],
                         )
                       : Container(),
@@ -1077,39 +1076,15 @@ class _MainPageState extends State<MainPage> {
   }
 
   IconData _iconHeader(String currentPage) {
-    switch (currentPage) {
-      case "Search":
-        {
-          return Icons.filter_list_outlined;
-          break;
-        }
-      case "Favorites":
-        {
-          return Icons.filter_list_outlined;
-          break;
-        }
-      case "Profile":
-        {
-          return Icons.settings;
-          break;
-        }
-      case "البحث":
-        {
-          return Icons.filter_list_outlined;
-          break;
-        }
-      case "المفضلة":
-        {
-          return Icons.filter_list_outlined;
-          break;
-        }
-      case "الملف الشخصي":
-        {
-          return Icons.settings;
-          break;
-        }
+    String favorite = AppLocalizations.of(context)!.favorite;
+    String profile = AppLocalizations.of(context)!.profile;
+
+   if (currentPage == profile) {
+      return Icons.settings;
+    } else {
+      return Icons.filter_list_outlined;
     }
-    return Icons.abc;
+
   }
 
   Widget _bottomNavigation() {

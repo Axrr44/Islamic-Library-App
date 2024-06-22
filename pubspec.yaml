@@ -113,6 +113,12 @@ dependencies:
   #SQLITE :
   sqflite: ^2.0.0+4
 
+  #Geolocator :
+  geolocator: ^11.0.0
+
+  #Qiblah :
+  flutter_qiblah: ^3.0.3
+
   #Provider
   provider:
 
@@ -154,6 +160,9 @@ flutter:
     - assets/images/islamic_pattern_2.png
     - assets/images/islamic_pattern_3.png
     - assets/images/islamic_pattern_4.png
+    - assets/images/beads.png
+    - assets/images/reading_book.png
+    - assets/images/allah_akbar.png
     - assets/images/drop_down.png
     - assets/images/filter.png
     - assets/images/hadith.png

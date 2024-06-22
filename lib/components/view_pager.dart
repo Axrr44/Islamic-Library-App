@@ -250,83 +250,100 @@ class _ViewPagerState extends State<ViewPager> {
     var languageProvider =
         Provider.of<LanguageProvider>(context, listen: false);
     String currentLanguage = Localizations.localeOf(context).languageCode;
+    String selectedLanguage =
+        Utility.convertLanguageCodeToName(currentLanguage);
 
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          content: Padding(
-            padding: EdgeInsets.only(top: 10.h),
-            child: Text(
-              AppLocalizations.of(context)!.chooseTheLanguage,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15.sp),
-            ),
-          ),
-          actions: <Widget>[
-            Center(
-              // Center the Row
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.grey),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.w),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      if (currentLanguage != Languages.AR.languageCode) {
-                        languageProvider.setCurrentLanguage('ar');
-                        Phoenix.rebirth(context);
-                      }
-                      AppDataPreferences.setShowLanguage(false);
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      "العربية",
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.grey),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.w),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      if (currentLanguage != Languages.EN.languageCode) {
-                        languageProvider.setCurrentLanguage('en');
-                        Phoenix.rebirth(context);
-                      }
-                      AppDataPreferences.setShowLanguage(false);
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      "English",
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: Padding(
+              padding: EdgeInsets.only(top: 10.h),
+              child: Text(
+                AppLocalizations.of(context)!.chooseTheLanguage,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15.sp),
               ),
             ),
-          ],
-        );
+            actions: <Widget>[
+              Center(
+                // Center the Column
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      height: 50.h,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: AppColor.black, width: 1.w),
+                          borderRadius: BorderRadius.circular(5.w)),
+                      child: SizedBox(
+                        height: double.infinity,
+                        child: DropdownButton<String>(
+                          value: selectedLanguage,
+                          iconSize: 0,
+                          underline: Container(),
+                          itemHeight: 50.h,
+                          isExpanded: true,
+                          onChanged: (value)
+                          {
+                            setState(() {
+                             selectedLanguage = value!;
+                           });
+                          },
+                          items: List.generate(7, (index) {
+                            return DropdownMenuItem<String>(
+                              value: Utility.getLanguageByIndex(index),
+                              child: Center(
+                                  child: Text(
+                                textAlign: TextAlign.center,
+                                Utility.getLanguageByIndex(index),
+                                style: TextStyle(
+                                    fontSize: 15.sp,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                            );
+                          }),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15.h),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(AppColor.primary1),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.w),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        var languageCode = Utility.convertNameToLanguageCode(selectedLanguage);
+                        if (currentLanguage != languageCode) {
+                          languageProvider.setCurrentLanguage(languageCode);
+                          Phoenix.rebirth(context);
+                        }
+                        AppDataPreferences.setShowLanguage(false);
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.set,
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
       },
     );
   }

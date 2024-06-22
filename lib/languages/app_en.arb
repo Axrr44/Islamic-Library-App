@@ -17,7 +17,7 @@
   "signIn" : "Sign in",
   "forgetPassword" : "Forget password ?",
   "signInFG" : "Or",
-  "signInWith" : "Sign in with ",
+  "signInWith" : "Sign in with",
   "google" : "Google",
   "signUp" : "Sign up",
   "dontHaveAccount" : "Don`t have an account",
@@ -104,11 +104,11 @@
   "no" : "No",
   "exitDialog" : "Do you want to exit the application?",
   "apple" : "Apple",
-  "chooseTheLanguage" : "Choose the language"
-
-
-
-
-
+  "chooseTheLanguage" : "Choose the language",
+  "quranButtonSubTitle": "This is the Book about which there is no doubt, a guidance for those conscious of Allah",
+  "qiblahButtonSubTitle": "Indeed, prayer has been decreed upon the believers a decree of specified times",
+  "storiesOfProphets": "Stories of the Prophets",
+  "azkar": "Azkar",
+  "qiblahAndPrayer": "Qiblah and Prayer Times"
 
 }

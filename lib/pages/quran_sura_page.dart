@@ -197,7 +197,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                     color: AppColor.white,
                     child: InkWell(
                       onTap: () {
-                        int value = index;
+                        int value = index + 1;
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => QuranAyaPage(
                                   surahId: value,
@@ -239,10 +239,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                                 ),
                               ],
                             ),
-                            Text(
-                              currentLanguage == Languages.EN.languageCode
-                                  ? quran.getSurahNameEnglish(++index)
-                                  : quran.getSurahNameArabic(++index),
+                            Text(surahList[index],
                               style: TextStyle(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w700,
@@ -254,8 +251,8 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                               children: [
                                 Text(
                                   currentLanguage == Languages.EN.languageCode
-                                      ? "${quran.getVerseCount(index)}   Verse"
-                                      : "${ArabicNumbers.convert(quran.getVerseCount(index))}   اية",
+                                      ? "${quran.getVerseCount(index + 1)}   Verse"
+                                      : "${ArabicNumbers.convert(quran.getVerseCount(index + 1))}   اية",
                                   style: TextStyle(
                                       fontFamily: Utility.getTextFamily(
                                           currentLanguage),
@@ -372,9 +369,9 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                             Navigator.pop(context);
                           },
                           icon: Icon(
-                            currentLanguage == Languages.EN.languageCode
-                                ? Icons.keyboard_arrow_left_rounded
-                                : Icons.keyboard_arrow_right_rounded,
+                            Utility.isRTLLanguage(currentLanguage) ?
+                            Icons.keyboard_arrow_right_rounded :
+                            Icons.keyboard_arrow_left_rounded,
                             size: 35.w,
                             color: AppColor.white,
                           ),
@@ -388,7 +385,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                         Text(
                           AppLocalizations.of(context)!.quran,
                           style: TextStyle(
-                              fontSize: 60.sp,
+                              fontSize: Utility.isEnglishOrArabic(currentLanguage) ? 60.sp : 40.sp,
                               color: AppColor.black,
                               fontFamily: 'AEFont',
                               fontWeight: FontWeight.bold),
@@ -398,7 +395,9 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                           child: Text(
                             AppLocalizations.of(context)!.quranSubTitle,
                             style:
-                                TextStyle(fontSize: 15.sp, color: Colors.grey),
+                                TextStyle(
+                                    fontSize: Utility.isEnglishOrArabic(currentLanguage) ? 15.sp : 10.sp,
+                                    color: Colors.grey),
                           ),
                         ),
                       ],
@@ -454,7 +453,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                     Text(
                       AppLocalizations.of(context)!.lastRead,
                       style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: Utility.isEnglishOrArabic(currentLanguage) ? 12.sp : 10.sp,
                           color: Colors.grey,
                           fontFamily: Utility.getTextFamily(currentLanguage)),
                     )

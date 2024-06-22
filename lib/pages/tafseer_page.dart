@@ -189,9 +189,9 @@ class _TafseerPageState extends State<TafseerPage> {
                             Navigator.pop(context);
                           },
                           icon: Icon(
-                            currentLanguage == Languages.EN.languageCode
-                                ? Icons.keyboard_arrow_left_rounded
-                                : Icons.keyboard_arrow_right_rounded,
+                            Utility.isRTLLanguage(currentLanguage) ?
+                            Icons.keyboard_arrow_right_rounded :
+                            Icons.keyboard_arrow_left_rounded,
                             size: 35.w,
                             color: AppColor.white,
                           ),
@@ -206,7 +206,7 @@ class _TafseerPageState extends State<TafseerPage> {
                           AppLocalizations.of(context)!.tafseer,
                           style: TextStyle(
                               fontFamily: 'AEFont',
-                              fontSize: 60.sp,
+                              fontSize: Utility.isEnglishOrArabic(currentLanguage) ? 60.sp : 40.sp,
                               color: AppColor.black,
                               fontWeight: FontWeight.bold),
                         ),
@@ -215,7 +215,7 @@ class _TafseerPageState extends State<TafseerPage> {
                           child: Text(
                             AppLocalizations.of(context)!.tafseerSubTitle,
                             style: TextStyle(
-                                fontSize: 15.sp,
+                                fontSize: Utility.isEnglishOrArabic(currentLanguage) ? 15.sp : 10.sp,
                                 color: Colors.grey,
                                 fontFamily:
                                     currentLanguage == Languages.EN.languageCode
@@ -274,7 +274,7 @@ class _TafseerPageState extends State<TafseerPage> {
                     Text(
                       AppLocalizations.of(context)!.lastRead,
                       style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: Utility.isEnglishOrArabic(currentLanguage) ? 12.sp : 10.sp,
                           color: Colors.grey,
                           fontFamily: Utility.getTextFamily(currentLanguage)),
                     )
