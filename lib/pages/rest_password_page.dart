@@ -46,9 +46,9 @@ class RestPasswordPage extends StatelessWidget {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                    MaterialStateProperty.all(AppColor.primary1),
-                    foregroundColor: MaterialStateProperty.all(AppColor.white),
-                    shape: MaterialStateProperty.all(
+                    WidgetStateProperty.all(AppColor.primary1),
+                    foregroundColor: WidgetStateProperty.all(AppColor.white),
+                    shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),

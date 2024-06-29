@@ -47,8 +47,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     .pushReplacementNamed(AppRoutes.SIGN_IN_ROUTES);
               },
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(AppColor.primary1),
-                shape: MaterialStateProperty.all(
+                backgroundColor: WidgetStateProperty.all(AppColor.primary1),
+                shape: WidgetStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.w),
                   ),
@@ -238,8 +238,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: <Widget>[
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.grey),
-                      shape: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(Colors.grey),
+                      shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
                         ),
@@ -260,8 +260,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(AppColor.primary1),
-                      shape: MaterialStateProperty.all(
+                          WidgetStateProperty.all(AppColor.primary1),
+                      shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
                         ),

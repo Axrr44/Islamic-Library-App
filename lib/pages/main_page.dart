@@ -838,13 +838,13 @@ class _MainPageState extends State<MainPage> {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(AppColor.black),
-                          shape: MaterialStateProperty.all(
+                              WidgetStateProperty.all(AppColor.black),
+                          shape: WidgetStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5.w),
                             ),
                           ),
-                          minimumSize: MaterialStateProperty.all(Size(200.w, 50.h)),
+                          minimumSize: WidgetStateProperty.all(Size(200.w, 50.h)),
                         ),
                         child: Text(
                           "Sign out",
@@ -1281,8 +1281,8 @@ class _MainPageState extends State<MainPage> {
                 children: <Widget>[
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.grey),
-                      shape: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(Colors.grey),
+                      shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
                         ),
@@ -1302,8 +1302,8 @@ class _MainPageState extends State<MainPage> {
                   SizedBox(width: 8.w),
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(AppColor.primary1),
-                      shape: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(AppColor.primary1),
+                      shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
                         ),

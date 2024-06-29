@@ -160,9 +160,9 @@ class _ViewPagerState extends State<ViewPager> {
           },
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all<Color>(AppColor.primary1),
-            foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
-            shape: MaterialStateProperty.all(
+                WidgetStateProperty.all<Color>(AppColor.primary1),
+            foregroundColor: WidgetStateProperty.all<Color>(AppColor.white),
+            shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -273,8 +273,8 @@ class _ViewPagerState extends State<ViewPager> {
                 children: <Widget>[
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.grey),
-                      shape: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(Colors.grey),
+                      shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
                         ),
@@ -299,8 +299,8 @@ class _ViewPagerState extends State<ViewPager> {
                   SizedBox(width: 8.w),
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.grey),
-                      shape: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(Colors.grey),
+                      shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
                         ),

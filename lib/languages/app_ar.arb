@@ -17,7 +17,7 @@
   "signIn" : "تسجيل الدخول",
   "forgetPassword" : "هل نسيت كلمة المرور ؟",
   "signInFG" : "او",
-  "signInWith" : "التسجيل في ",
+  "signInWith" : "التسجيل في",
   "google" : "جوجل",
   "signUp" : "إنشاء حساب",
   "dontHaveAccount" : "لا املك حساب ؟",
@@ -103,9 +103,10 @@
   "no" : "لا",
   "exitDialog" : "هل تريد الخروج من التطبيق؟",
   "apple" : "أبل",
-  "chooseTheLanguage" : "قم باختيار اللغة"
-
-
-
-
+  "chooseTheLanguage" : "قم باختيار اللغة",
+  "quranButtonSubTitle" : "ذَلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ هُدًى لِلْمُتَّقِينَ",
+  "qiblahButtonSubTitle" : " إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَوْقُوتًا",
+  "storiesOfProphets" : "قصص الانبياء",
+  "azkar" : "الأذكار",
+  "qiblahAndPrayer" : "القبلة ومواقيت الصلاة"
 }
