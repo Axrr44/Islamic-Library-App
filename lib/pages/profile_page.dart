@@ -19,10 +19,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -88,161 +86,166 @@ class _ProfilePageState extends State<ProfilePage> {
             color: Colors.white.withOpacity(0.0),
             child: Container(
               color: Colors.grey.withOpacity(0.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 15.h,
-                    child: const Divider(color: Colors.grey),
-                  ),
-                  SizedBox(
-                    width: width,
-                    child: Padding(
-                      padding: EdgeInsets.all(5.w),
-                      child: ListTile(
-                        leading: const Icon(Icons.person_rounded),
-                        title: Text(
-                          "${AppLocalizations.of(context)!.fullName} : ${userInfo['name']}",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: Utility.getTextFamily(currentLanguage),
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.bold,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 15.h,
+                      child: const Divider(color: Colors.grey),
+                    ),
+                    SizedBox(
+                      width: width,
+                      child: Padding(
+                        padding: EdgeInsets.all(5.w),
+                        child: ListTile(
+                          leading: const Icon(Icons.person_rounded),
+                          title: Text(
+                            "${AppLocalizations.of(context)!.fullName} : ${userInfo['name']}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily:
+                                  Utility.getTextFamily(currentLanguage),
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                    child: const Divider(color: Colors.grey),
-                  ),
-                  SizedBox(
-                    width: width,
-                    child: Padding(
-                      padding: EdgeInsets.all(5.w),
-                      child: ListTile(
-                        leading: const Icon(Icons.email),
-                        title: Text(
-                          "${AppLocalizations.of(context)!.email} : ${userInfo['email']}",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: Utility.getTextFamily(currentLanguage),
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.bold,
+                    SizedBox(
+                      height: 15.h,
+                      child: const Divider(color: Colors.grey),
+                    ),
+                    SizedBox(
+                      width: width,
+                      child: Padding(
+                        padding: EdgeInsets.all(5.w),
+                        child: ListTile(
+                          leading: const Icon(Icons.email),
+                          title: Text(
+                            "${AppLocalizations.of(context)!.email} : ${userInfo['email']}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily:
+                                  Utility.getTextFamily(currentLanguage),
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                    child: const Divider(color: Colors.grey),
-                  ),
-                  FutureBuilder<bool>(
-                    future: AuthServices.isSignedInWithGoogle(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      }
-                      if (snapshot.hasData && !snapshot.data!) {
-                        return Column(
-                          children: [
-                            SizedBox(
-                              width: width,
-                              child: Padding(
-                                padding: EdgeInsets.all(5.w),
-                                child: ListTile(
-                                  leading:
-                                      const Icon(Icons.lock_reset_outlined),
-                                  title: TextButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(context,
-                                          AppRoutes.PASSWORD_RESET_ROUTES);
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .changePassword,
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontFamily: Utility.getTextFamily(
-                                            currentLanguage),
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.bold,
+                    SizedBox(
+                      height: 15.h,
+                      child: const Divider(color: Colors.grey),
+                    ),
+                    FutureBuilder<bool>(
+                      future: AuthServices.isSignedInWithGoogle(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (snapshot.hasData && !snapshot.data!) {
+                          return Column(
+                            children: [
+                              SizedBox(
+                                width: width,
+                                child: Padding(
+                                  padding: EdgeInsets.all(5.w),
+                                  child: ListTile(
+                                    leading:
+                                        const Icon(Icons.lock_reset_outlined),
+                                    title: TextButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(context,
+                                            AppRoutes.PASSWORD_RESET_ROUTES);
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)!
+                                            .changePassword,
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          fontFamily: Utility.getTextFamily(
+                                              currentLanguage),
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              height: 15.h,
-                              child: const Divider(color: Colors.grey),
-                            ),
-                          ],
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                  SizedBox(
-                    width: width,
-                    child: Padding(
-                      padding: EdgeInsets.all(5.w),
-                      child: ListTile(
-                        leading: const Icon(Icons.delete),
-                        title: TextButton(
-                          onPressed: () {
-                            _showDeleteConfirmationDialog(context);
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)!.deleteAccount,
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontFamily:
-                                  Utility.getTextFamily(currentLanguage),
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.bold,
+                              SizedBox(
+                                height: 15.h,
+                                child: const Divider(color: Colors.grey),
+                              ),
+                            ],
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                    SizedBox(
+                      width: width,
+                      child: Padding(
+                        padding: EdgeInsets.all(5.w),
+                        child: ListTile(
+                          leading: const Icon(Icons.delete),
+                          title: TextButton(
+                            onPressed: () {
+                              _showDeleteConfirmationDialog(context);
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.deleteAccount,
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontFamily:
+                                    Utility.getTextFamily(currentLanguage),
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                    child: const Divider(color: Colors.grey),
-                  ),
-                  SizedBox(
-                    width: width,
-                    child: Padding(
-                      padding: EdgeInsets.all(5.w),
-                      child: ListTile(
-                        leading: const Icon(Icons.feedback_outlined),
-                        title: TextButton(
-                          onPressed: () {
-                            _showFeedbackBottomSheet(context);
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)!.feedback,
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontFamily:
-                                  Utility.getTextFamily(currentLanguage),
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.bold,
+                    SizedBox(
+                      height: 15.h,
+                      child: const Divider(color: Colors.grey),
+                    ),
+                    SizedBox(
+                      width: width,
+                      child: Padding(
+                        padding: EdgeInsets.all(5.w),
+                        child: ListTile(
+                          leading: const Icon(Icons.feedback_outlined),
+                          title: TextButton(
+                            onPressed: () {
+                              _showFeedbackBottomSheet(context);
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.feedback,
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontFamily:
+                                    Utility.getTextFamily(currentLanguage),
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                    child: const Divider(color: Colors.grey),
-                  ),
-                ],
+                    SizedBox(
+                      height: 15.h,
+                      child: const Divider(color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -347,7 +350,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.title,
                     border: const OutlineInputBorder(),
-                    focusedBorder:  const OutlineInputBorder(
+                    focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: AppColor.primary1),
                     ),
                   ),
@@ -360,7 +363,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.description,
                     border: const OutlineInputBorder(),
-                    focusedBorder:  const OutlineInputBorder(
+                    focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: AppColor.primary1),
                     ),
                   ),
@@ -369,11 +372,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 20.h),
                 ElevatedButton(
                   onPressed: () async {
-                    if(_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
-                      ToastMessage.showMessage(AppLocalizations.of(context)!.feedback_toast);
+                    if (_titleController.text.isEmpty ||
+                        _descriptionController.text.isEmpty) {
+                      ToastMessage.showMessage(
+                          AppLocalizations.of(context)!.feedback_toast);
                       return;
                     }
-                    await FireStoreService.addFeedback(_titleController.text,_descriptionController.text);
+                    await FireStoreService.addFeedback(
+                        _titleController.text, _descriptionController.text);
                     Navigator.pop(context);
                   },
                   style: ButtonStyle(

@@ -37,7 +37,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   BannerAd? _bannerAd;
   NativeAd? _nativeAd;
-  bool _isAdLoaded = false ;
+  bool _isAdLoaded = false;
   InterstitialAd? _interstitialAd;
   late String _selectedLanguage;
   late int _selectedFilterSearch;
@@ -80,31 +80,27 @@ class _MainPageState extends State<MainPage> {
   @override
   void dispose() {
     _nativeAd?.dispose();
-    _isAdLoaded = false ;
+    _isAdLoaded = false;
     super.dispose();
   }
 
-  void _loadNativeAd()
-  {
+  void _loadNativeAd() {
     _nativeAd = NativeAd(
         adUnitId: AdmobService.nativeAdUnitId(false),
-        listener: NativeAdListener(
-          onAdLoaded: (ad){
-            setState(() {
-              _isAdLoaded = true;
-              print("is loaded");
-            });
-          },
-          onAdFailedToLoad: (ad,error)
-            {
-              setState(() {
-                _isAdLoaded = false ;
-                print("failed to load");
-              });
-            }
-        ),
+        listener: NativeAdListener(onAdLoaded: (ad) {
+          setState(() {
+            _isAdLoaded = true;
+            print("is loaded");
+          });
+        }, onAdFailedToLoad: (ad, error) {
+          setState(() {
+            _isAdLoaded = false;
+            print("failed to load");
+          });
+        }),
         request: const AdRequest(),
-    nativeTemplateStyle: NativeTemplateStyle(templateType: TemplateType.medium));
+        nativeTemplateStyle:
+            NativeTemplateStyle(templateType: TemplateType.medium));
     _nativeAd!.load();
   }
 
@@ -161,21 +157,25 @@ class _MainPageState extends State<MainPage> {
         body: Column(
           children: [
             _header(width, height, notificationCount, isMobile),
-            if(_currentPage == 0) Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: Row(
+            if (_currentPage == 0)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
-                        onPressed: (){
+                        onPressed: () {
                           createTutorial();
                           Future.delayed(Duration.zero, showTutorial);
                         },
-                        icon: Icon(Icons.info,size: 20.w,))
+                        icon: Icon(
+                          Icons.info,
+                          size: 20.w,
+                        ))
                   ],
                 ),
-            ),
+              ),
             Expanded(
               child: pages[_currentPage],
             ),
@@ -239,7 +239,6 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
     );
-
 
     targets.add(
       TargetFocus(
@@ -862,7 +861,8 @@ class _MainPageState extends State<MainPage> {
                               borderRadius: BorderRadius.circular(5.w),
                             ),
                           ),
-                          minimumSize: WidgetStateProperty.all(Size(200.w, 50.h)),
+                          minimumSize:
+                              WidgetStateProperty.all(Size(200.w, 50.h)),
                         ),
                         child: Text(
                           "Sign out",
@@ -970,39 +970,38 @@ class _MainPageState extends State<MainPage> {
                   mainProvider.currentPageName !=
                           AppLocalizations.of(context)!.home
                       ? ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        isMobile == true ? 15.w : 10.w),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: AppColor.white,
-                        border: Border.all(
-                          color: AppColor.black,
-                          width: 1.w,
-                        ),
-                        borderRadius: BorderRadius.circular(
-                            isMobile == true ? 15.w : 10.w),
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          _actionOfHeaderButton();
-                        },
-                        icon: mainProvider.currentPageName !=
-                            AppLocalizations.of(context)!.search
-                            ? Icon(
-                          _iconHeader(
-                              mainProvider.currentPageName),
-                          size: 35.w,
-                          color: AppColor.black,
+                          borderRadius: BorderRadius.circular(
+                              isMobile == true ? 15.w : 10.w),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: AppColor.white,
+                              border: Border.all(
+                                color: AppColor.black,
+                                width: 1.w,
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                  isMobile == true ? 15.w : 10.w),
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                _actionOfHeaderButton();
+                              },
+                              icon: mainProvider.currentPageName !=
+                                      AppLocalizations.of(context)!.search
+                                  ? Icon(
+                                      _iconHeader(mainProvider.currentPageName),
+                                      size: 35.w,
+                                      color: AppColor.black,
+                                    )
+                                  : SizedBox(
+                                      width: 35.w,
+                                      height: 35.w,
+                                      child: Image.asset(
+                                          "assets/images/filter.png"),
+                                    ),
+                            ),
+                          ),
                         )
-                            : SizedBox(
-                          width: 35.w,
-                          height: 35.w,
-                          child: Image.asset(
-                              "assets/images/filter.png"),
-                        ),
-                      ),
-                    ),
-                  )
                       : Container(),
                 ],
               ),
@@ -1195,7 +1194,7 @@ class _MainPageState extends State<MainPage> {
   void _createBannerAd() {
     _bannerAd = BannerAd(
         size: AdSize.fullBanner,
-        adUnitId: AdmobService.bannerAdUnitId(false),
+        adUnitId: AdmobService.bannerAdUnitId(true),
         listener: AdmobService.bannerListener,
         request: const AdRequest())
       ..load();
@@ -1203,7 +1202,7 @@ class _MainPageState extends State<MainPage> {
 
   void _createInterstitialAd() {
     InterstitialAd.load(
-        adUnitId: AdmobService.interstitialAdUnitId(false),
+        adUnitId: AdmobService.interstitialAdUnitId(true),
         request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
           _interstitialAd = ad;
@@ -1238,8 +1237,7 @@ class _MainPageState extends State<MainPage> {
         return AlertDialog(
           backgroundColor: Colors.white,
           content: StatefulBuilder(
-            builder: (context,setState)
-            {
+            builder: (context, setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -1290,7 +1288,8 @@ class _MainPageState extends State<MainPage> {
                   SizedBox(width: 8.w),
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(AppColor.primary1),
+                      backgroundColor:
+                          WidgetStateProperty.all(AppColor.primary1),
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.w),
