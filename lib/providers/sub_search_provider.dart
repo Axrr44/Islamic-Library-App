@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:flutter/cupertino.dart';
 import 'package:islamiclibrary/utilities/utility.dart';
 
@@ -5,33 +7,70 @@ import '../models/hadith_model.dart';
 import '../models/tafseer_content.dart';
 
 class SubSearchProvider extends ChangeNotifier {
-  String _searchQuery = '';
+  String _searchHadithQuery = '';
+  String _searchTafseerQuery = '';
+  List<Hadith> filteredHadiths = [];
+  bool _isLoading = false;
 
-  void updateSearchQuery(String query) {
-    _searchQuery = query;
+
+  bool get isLoading => _isLoading;
+
+
+  void updateSearchTafseerQuery(String query) {
+    _searchTafseerQuery = query;
     notifyListeners();
   }
 
-  List<Hadith> filterHadiths(List<Hadith> hadiths) {
-    if (_searchQuery.trim().isEmpty) {
-      return hadiths;
+  void updateSearchHadithQuery(String query, List<Hadith> hadiths) {
+    _searchHadithQuery = query;
+    _isLoading = true;
+    notifyListeners();
+    _filterHadithsInBackground(hadiths);
+  }
+
+  void _filterHadithsInBackground(List<Hadith> hadiths) {
+    if (_searchHadithQuery.trim().isEmpty) {
+      filteredHadiths = hadiths;
+      _isLoading = false;
+      notifyListeners();
+      return;
     }
 
-    print("is not empty $_searchQuery");
+    final receivePort = ReceivePort();
+    Isolate.spawn(_filterHadithsIsolate, {
+      'query': _searchHadithQuery,
+      'sendPort': receivePort.sendPort,
+      'hadiths': hadiths,
+    });
 
-    final normalizedQuery =
-        Utility.removeDiacritics(_searchQuery.toLowerCase());
-    return hadiths.where((hadith) {
+    receivePort.listen((data) {
+      final result = data as List<Hadith>;
+      filteredHadiths = result.isEmpty ? hadiths : result;
+      _isLoading = false;
+      notifyListeners();
+      receivePort.close();
+    });
+  }
+
+  static void _filterHadithsIsolate(Map<String, dynamic> params) {
+    final query = params['query'] as String;
+    final sendPort = params['sendPort'] as SendPort;
+    final hadiths = params['hadiths'] as List<Hadith>;
+
+    final normalizedQuery = Utility.removeDiacritics(query.toLowerCase());
+    final filteredHadiths = hadiths.where((hadith) {
       final hadithTextArabic = Utility.removeDiacritics(hadith.arabic ?? '');
       final hadithTextEnglish = hadith.english?.toLowerCase() ?? '';
       return hadithTextArabic.toLowerCase().contains(normalizedQuery) ||
           hadithTextEnglish.contains(normalizedQuery);
     }).toList();
+
+    sendPort.send(filteredHadiths);
   }
 
   List<TafseerContent> filterTafseerContents(
       List<TafseerContent> tafseerContents) {
-    if (_searchQuery.isEmpty) {
+    if (_searchTafseerQuery.isEmpty) {
       return tafseerContents;
     }
     Set<TafseerContent> filteredSet =
@@ -47,7 +86,7 @@ class SubSearchProvider extends ChangeNotifier {
   List<TafseerContent> _filterWithDiacritics(
       List<TafseerContent> tafseerContents) {
     final normalizedQuery =
-        Utility.removeDiacritics(_searchQuery.toLowerCase());
+        Utility.removeDiacritics(_searchTafseerQuery.toLowerCase());
     return tafseerContents.where((tafseerContent) {
       final normalizedVerseText =
           Utility.removeDiacritics(tafseerContent.verseText).toLowerCase();
@@ -61,7 +100,7 @@ class SubSearchProvider extends ChangeNotifier {
   List<TafseerContent> _filterWithDiacritics2(
       List<TafseerContent> tafseerContents) {
     final normalizedQuery =
-        Utility.removeDiacritics2(_searchQuery.toLowerCase());
+        Utility.removeDiacritics2(_searchTafseerQuery.toLowerCase());
     return tafseerContents.where((tafseerContent) {
       final normalizedVerseText =
           Utility.removeDiacritics2(tafseerContent.verseText).toLowerCase();

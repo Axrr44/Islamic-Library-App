@@ -73,7 +73,7 @@
   "searchTutorial" : "The search page enables you to search in hadiths, the Qur’an, or interpretation with the filtering feature",
   "favoriteTutorial" : "You can favorite many things in the application and save them on this page to return to later with the filter feature",
   "profileTutorial" : "This page contains your personal information, settings, and the ability to change your password",
-  "noLastRead" : "“No last read",
+  "noLastRead" : "No last read",
   "warningFilterSearch" : "The default search is set to \"Quraan\". Please change it to \"Tafaseer\" or \"ahadeeth” if you want to search those fields.",
   "signInDescription" : "Welcome to Islamic Library, sign up today and stay connected with the latest updates and features!",
   "set" : "Set",
@@ -109,6 +109,13 @@
   "qiblahButtonSubTitle": "Indeed, prayer has been decreed upon the believers a decree of specified times",
   "storiesOfProphets": "Stories of the Prophets",
   "azkar": "Azkar",
-  "qiblahAndPrayer": "Qiblah and Prayer Times"
+  "qiblahAndPrayer": "Qiblah and Prayer Times",
+  "coming_soon" : "coming soon",
+  "feedback" : "Feedback",
+  "title" : "Title",
+  "description" : "Description",
+  "send" : "Send",
+  "feedback_toast" : "Send the feetback with a title and description"
+
 
 }

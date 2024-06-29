@@ -108,5 +108,13 @@
   "qiblahButtonSubTitle" : " إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَوْقُوتًا",
   "storiesOfProphets" : "قصص الانبياء",
   "azkar" : "الأذكار",
-  "qiblahAndPrayer" : "القبلة ومواقيت الصلاة"
+  "qiblahAndPrayer" : "القبلة ومواقيت الصلاة",
+  "coming_soon" : "قريباً",
+  "feedback" : "ملاحظات",
+  "title" : "العنوان",
+  "description" : "الوصف",
+  "send" : "إرسال",
+  "feedback_toast" : "ابعث الملاحظة مع عنوان ووصف"
+
+
 }

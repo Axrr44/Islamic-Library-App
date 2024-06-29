@@ -217,6 +217,7 @@ class _TafseerPageState extends State<TafseerPage> {
                             style: TextStyle(
                                 fontSize: 15.sp,
                                 color: Colors.grey,
+                                fontWeight: FontWeight.bold,
                                 fontFamily:
                                     currentLanguage == Languages.EN.languageCode
                                         ? 'EnglishQuran'
@@ -246,7 +247,7 @@ class _TafseerPageState extends State<TafseerPage> {
                         child: IconButton(
                           onPressed: () async {
                             await _loadTafseerData();
-                            if (_indexOfScrolling != -1) {
+                            if (_surahId != -1) {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => TafseerContentPage(
                                   mufseer: _mufseerLastRead,

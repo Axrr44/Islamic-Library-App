@@ -5,6 +5,7 @@ import '../models/favorite_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FireStoreService {
+
   static DocumentReference _getUserFavoritesDocument() {
     User? currentUser = AuthServices.getCurrentUser();
     if (currentUser != null) {
@@ -51,4 +52,19 @@ class FireStoreService {
       return [];
     }
   }
+
+  static Future<void> addFeedback(String title, String description) async {
+    try {
+      CollectionReference feedbackCollection = FirebaseFirestore.instance.collection('feedback');
+      await feedbackCollection.add({
+        'title': title,
+        'description': description,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      print('Feedback added successfully'); // Debug print
+    } catch (e) {
+      print('Error adding feedback: $e'); // Debug print
+    }
+  }
+
 }

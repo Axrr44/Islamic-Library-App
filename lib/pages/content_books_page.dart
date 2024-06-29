@@ -47,8 +47,11 @@ class ContentBooksPage extends StatefulWidget {
 
 class _ContentBooksPageState extends State<ContentBooksPage> {
   final ItemScrollController _scrollController = ItemScrollController();
+  final TextEditingController _searchController = TextEditingController();
   late SubSearchProvider _subSearchProvider;
   late Future _bookDataFuture;
+  bool _isSearching = false;
+
 
   @override
   void initState() {
@@ -64,7 +67,8 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
 
   @override
   void dispose() {
-    _subSearchProvider.updateSearchQuery('');
+    _subSearchProvider.updateSearchHadithQuery('',[]);
+    _subSearchProvider.filteredHadiths.clear();
     super.dispose();
   }
 
@@ -96,6 +100,8 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                   : parseHadiths(snapshot.data);
               List<Chapter> chapters = parseChapters(snapshot.data);
 
+              _subSearchProvider.filteredHadiths = hadiths;
+
               if (widget.isScrollable!) {
                 int index = hadiths.indexWhere(
                     (element) => element.idInBook == widget.indexOfScrollable);
@@ -117,35 +123,70 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                 children: [
                   _header(currentLanguage, metadata, context, width, isMobile),
                   Padding(
-                    padding:
-                        EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h),
-                    child: TextField(
-                      onChanged: (query) {
-                        _subSearchProvider.updateSearchQuery(query);
-                      },
-                      decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)!.search,
-                        prefixIcon:
-                            Icon(Icons.search, color: Colors.black, size: 20.w),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.w),
-                          borderSide: const BorderSide(color: Colors.black),
+                    padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (value){
+                              if (value.trim().isNotEmpty) {
+                                setState(() {
+                                  _isSearching = true;
+                                });
+                              } else {
+                                setState(() {
+                                  _isSearching = false;
+                                });
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: AppLocalizations.of(context)!.search,
+                              prefixIcon:
+                                  Icon(Icons.search, color: Colors.black, size: 20.w),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.w),
+                                borderSide: const BorderSide(color: Colors.black),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.w),
+                                borderSide: const BorderSide(color: Colors.black),
+                              ),
+                            ),
+                            style: const TextStyle(color: Colors.black),
+                            cursorColor: AppColor.black,
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.w),
-                          borderSide: const BorderSide(color: Colors.black),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.black),
-                      cursorColor: AppColor.black,
+                        if(_isSearching)
+                        SizedBox(width: 10.w,),
+                        if(_isSearching)
+                        IconButton(
+                          onPressed: () async {
+                            _subSearchProvider.updateSearchHadithQuery(_searchController.text,hadiths);
+                          },
+                          icon: Icon(
+                            color: AppColor.white,
+                            Icons.search_rounded,
+                            size: 33.w,
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(Colors.black),
+                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.w),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   Expanded(
                     child: Consumer<SubSearchProvider>(
                       builder: (context, subSearchProvider, _) {
                         final filteredHadiths =
-                            subSearchProvider.filterHadiths(hadiths);
-                        return Row(
+                        subSearchProvider.filteredHadiths;
+                        return subSearchProvider.isLoading ? const Center(child: CircularProgressIndicator(color: AppColor.primary1,)):Row(
                           children: [
                             Expanded(
                               child: _listOfHadiths(
@@ -155,9 +196,10 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                               _buildScrollbar(filteredHadiths.length,
                                   filteredHadiths, currentLanguage),
                           ],
-                        );
+                        ) ;
                       },
-                    ),
+                    )
+                    ,
                   ),
                 ],
               );

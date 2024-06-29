@@ -47,6 +47,8 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
   int _downloadProgress = 0;
   bool _isDataFromDb = true;
   late SubSearchProvider _subSearchProvider;
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
 
   @override
   void didChangeDependencies() {
@@ -60,7 +62,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
 
   @override
   void dispose() {
-    _subSearchProvider.updateSearchQuery('');
+    _subSearchProvider.updateSearchTafseerQuery('');
     super.dispose();
   }
 
@@ -214,6 +216,8 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
   }
 
   Widget _buildSearchField(BuildContext context) {
+    final subSearch = Provider.of<SubSearchProvider>(context,listen: false);
+
     return Padding(
       padding:
           EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w, bottom: 20.h),
@@ -221,16 +225,22 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
         children: [
           Expanded(
             child: TextField(
-              onChanged: (query) {
-                _subSearchProvider.updateSearchQuery(query);
+              controller: _searchController,
+              onChanged: (value){
+                if (value.trim().isNotEmpty) {
+                  setState(() {
+                    _isSearching = true;
+                  });
+                } else {
+                  setState(() {
+                    _isSearching = false;
+                  });
+                }
               },
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context)!.search,
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.black,
-                  size: 20.w,
-                ),
+                prefixIcon:
+                Icon(Icons.search, color: Colors.black, size: 20.w),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.w),
                   borderSide: const BorderSide(color: Colors.black),
@@ -244,6 +254,27 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
               cursorColor: AppColor.black,
             ),
           ),
+          if(_isSearching)
+            SizedBox(width: 10.w,),
+          if(_isSearching)
+            IconButton(
+              onPressed: () async {
+                subSearch.updateSearchTafseerQuery(_searchController.text);
+              },
+              icon: Icon(
+                color: AppColor.white,
+                Icons.search_rounded,
+                size: 33.w,
+              ),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(Colors.black),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.w),
+                  ),
+                ),
+              ),
+            )
         ],
       ),
     );

@@ -155,6 +155,7 @@ class _BooksPageState extends State<BooksPage> {
                                       ? 10.sp
                                       : 15.sp,
                               color: Colors.grey,
+                              fontWeight: FontWeight.bold,
                               fontFamily:
                                   currentLanguage == Languages.EN.languageCode
                                       ? 'EnglishQuran'

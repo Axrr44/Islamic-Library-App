@@ -398,7 +398,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                           child: Text(
                             AppLocalizations.of(context)!.quranSubTitle,
                             style:
-                                TextStyle(fontSize: 15.sp, color: Colors.grey),
+                                TextStyle(fontWeight : FontWeight.bold ,fontSize: 15.sp, color: Colors.grey),
                           ),
                         ),
                       ],

@@ -64,11 +64,11 @@ class HomePage extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20.w),
-                      image: DecorationImage(
+                      image: const DecorationImage(
                         image:
-                        const AssetImage("assets/images/text_patter_2.png"),
+                        AssetImage("assets/images/text_patter_2.png"),
                         colorFilter: ColorFilter.mode(
-                            Colors.grey.withOpacity(0.1), BlendMode.srcATop),
+                            Colors.grey, BlendMode.srcATop),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -323,56 +323,56 @@ class HomePage extends StatelessWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.w),
-                              image: DecorationImage(
-                                image: const AssetImage(
-                                    "assets/images/wave_lines_4.png"),
-                                colorFilter: ColorFilter.mode(
-                                  Colors.grey.withOpacity(0.15),
-                                  BlendMode.srcATop,
-                                ),
-                                fit: BoxFit.cover,
-                              ),
+                              color: Colors.black.withOpacity(0.7)
                             ),
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 20.h, horizontal: 20.w),
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                              child: Stack(
+                                alignment: Alignment.center,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 50.w,
-                                        height: 50.w,
-                                        child: Image.asset(
-                                          "assets/images/beads.png",
-                                          color: AppColor.black,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
+                                  Column(
                                     mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        AppLocalizations.of(context)!.azkar,
-                                        style: TextStyle(
-                                            fontFamily: 'AEFont',
-                                            color: AppColor.black,
-                                            fontSize: 20.sp,
-                                            fontWeight: FontWeight.w700),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: 50.w,
+                                            height: 50.w,
+                                            child: Image.asset(
+                                              "assets/images/beads.png",
+                                              color: AppColor.black,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_rounded,
-                                        color: AppColor.black,
-                                        size: 20.w,
-                                      )
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            AppLocalizations.of(context)!.azkar,
+                                            style: TextStyle(
+                                                fontFamily: 'AEFont',
+                                                color: AppColor.black,
+                                                fontSize: 20.sp,
+                                                fontWeight: FontWeight.w700),
+                                          ),
+                                          Icon(
+                                            Icons.arrow_forward_ios_rounded,
+                                            color: AppColor.black,
+                                            size: 20.w,
+                                          )
+                                        ],
+                                      ),
                                     ],
                                   ),
+                                  Text(AppLocalizations.of(context)!.coming_soon
+                                    ,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
+                                  fontSize: 15.sp),)
                                 ],
                               ),
                             ),
@@ -388,9 +388,9 @@ class HomePage extends StatelessWidget {
                           onPressed: () {},
                           style: ButtonStyle(
                               overlayColor: WidgetStateProperty.all(
-                                  AppColor.white.withOpacity(0.1)),
+                                  AppColor.black.withOpacity(0.1)),
                               backgroundColor:
-                              WidgetStateProperty.all(AppColor.primary1),
+                              WidgetStateProperty.all(AppColor.white),
                               foregroundColor:
                               WidgetStateProperty.all(AppColor.white),
                               shape: WidgetStateProperty.all(
@@ -403,56 +403,60 @@ class HomePage extends StatelessWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.w),
-                              image: const DecorationImage(
-                                image: AssetImage(
-                                    "assets/images/wave_lines_6.png"),
-                                fit: BoxFit.cover,
-                              ),
+                              color: Colors.black.withOpacity(0.7)
                             ),
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 20.h, horizontal: 20.w),
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                              child: Stack(
+                                alignment: Alignment.center,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 50.w,
-                                        height: 50.w,
-                                        child: Image.asset(
-                                          "assets/images/reading_book.png",
-                                          color: AppColor.white,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
+                                  Column(
                                     mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                     children: [
-                                      SizedBox(
-                                        width: 80.w,
-                                        child: Text(
-                                          AppLocalizations.of(context)!
-                                              .storiesOfProphets,
-                                          style: TextStyle(
-                                              fontFamily: 'AEFont',
-                                              color: AppColor.white,
-                                              fontSize:  17.sp,
-                                              fontWeight: FontWeight.bold),
-                                        ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: 50.w,
+                                            height: 50.w,
+                                            child: Image.asset(
+                                              "assets/images/reading_book.png",
+                                              color: AppColor.black,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_rounded,
-                                        color: AppColor.white,
-                                        size: 20.w,
-                                      )
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          SizedBox(
+                                            width: 80.w,
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .storiesOfProphets,
+                                              style: TextStyle(
+                                                  fontFamily: 'AEFont',
+                                                  color: AppColor.black,
+                                                  fontSize:  17.sp,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.arrow_forward_ios_rounded,
+                                            color: AppColor.black,
+                                            size: 20.w,
+                                          )
+                                        ],
+                                      ),
                                     ],
                                   ),
+                                  Text(AppLocalizations.of(context)!.coming_soon
+                                    ,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
+                                        fontSize: 15.sp),)
                                 ],
                               ),
                             ),
@@ -475,7 +479,9 @@ class HomePage extends StatelessWidget {
                       overlayColor: WidgetStateProperty.all(
                           AppColor.black.withOpacity(0.1)),
                       backgroundColor:
-                      WidgetStateProperty.all(AppColor.primary6),
+                      WidgetStateProperty.all(AppColor.white),
+                      foregroundColor:
+                      WidgetStateProperty.all(AppColor.white),
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.w),
@@ -486,59 +492,61 @@ class HomePage extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20.w),
-                      image: DecorationImage(
-                        image:
-                        const AssetImage("assets/images/allah_akbar.png"),
-                        colorFilter: ColorFilter.mode(
-                            Colors.grey[300]!.withOpacity(0.005), BlendMode.srcATop),
-                        fit: BoxFit.cover,
-                      ),
+                      color: Colors.black.withOpacity(0.7)
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 20.h, horizontal: 20.w),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Stack(
+                      alignment: Alignment.center,
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.qiblahAndPrayer,
-                                style: TextStyle(
-                                    color: AppColor.black,
-                                    fontSize: 30.sp ,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'AEFont'),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                width: 200.w,
-                                child: Text(
-                                  AppLocalizations.of(context)!
-                                      .qiblahButtonSubTitle,
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 10.sp,
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.start,
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 20.h, horizontal: 20.w),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!.qiblahAndPrayer,
+                                      style: TextStyle(
+                                          color: AppColor.black,
+                                          fontSize: 30.sp ,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'AEFont'),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: AppColor.black,
-                                size: 30.w,
-                              )
-                            ],
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                      width: 200.w,
+                                      child: Text(
+                                        AppLocalizations.of(context)!
+                                            .qiblahButtonSubTitle,
+                                        style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 10.sp,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      color: AppColor.black,
+                                      size: 30.w,
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
+                          Text(AppLocalizations.of(context)!.coming_soon
+                            ,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
+                                fontSize: 15.sp),)
                         ],
-                      ),
                     ),
                   ),
                 ),

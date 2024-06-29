@@ -161,6 +161,21 @@ class _MainPageState extends State<MainPage> {
         body: Column(
           children: [
             _header(width, height, notificationCount, isMobile),
+            if(_currentPage == 0) Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                        onPressed: (){
+                          createTutorial();
+                          Future.delayed(Duration.zero, showTutorial);
+                        },
+                        icon: Icon(Icons.info,size: 20.w,))
+                  ],
+                ),
+            ),
             Expanded(
               child: pages[_currentPage],
             ),
@@ -203,13 +218,15 @@ class _MainPageState extends State<MainPage> {
         enableOverlayTab: true,
         contents: [
           TargetContent(
-            align: ContentAlign.top,
+            align: ContentAlign.bottom,
+            padding: EdgeInsets.symmetric(vertical: 150.h),
             builder: (context, controller) {
               return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
+                    textAlign: TextAlign.center,
                     AppLocalizations.of(context)!.quranTutorial,
                     style: const TextStyle(
                       color: Colors.white,
@@ -222,6 +239,7 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
     );
+
 
     targets.add(
       TargetFocus(
@@ -939,6 +957,7 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(
                             fontSize: 15.sp,
                             color: Colors.grey,
+                            fontWeight: FontWeight.bold,
                             fontFamily:
                                 currentLanguage == Languages.EN.languageCode
                                     ? 'EnglishQuran'
@@ -950,71 +969,40 @@ class _MainPageState extends State<MainPage> {
                   ),
                   mainProvider.currentPageName !=
                           AppLocalizations.of(context)!.home
-                      ? Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  isMobile == true ? 15.w : 10.w),
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: AppColor.white,
-                                  border: Border.all(
-                                    color: AppColor.black,
-                                    width: 1.w,
-                                  ),
-                                  borderRadius: BorderRadius.circular(
-                                      isMobile == true ? 15.w : 10.w),
-                                ),
-                                child: IconButton(
-                                  onPressed: () {
-                                    _actionOfHeaderButton();
-                                  },
-                                  icon: mainProvider.currentPageName !=
-                                          AppLocalizations.of(context)!.search
-                                      ? Icon(
-                                          _iconHeader(
-                                              mainProvider.currentPageName),
-                                          size: 35.w,
-                                          color: AppColor.black,
-                                        )
-                                      : SizedBox(
-                                          width: 35.w,
-                                          height: 35.w,
-                                          child: Image.asset(
-                                              "assets/images/filter.png"),
-                                        ),
-                                ),
-                              ),
-                            ),
-                            if (notificationCount > 0 &&
-                                mainProvider.currentPageName ==
-                                    AppLocalizations.of(context)!.home)
-                              Positioned(
-                                right: 8.w,
-                                top: 8.w,
-                                child: Container(
-                                  padding: EdgeInsets.all(4.w),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  constraints: BoxConstraints(
-                                    minWidth: 16.w,
-                                    minHeight: 16.w,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      notificationCount.toString(),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10.sp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
+                      ? ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                        isMobile == true ? 15.w : 10.w),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppColor.white,
+                        border: Border.all(
+                          color: AppColor.black,
+                          width: 1.w,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                            isMobile == true ? 15.w : 10.w),
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          _actionOfHeaderButton();
+                        },
+                        icon: mainProvider.currentPageName !=
+                            AppLocalizations.of(context)!.search
+                            ? Icon(
+                          _iconHeader(
+                              mainProvider.currentPageName),
+                          size: 35.w,
+                          color: AppColor.black,
                         )
+                            : SizedBox(
+                          width: 35.w,
+                          height: 35.w,
+                          child: Image.asset(
+                              "assets/images/filter.png"),
+                        ),
+                      ),
+                    ),
+                  )
                       : Container(),
                 ],
               ),

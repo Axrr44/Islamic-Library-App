@@ -3,7 +3,9 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamiclibrary/config/app_colors.dart';
 import 'package:islamiclibrary/config/app_routes.dart';
+import 'package:islamiclibrary/config/toast_message.dart';
 import 'package:islamiclibrary/providers/main_page_provider.dart';
+import 'package:islamiclibrary/services/firestore_service.dart';
 import 'package:islamiclibrary/utilities/utility.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +19,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -207,6 +214,34 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 15.h,
                     child: const Divider(color: Colors.grey),
                   ),
+                  SizedBox(
+                    width: width,
+                    child: Padding(
+                      padding: EdgeInsets.all(5.w),
+                      child: ListTile(
+                        leading: const Icon(Icons.feedback_outlined),
+                        title: TextButton(
+                          onPressed: () {
+                            _showFeedbackBottomSheet(context);
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.feedback,
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontFamily:
+                                  Utility.getTextFamily(currentLanguage),
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15.h,
+                    child: const Divider(color: Colors.grey),
+                  ),
                 ],
               ),
             ),
@@ -286,6 +321,77 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _showFeedbackBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(15.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                TextField(
+                  controller: _titleController,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.title,
+                    border: const OutlineInputBorder(),
+                    focusedBorder:  const OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColor.primary1),
+                    ),
+                  ),
+                  cursorColor: AppColor.primary1,
+                ),
+                SizedBox(height: 10.h),
+                TextField(
+                  controller: _descriptionController,
+                  cursorColor: AppColor.primary1,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.description,
+                    border: const OutlineInputBorder(),
+                    focusedBorder:  const OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColor.primary1),
+                    ),
+                  ),
+                  maxLines: 5,
+                ),
+                SizedBox(height: 20.h),
+                ElevatedButton(
+                  onPressed: () async {
+                    if(_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
+                      ToastMessage.showMessage(AppLocalizations.of(context)!.feedback_toast);
+                      return;
+                    }
+                    await FireStoreService.addFeedback(_titleController.text,_descriptionController.text);
+                    Navigator.pop(context);
+                  },
+                  style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStateProperty.all(AppColor.primary1),
+                      shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.w)))),
+                  child: Text(
+                    AppLocalizations.of(context)!.send,
+                    style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

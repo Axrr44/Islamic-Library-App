@@ -80,9 +80,12 @@ class AppDataPreferences {
 
   static Future<Tafseer> getTafseerMufseer() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? jsonString = prefs.getString("Tafseer-Mufseer");
-    final Map<String, dynamic> jsonMap = jsonDecode(jsonString!);
-    return Tafseer.fromJson(jsonMap) ?? Tafseer.empty();
+    final String jsonString = prefs.getString("Tafseer-Mufseer") ?? "";
+    late Map<String, dynamic> jsonMap;
+    if(jsonString != "") {
+      jsonMap = jsonDecode(jsonString);
+    }
+    return jsonString != "" ? Tafseer.fromJson(jsonMap) : Tafseer.empty();
   }
 
   static Future<int> getTafseerSurahId() async {

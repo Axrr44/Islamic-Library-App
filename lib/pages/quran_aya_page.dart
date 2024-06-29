@@ -132,14 +132,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
         extendBody: true,
         body: Column(
           children: [
-            Consumer<QuranAyaPageProvider>(
-              builder: (context, quranProvider, _) {
-                return quranProvider.showExtraWidget
-                    ? _appBar(isMobile, currentLanguage, width)
-                    : const PreferredSize(
-                        preferredSize: Size.zero, child: SizedBox());
-              },
-            ),
+            _appBar(isMobile, currentLanguage, width),
             _quranPages(height, currentLanguage, isPortrait),
             Consumer<QuranAyaPageProvider>(
               builder: (context, quranProvider, _) {
@@ -566,7 +559,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     String currentLanguage = Localizations.localeOf(context).languageCode;
     final response = await http.get(Uri.parse(
         'https://api.alquran.cloud/v1/page/$pageCount/'
-        '${currentLanguage == Languages.EN.languageCode ? 'en.asad' : 'quran-uthmani'}'));
+        '${currentLanguage == Languages.EN.languageCode ? 'en.sahih' : 'quran-uthmani'}'));
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
       return QuranData.fromJson(jsonData);
