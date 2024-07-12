@@ -34,7 +34,7 @@ class _QuranSuraPageState extends State<QuranSuraPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _createBannerAd();
+    //_createBannerAd();
   }
 
   @override
@@ -397,8 +397,10 @@ class _QuranSuraPageState extends State<QuranSuraPage>
                           width: width / 2,
                           child: Text(
                             AppLocalizations.of(context)!.quranSubTitle,
-                            style:
-                                TextStyle(fontWeight : FontWeight.bold ,fontSize: 15.sp, color: Colors.grey),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15.sp,
+                                color: Colors.grey),
                           ),
                         ),
                       ],
