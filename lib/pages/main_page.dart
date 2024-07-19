@@ -1194,7 +1194,7 @@ class _MainPageState extends State<MainPage> {
   void _createBannerAd() {
     _bannerAd = BannerAd(
         size: AdSize.fullBanner,
-        adUnitId: AdmobService.bannerAdUnitId(false),
+        adUnitId: AdmobService.bannerAdUnitId(true),
         listener: AdmobService.bannerListener,
         request: const AdRequest())
       ..load();
@@ -1202,7 +1202,7 @@ class _MainPageState extends State<MainPage> {
 
   void _createInterstitialAd() {
     InterstitialAd.load(
-        adUnitId: AdmobService.interstitialAdUnitId(false),
+        adUnitId: AdmobService.interstitialAdUnitId(true),
         request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
           _interstitialAd = ad;

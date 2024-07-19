@@ -122,7 +122,7 @@ class _TafseerPageState extends State<TafseerPage> {
   void _createBannerAd() {
     _bannerAd = BannerAd(
       size: AdSize.fullBanner,
-      adUnitId: AdmobService.bannerAdUnitId(false),
+      adUnitId: AdmobService.bannerAdUnitId(true),
       listener: AdmobService.bannerListener,
       request: const AdRequest(),
     )..load();

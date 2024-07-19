@@ -50,5 +50,21 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+
+	<key>CFBundleURLTypes</key>
+    <array>
+      <dict>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>fb1875425282932383</string>
+      </array>
+      </dict>
+    </array>
+    <key>FacebookAppID</key>
+    <string>1875425282932383</string>
+    <key>FacebookClientToken</key>
+    <string>b9de30f9c3b6b55e44bf29e8425c9744</string>
+    <key>FacebookDisplayName</key>
+    <string>The Islamic Library</string>
 </dict>
 </plist>

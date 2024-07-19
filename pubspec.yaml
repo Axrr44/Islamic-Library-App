@@ -124,6 +124,7 @@ dependencies:
   http: any
   path: any
   firebase_analytics: ^10.10.7
+  facebook_app_events: ^0.19.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

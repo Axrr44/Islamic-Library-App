@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:islamiclibrary/services/app_data_pref.dart';
+import 'package:islamiclibrary/services/facebook_service.dart';
 import 'package:islamiclibrary/utilities/utility.dart';
 import '../components/custom_textfield.dart';
 import '../config/app_colors.dart';
@@ -181,6 +182,8 @@ class _SignUpState extends State<SignUp> {
                     ),
                     onPressed: isPrivacyCheck
                         ? () {
+                      FacebookService.logEvent(FacebookEvents.EVENT1, {'SignUpButton': 'Sign Up Button Clicked'});
+
                             if (_formKey.currentState!.validate()) {
                               AuthServices.signUp(
                                 context,
