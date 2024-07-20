@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "99752408527-amvt8up706o29cs53i2g68jfuk6m4t2c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muehldorfsd.theislamiclibrary",
+            "certificate_hash": "3c14b4c019b2c36f0e0fbc1519c6a85b21d75949"
+          }
+        },
+        {
           "client_id": "99752408527-t17sg7f448d7sbe7mmmm3pj6k3ql9n64.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
