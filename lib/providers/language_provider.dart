@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:islamiclibrary/services/app_data_pref.dart';
 import 'dart:io' show Platform;
@@ -19,6 +20,8 @@ class LanguageProvider with ChangeNotifier {
   Future<void> setCurrentLanguage(String language) async {
     _currentLanguage = language;
     await AppDataPreferences.setCurrentLanguage(language);
+    await FirebaseAnalytics.instance
+        .setUserProperty(name: 'islamic_library_language', value: language);
     notifyListeners();
   }
 }
