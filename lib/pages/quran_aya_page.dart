@@ -290,7 +290,8 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
       quran
           .getVersesTextByPage(
               quran.getPageNumber(surahIdLastRead, verseIdLastRead),
-              verseEndSymbol: true)
+              verseEndSymbol: true,
+              languageCode: currentLanguage)
           .forEach((element) {
         versesText.add(element);
       });
