@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:islamiclibrary/config/app_languages.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Utility {
   static String getTextFamily(String currentLanguage) {
@@ -486,4 +488,11 @@ class Utility {
     int maxDigits = 3;
     return number.toString().padLeft(maxDigits, '0');
   }
+
+
+  static String getShareText(BuildContext context)
+  {
+    return "\n${AppLocalizations.of(context)!.share_description}Android : https://play.google.com/store/apps/details?id=com.muehldorfsd.theislamiclibrary&hl=en\niOS: https://apps.apple.com/us/app/the-complete-islamic-library/id6504050255";
+  }
+
 }

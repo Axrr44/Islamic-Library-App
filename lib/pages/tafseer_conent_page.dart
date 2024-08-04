@@ -21,6 +21,7 @@ import 'package:quran/quran.dart' as quran;
 import 'package:http/http.dart' as http;
 import '../models/tafseer_response.dart';
 import '../services/authentication.dart';
+import '../utilities/utility.dart';
 
 class TafseerContentPage extends StatefulWidget {
   final Tafseer? mufseer;
@@ -517,7 +518,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
     copy() {
       final value = ClipboardData(
         text:
-            "${tafseerContent.verseText}[${tafseerContent.surahText}]\n\n\n\n${tafseerContent.tafseerText}",
+            "${tafseerContent.verseText}[${tafseerContent.surahText}]\n\n\n\n${tafseerContent.tafseerText}${Utility.getShareText(context)}",
       );
       Clipboard.setData(value);
       ToastMessage.showMessage("Text copied");
@@ -564,7 +565,7 @@ class _TafseerContentPageState extends State<TafseerContentPage> {
                 child: InkWell(
                   onTap: () async {
                     await Share.share(
-                        "${tafseerContent.verseText}[${tafseerContent.surahText}]\n\n\n\n${tafseerContent.tafseerText}");
+                        "${tafseerContent.verseText}[${tafseerContent.surahText}]\n\n\n\n${tafseerContent.tafseerText}${Utility.getShareText(context)}");
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

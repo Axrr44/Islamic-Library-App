@@ -52,7 +52,6 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
   late Future _bookDataFuture;
   bool _isSearching = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -67,7 +66,7 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
 
   @override
   void dispose() {
-    _subSearchProvider.updateSearchHadithQuery('',[]);
+    _subSearchProvider.updateSearchHadithQuery('', []);
     _subSearchProvider.filteredHadiths.clear();
     super.dispose();
   }
@@ -123,13 +122,14 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                 children: [
                   _header(currentLanguage, metadata, context, width, isMobile),
                   Padding(
-                    padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h),
+                    padding:
+                        EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextField(
                             controller: _searchController,
-                            onChanged: (value){
+                            onChanged: (value) {
                               if (value.trim().isNotEmpty) {
                                 setState(() {
                                   _isSearching = true;
@@ -142,42 +142,49 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                             },
                             decoration: InputDecoration(
                               hintText: AppLocalizations.of(context)!.search,
-                              prefixIcon:
-                                  Icon(Icons.search, color: Colors.black, size: 20.w),
+                              prefixIcon: Icon(Icons.search,
+                                  color: Colors.black, size: 20.w),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8.w),
-                                borderSide: const BorderSide(color: Colors.black),
+                                borderSide:
+                                    const BorderSide(color: Colors.black),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8.w),
-                                borderSide: const BorderSide(color: Colors.black),
+                                borderSide:
+                                    const BorderSide(color: Colors.black),
                               ),
                             ),
                             style: const TextStyle(color: Colors.black),
                             cursorColor: AppColor.black,
                           ),
                         ),
-                        if(_isSearching)
-                        SizedBox(width: 10.w,),
-                        if(_isSearching)
-                        IconButton(
-                          onPressed: () async {
-                            _subSearchProvider.updateSearchHadithQuery(_searchController.text,hadiths);
-                          },
-                          icon: Icon(
-                            color: AppColor.white,
-                            Icons.search_rounded,
-                            size: 33.w,
+                        if (_isSearching)
+                          SizedBox(
+                            width: 10.w,
                           ),
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(Colors.black),
-                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.w),
+                        if (_isSearching)
+                          IconButton(
+                            onPressed: () async {
+                              _subSearchProvider.updateSearchHadithQuery(
+                                  _searchController.text, hadiths);
+                            },
+                            icon: Icon(
+                              color: AppColor.white,
+                              Icons.search_rounded,
+                              size: 33.w,
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  WidgetStateProperty.all(Colors.black),
+                              shape: WidgetStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.w),
+                                ),
                               ),
                             ),
-                          ),
-                        )
+                          )
                       ],
                     ),
                   ),
@@ -185,21 +192,25 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                     child: Consumer<SubSearchProvider>(
                       builder: (context, subSearchProvider, _) {
                         final filteredHadiths =
-                        subSearchProvider.filteredHadiths;
-                        return subSearchProvider.isLoading ? const Center(child: CircularProgressIndicator(color: AppColor.primary1,)):Row(
-                          children: [
-                            Expanded(
-                              child: _listOfHadiths(
-                                  filteredHadiths, chapters, currentLanguage),
-                            ),
-                            if (filteredHadiths.length >= 10)
-                              _buildScrollbar(filteredHadiths.length,
-                                  filteredHadiths, currentLanguage),
-                          ],
-                        ) ;
+                            subSearchProvider.filteredHadiths;
+                        return subSearchProvider.isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                color: AppColor.primary1,
+                              ))
+                            : Row(
+                                children: [
+                                  Expanded(
+                                    child: _listOfHadiths(filteredHadiths,
+                                        chapters, currentLanguage),
+                                  ),
+                                  if (filteredHadiths.length >= 10)
+                                    _buildScrollbar(filteredHadiths.length,
+                                        filteredHadiths, currentLanguage),
+                                ],
+                              );
                       },
-                    )
-                    ,
+                    ),
                   ),
                 ],
               );
@@ -431,7 +442,7 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
     copy() {
       final value = ClipboardData(
         text:
-            "$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}/$idInBook]",
+            "$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}/$idInBook]${Utility.getShareText(context)}",
       );
       Clipboard.setData(value);
       Fluttertoast.showToast(
@@ -486,7 +497,7 @@ class _ContentBooksPageState extends State<ContentBooksPage> {
                       child: InkWell(
                         onTap: () async {
                           await Share.share(
-                              "$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}/$idInBook]");
+                              "$hadith[${AppData.getBookName(context, widget.bookId)}][${widget.bookName}/$idInBook]${Utility.getShareText(context)}");
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

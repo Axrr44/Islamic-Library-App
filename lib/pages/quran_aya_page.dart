@@ -299,7 +299,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
     }
 
     copy() {
-      String verses = getDataByPage();
+      String verses = getDataByPage() + Utility.getShareText(context);
       final value = ClipboardData(
         text: verses,
       );
@@ -345,8 +345,9 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                       )),
                   IconButton(
                       onPressed: () async {
+                        String result = "${getDataByPage()}[${currentLanguage == Languages.EN.languageCode ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)} ${Utility.getShareText(context)}]";
                         await Share.share(
-                            "${getDataByPage()}[${currentLanguage == Languages.EN.languageCode ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)}]");
+                            result);
                       },
                       icon: Icon(
                         Icons.share,
@@ -635,7 +636,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
 
     copy() {
       final value = ClipboardData(
-        text: ayahText,
+        text: ayahText + Utility.getShareText(context),
       );
       Clipboard.setData(value);
       Fluttertoast.showToast(
@@ -710,7 +711,7 @@ class _QuranAyaPageState extends State<QuranAyaPage> {
                     InkWell(
                       onTap: () async {
                         await Share.share(
-                            "$ayahText[${currentLanguage == Languages.EN.languageCode ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)}]");
+                            "$ayahText[${currentLanguage == Languages.EN.languageCode ? quran.getSurahName(surahIdLastRead) : quran.getSurahNameArabic(surahIdLastRead)}]${Utility.getShareText(context)}");
                         Navigator.of(context).pop();
                       },
                       child: ListTile(

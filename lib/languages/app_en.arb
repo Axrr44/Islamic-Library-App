@@ -115,7 +115,9 @@
   "title" : "Title",
   "description" : "Description",
   "send" : "Send",
-  "feedback_toast" : "Send the feetback with a title and description"
+  "feedback_toast" : "Send the feetback with a title and description",
+  "share_description" : "This text was shared by the Islamic library application\n"
+
 
 
 }
